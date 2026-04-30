@@ -1,4 +1,4 @@
-import { getProfiles } from "@/lib/profiles";
+﻿import { getProfiles } from "@/lib/profiles";
 import { ProfileCard } from "@/components/ProfileCard";
 
 const categories = [
@@ -25,7 +25,7 @@ export default async function BrowsePage(props: { searchParams: SearchParams }) 
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-12">
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">プロを探す</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-2">経験者を探す</h1>
       <p className="text-gray-600 mb-8">
         AIを活用して独立・副業中のプロフェッショナル一覧
       </p>
@@ -79,6 +79,13 @@ const sampleProfiles = [
     linkedin_url: null,
     hourly_rate: "相談ベース",
     availability: "available" as const,
+    services: null,
+    company: null,
+    role: null,
+    linkedin_connections: null,
+    past_companies: ["McKinsey", "Accenture"],
+    linkedin_verified: true,
+    password_hash: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   },
@@ -96,6 +103,13 @@ const sampleProfiles = [
     linkedin_url: null,
     hourly_rate: "¥15,000/h",
     availability: "part-time" as const,
+    services: null,
+    company: null,
+    role: null,
+    linkedin_connections: null,
+    past_companies: null,
+    linkedin_verified: false,
+    password_hash: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   },

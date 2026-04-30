@@ -1,6 +1,8 @@
 import type { NextAuthOptions } from "next-auth";
 import LinkedInProvider from "next-auth/providers/linkedin";
+import CredentialsProvider from "next-auth/providers/credentials";
 import { createClient } from "@supabase/supabase-js";
+import bcrypt from "bcryptjs";
 
 function getSupabaseAdmin() {
   return createClient(
@@ -18,24 +20,47 @@ export const authOptions: NextAuthOptions = {
         params: { scope: "openid profile email" },
       },
     }),
+    CredentialsProvider({
+      name: "credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) return null;
+
+        const supabase = getSupabaseAdmin();
+        const { data } = await supabase
+          .from("profiles")
+          .select("linkedin_id, name, email, image, password_hash")
+          .eq("email", credentials.email)
+          .not("password_hash", "is", null)
+          .single();
+
+        if (!data?.password_hash) return null;
+        const valid = await bcrypt.compare(credentials.password, data.password_hash);
+        if (!valid) return null;
+
+        return { id: data.linkedin_id, name: data.name, email: data.email, image: data.image };
+      },
+    }),
   ],
   callbacks: {
     async signIn({ user, account }) {
       if (!user.email) return false;
+      if (account?.provider !== "linkedin") return true;
 
-      // LinkedInでログイン時にprofilesテーブルへupsert
       await getSupabaseAdmin().from("profiles").upsert(
         {
-          linkedin_id: account?.providerAccountId,
+          linkedin_id: account.providerAccountId,
           name: user.name ?? "",
           email: user.email,
           image: user.image ?? null,
-          linkedin_url: `https://www.linkedin.com/in/${account?.providerAccountId}`,
+          linkedin_verified: true,
           updated_at: new Date().toISOString(),
         },
         { onConflict: "linkedin_id", ignoreDuplicates: false }
       );
-
       return true;
     },
     async session({ session, token }) {
@@ -44,15 +69,17 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
-    async jwt({ token, account }) {
-      if (account) {
-        token.linkedinId = account.providerAccountId;
+    async jwt({ token, account, user }) {
+      if (account?.provider === "linkedin") {
+        token.sub = account.providerAccountId;
+      } else if (user?.id) {
+        token.sub = user.id;
       }
       return token;
     },
   },
   pages: {
-    signIn: "/",
+    signIn: "/login",
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

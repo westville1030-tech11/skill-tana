@@ -2,6 +2,7 @@ import { getProfileByLinkedInId } from "@/lib/profiles";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { PageProps } from "@/types/next";
+import { InquiryForm } from "@/components/InquiryForm";
 
 const categoryLabel: Record<string, string> = {
   consultant: "コンサルタント",
@@ -30,6 +31,13 @@ export default async function ProfilePage(props: PageProps<"/profile/[id]">) {
 
   const avail = availabilityLabel[profile.availability ?? ""] ?? null;
   const services = profile.services ?? [];
+
+  const connectionsLabel: Record<string, string> = {
+    under_100: "〜100人",
+    "100_500": "100〜500人",
+    "500_1000": "500〜1,000人",
+    over_1000: "1,000人以上",
+  };
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
@@ -68,6 +76,46 @@ export default async function ProfilePage(props: PageProps<"/profile/[id]">) {
           </div>
         </div>
 
+        {/* 所属・つながり数 */}
+        {(profile.company || profile.role || profile.linkedin_connections) && (
+          <div className="flex flex-wrap gap-2">
+            {profile.company && (
+              <span className="text-sm bg-gray-50 border border-gray-100 text-gray-700 px-3 py-1.5 rounded-full">
+                🏢 {profile.company}
+              </span>
+            )}
+            {profile.role && (
+              <span className="text-sm bg-gray-50 border border-gray-100 text-gray-700 px-3 py-1.5 rounded-full">
+                💼 {profile.role}
+              </span>
+            )}
+            {profile.linkedin_connections && (
+              <span className="text-sm bg-blue-50 border border-blue-100 text-blue-700 px-3 py-1.5 rounded-full">
+                👥 {connectionsLabel[profile.linkedin_connections]}のつながり
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* 過去の所属会社 */}
+        {profile.past_companies && profile.past_companies.length > 0 && (
+          <div>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">経歴（自己申告）</p>
+            <div className="flex flex-wrap gap-3">
+              {profile.past_companies.map((c) => (
+                <CompanyBadge key={c} name={c} />
+              ))}
+            </div>
+            {profile.linkedin_url && (
+              <p className="text-xs text-gray-400 mt-2">
+                <a href={profile.linkedin_url} target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-600">
+                  LinkedInで経歴を確認する →
+                </a>
+              </p>
+            )}
+          </div>
+        )}
+
         {/* LinkedIn信頼バッジ */}
         <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-2">
@@ -93,28 +141,66 @@ export default async function ProfilePage(props: PageProps<"/profile/[id]">) {
 
         {/* 成果物メニュー */}
         {services.length > 0 && (
-          <div>
-            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">
-              成果物メニュー
-            </h2>
-            <div className="space-y-3">
-              {services.map((s) => (
-                <div key={s.id} className="border border-gray-200 rounded-xl p-5">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900">{s.title}</h3>
-                      {s.description && (
-                        <p className="text-sm text-gray-500 mt-1 leading-relaxed">{s.description}</p>
-                      )}
+          <div className="space-y-6">
+            {/* スポット成果物 */}
+            {services.filter((s) => s.service_type !== "ongoing").length > 0 && (
+              <div>
+                <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+                  スポット成果物
+                </h2>
+                <div className="space-y-3">
+                  {services.filter((s) => s.service_type !== "ongoing").map((s) => (
+                    <div key={s.id} className="border border-gray-200 rounded-xl p-5">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-gray-900">{s.title}</h3>
+                          {s.description && (
+                            <p className="text-sm text-gray-500 mt-1 leading-relaxed">{s.description}</p>
+                          )}
+                        </div>
+                        <div className="text-right flex-shrink-0">
+                          <div className="text-blue-700 font-bold">¥{s.price.toLocaleString()}</div>
+                          <div className="text-xs text-gray-400 mt-0.5">{s.days}日以内</div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="text-right flex-shrink-0">
-                      <div className="text-blue-700 font-bold">¥{s.price.toLocaleString()}</div>
-                      <div className="text-xs text-gray-400 mt-0.5">{s.days}日以内</div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            )}
+
+            {/* 継続サポート */}
+            {services.filter((s) => s.service_type === "ongoing").length > 0 && (
+              <div>
+                <h2 className="text-sm font-semibold text-purple-600 uppercase tracking-wide mb-3">
+                  継続サポート
+                </h2>
+                <div className="space-y-3">
+                  {services.filter((s) => s.service_type === "ongoing").map((s) => (
+                    <div key={s.id} className="border border-purple-200 bg-purple-50 rounded-xl p-5">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="font-semibold text-gray-900">{s.title}</h3>
+                            <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-medium">継続</span>
+                          </div>
+                          {s.frequency && (
+                            <p className="text-xs text-purple-600 mb-1 font-medium">{s.frequency}</p>
+                          )}
+                          {s.description && (
+                            <p className="text-sm text-gray-500 leading-relaxed">{s.description}</p>
+                          )}
+                        </div>
+                        <div className="text-right flex-shrink-0">
+                          <div className="text-purple-700 font-bold">¥{s.price.toLocaleString()}<span className="text-xs font-normal">/月</span></div>
+                          <div className="text-xs text-gray-400 mt-0.5">{s.days}ヶ月〜</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -124,20 +210,39 @@ export default async function ProfilePage(props: PageProps<"/profile/[id]">) {
           </div>
         )}
 
-        {/* 発注ボタン */}
-        {profile.linkedin_url && (
-          <a
-            href={profile.linkedin_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 w-full bg-blue-700 text-white py-4 rounded-xl font-medium hover:bg-blue-800 transition-colors text-base"
-          >
-            <LinkedInIcon />
-            LinkedInで発注を相談する
-          </a>
-        )}
+        {/* 問い合わせフォーム */}
+        <InquiryForm proLinkedInId={id} services={services} />
       </div>
     </div>
+  );
+}
+
+function CompanyBadge({ name }: { name: string }) {
+  const domain = name.toLowerCase().replace(/\s+/g, "").replace(/[^a-z0-9]/g, "") + ".com";
+  const initials = name.slice(0, 2).toUpperCase();
+  return (
+    <span className="flex items-center gap-2 bg-white border border-gray-200 text-gray-700 text-sm px-3 py-2 rounded-xl shadow-sm">
+      <span className="relative flex-shrink-0 w-5 h-5">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={`https://logo.clearbit.com/${domain}`}
+          alt={name}
+          width={20}
+          height={20}
+          className="rounded-sm object-contain w-5 h-5"
+          onError={(e) => {
+            const el = e.currentTarget;
+            el.style.display = "none";
+            const fb = el.nextElementSibling as HTMLElement | null;
+            if (fb) fb.style.display = "flex";
+          }}
+        />
+        <span className="absolute inset-0 hidden items-center justify-center bg-gray-100 rounded-sm text-gray-500 font-bold text-xs">
+          {initials}
+        </span>
+      </span>
+      {name}
+    </span>
   );
 }
 

@@ -14,6 +14,13 @@ const availabilityLabel: Record<string, { label: string; color: string }> = {
   busy: { label: "稼働不可", color: "bg-gray-100 text-gray-500" },
 };
 
+const connectionsMap: Record<string, string> = {
+  under_100: "〜100人",
+  "100_500": "100〜500人",
+  "500_1000": "500〜1,000人",
+  over_1000: "1,000人以上",
+};
+
 export function ProfileCard({ profile }: { profile: Profile }) {
   const avail = availabilityLabel[profile.availability ?? ""] ?? null;
 
@@ -42,6 +49,21 @@ export function ProfileCard({ profile }: { profile: Profile }) {
               </span>
             )}
           </div>
+          {/* 所属・つながり数 */}
+          {(profile.company || profile.linkedin_connections) && (
+            <div className="flex flex-wrap gap-1.5 mt-1.5">
+              {profile.company && (
+                <span className="text-xs text-gray-500 bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-full">
+                  {profile.company}
+                </span>
+              )}
+              {profile.linkedin_connections && (
+                <span className="text-xs text-blue-600 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-full">
+                  👥 {connectionsMap[profile.linkedin_connections]}
+                </span>
+              )}
+            </div>
+          )}
           {profile.services && profile.services.length > 0 ? (
             <div className="mt-2 space-y-1.5">
               {profile.services.slice(0, 2).map((s) => (

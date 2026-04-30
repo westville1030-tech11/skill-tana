@@ -18,10 +18,21 @@ export function Navbar() {
           <Link href="/browse" className="hover:text-blue-700 transition-colors">
             棚を見る
           </Link>
+          <Link href="/request" className="hover:text-blue-700 transition-colors">
+            発注相談
+          </Link>
+          <Link href="/feedback" className="hover:text-blue-700 transition-colors">
+            ご意見箱
+          </Link>
           {session && (
-            <Link href="/profile/edit" className="hover:text-blue-700 transition-colors">
-              マイ棚を編集
-            </Link>
+            <>
+              <Link href="/inbox" className="hover:text-blue-700 transition-colors">
+                受信箱
+              </Link>
+              <Link href="/profile/edit" className="hover:text-blue-700 transition-colors">
+                マイ棚を編集
+              </Link>
+            </>
           )}
         </nav>
 
@@ -46,13 +57,14 @@ export function Navbar() {
               </button>
             </div>
           ) : (
-            <button
-              onClick={() => signIn("linkedin")}
-              className="flex items-center gap-2 bg-blue-700 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors"
-            >
-              <LinkedInIcon />
-              LinkedInでログイン
-            </button>
+            <div className="flex items-center gap-2">
+              <Link href="/login" className="text-sm text-gray-600 hover:text-blue-700 transition-colors px-3 py-2">
+                ログイン
+              </Link>
+              <Link href="/signup" className="flex items-center gap-1.5 bg-blue-700 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors font-medium">
+                無料で登録
+              </Link>
+            </div>
           )}
         </div>
       </div>

@@ -1,4 +1,4 @@
-export default function PreviewPage() {
+﻿export default function PreviewPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-8">
       <div className="max-w-3xl w-full bg-white rounded-2xl shadow-sm p-10">
@@ -38,8 +38,8 @@ function ConceptDiagram() {
       {/* 矢印3 */}
       <ThinArrow x1={514} y1={78} x2={570} y2={78} />
 
-      {/* プロカード */}
-      <ActorCard x={570} y={42} icon="💼" topLabel="プロ" bottomLabel="スキルを持つ側" color="#f3f4f6" border="#d1d5db" />
+      {/* 経験者カード */}
+      <ActorCard x={570} y={42} icon="💼" topLabel="経験者" bottomLabel="スキルを持つ側" color="#f3f4f6" border="#d1d5db" />
 
       {/* ===== 区切り線 ===== */}
       <line x1="24" y1="148" x2="696" y2="148" stroke="#e5e7eb" strokeWidth="1.5" strokeDasharray="6 4" />
@@ -59,8 +59,8 @@ function ConceptDiagram() {
       <text x="360" y="221" fontSize="13" fill="#1d4ed8" fontWeight="800" textAnchor="middle">直接発注</text>
       <text x="360" y="237" fontSize="10.5" fill="#3b82f6" textAnchor="middle">手数料・仲介料 すべて ¥0</text>
 
-      {/* プロカード（青） */}
-      <ActorCard x={582} y={188} icon="💼" topLabel="プロ" bottomLabel="スキルを持つ側" color="#eff6ff" border="#bfdbfe" />
+      {/* 経験者カード（青） */}
+      <ActorCard x={582} y={188} icon="💼" topLabel="経験者" bottomLabel="スキルを持つ側" color="#eff6ff" border="#bfdbfe" />
 
       {/* ✓ 3点 */}
       <text x="360" y="284" fontSize="10.5" fill="#16a34a" fontWeight="600" textAnchor="middle">

@@ -80,6 +80,7 @@
 | `NEXT_PUBLIC_SUPABASE_URL` | SupabaseのProject URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabaseのanon key |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabaseのservice_role key |
+| `ANTHROPIC_API_KEY` | Anthropic APIキー（AIマッチング機能用） |
 
 4. `NEXTAUTH_SECRET` の生成方法（ターミナルで）：
    ```

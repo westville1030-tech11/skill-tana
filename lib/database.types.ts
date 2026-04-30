@@ -4,6 +4,8 @@ export type Service = {
   description: string;
   price: number;
   days: number;
+  service_type?: "spot" | "ongoing";
+  frequency?: string;
 };
 
 export type Profile = {
@@ -21,6 +23,12 @@ export type Profile = {
   hourly_rate: string | null;
   availability: "available" | "busy" | "part-time" | null;
   services: Service[] | null;
+  company: string | null;
+  role: string | null;
+  linkedin_connections: "under_100" | "100_500" | "500_1000" | "over_1000" | null;
+  past_companies: string[] | null;
+  linkedin_verified: boolean | null;
+  password_hash: string | null;
   created_at: string;
   updated_at: string;
 };
