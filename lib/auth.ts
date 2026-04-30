@@ -1,5 +1,4 @@
 import type { NextAuthOptions } from "next-auth";
-import type { OAuthConfig } from "next-auth/providers";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { createClient } from "@supabase/supabase-js";
 import bcrypt from "bcryptjs";
@@ -11,37 +10,27 @@ function getSupabaseAdmin() {
   );
 }
 
-// LinkedIn OIDC via wellKnown discovery — uses ID token claims directly,
-// bypassing the userinfo endpoint that causes OAuthCallback errors when the
-// "Sign In with LinkedIn using OpenID Connect" product permissions lag.
-const linkedInOIDC: OAuthConfig<{
-  sub: string;
-  name?: string;
-  given_name?: string;
-  family_name?: string;
-  email?: string;
-  picture?: string;
-}> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const linkedInOIDC: any = {
   id: "linkedin",
   name: "LinkedIn",
   type: "oauth",
-  wellKnown:
-    "https://www.linkedin.com/oauth/.well-known/openid-configuration",
+  wellKnown: "https://www.linkedin.com/oauth/.well-known/openid-configuration",
   authorization: { params: { scope: "openid profile email" } },
   idToken: true,
   checks: ["pkce", "state"],
   clientId: process.env.LINKEDIN_CLIENT_ID,
   clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
-  profile(profile) {
+  profile(profile: Record<string, unknown>) {
     const name =
-      profile.name ??
+      (profile.name as string) ??
       [profile.given_name, profile.family_name].filter(Boolean).join(" ") ??
       "";
     return {
-      id: profile.sub,
+      id: profile.sub as string,
       name,
-      email: profile.email ?? "",
-      image: profile.picture ?? null,
+      email: (profile.email as string) ?? "",
+      image: (profile.picture as string) ?? null,
     };
   },
 };
@@ -95,7 +84,6 @@ export const authOptions: NextAuthOptions = {
           );
       } catch (e) {
         console.error("[auth] Supabase upsert failed:", e);
-        // Don't block login on DB error
       }
       return true;
     },
