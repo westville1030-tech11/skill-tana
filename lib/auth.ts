@@ -1,5 +1,5 @@
 import type { NextAuthOptions } from "next-auth";
-import LinkedInProvider from "next-auth/providers/linkedin";
+import type { OAuthConfig } from "next-auth/providers";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { createClient } from "@supabase/supabase-js";
 import bcrypt from "bcryptjs";
@@ -11,15 +11,44 @@ function getSupabaseAdmin() {
   );
 }
 
+// LinkedIn OIDC via wellKnown discovery — uses ID token claims directly,
+// bypassing the userinfo endpoint that causes OAuthCallback errors when the
+// "Sign In with LinkedIn using OpenID Connect" product permissions lag.
+const linkedInOIDC: OAuthConfig<{
+  sub: string;
+  name?: string;
+  given_name?: string;
+  family_name?: string;
+  email?: string;
+  picture?: string;
+}> = {
+  id: "linkedin",
+  name: "LinkedIn",
+  type: "oauth",
+  wellKnown:
+    "https://www.linkedin.com/oauth/.well-known/openid-configuration",
+  authorization: { params: { scope: "openid profile email" } },
+  idToken: true,
+  checks: ["pkce", "state"],
+  clientId: process.env.LINKEDIN_CLIENT_ID,
+  clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
+  profile(profile) {
+    const name =
+      profile.name ??
+      [profile.given_name, profile.family_name].filter(Boolean).join(" ") ??
+      "";
+    return {
+      id: profile.sub,
+      name,
+      email: profile.email ?? "",
+      image: profile.picture ?? null,
+    };
+  },
+};
+
 export const authOptions: NextAuthOptions = {
   providers: [
-    LinkedInProvider({
-      clientId: process.env.LINKEDIN_CLIENT_ID!,
-      clientSecret: process.env.LINKEDIN_CLIENT_SECRET!,
-      authorization: {
-        params: { scope: "openid profile email" },
-      },
-    }),
+    linkedInOIDC,
     CredentialsProvider({
       name: "credentials",
       credentials: {
@@ -50,17 +79,24 @@ export const authOptions: NextAuthOptions = {
       if (!user.email) return false;
       if (account?.provider !== "linkedin") return true;
 
-      await getSupabaseAdmin().from("profiles").upsert(
-        {
-          linkedin_id: account.providerAccountId,
-          name: user.name ?? "",
-          email: user.email,
-          image: user.image ?? null,
-          linkedin_verified: true,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: "linkedin_id", ignoreDuplicates: false }
-      );
+      try {
+        await getSupabaseAdmin()
+          .from("profiles")
+          .upsert(
+            {
+              linkedin_id: account.providerAccountId,
+              name: user.name ?? "",
+              email: user.email,
+              image: user.image ?? null,
+              linkedin_verified: true,
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: "linkedin_id", ignoreDuplicates: false }
+          );
+      } catch (e) {
+        console.error("[auth] Supabase upsert failed:", e);
+        // Don't block login on DB error
+      }
       return true;
     },
     async session({ session, token }) {
