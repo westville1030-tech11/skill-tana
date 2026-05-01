@@ -92,9 +92,9 @@ export default function Home() {
       <section className="py-28 px-4 bg-white">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">仕組み</h2>
-          <p className="text-center text-gray-400 mb-12">仲介を完全に排除した直接発注</p>
+          <p className="text-center text-gray-400 mb-12">直接発注は他にもある。でも、ここだけ手数料がない。</p>
           <div className="overflow-x-auto -mx-4 px-4">
-            <div className="min-w-[420px]">
+            <div className="min-w-[600px]">
               <ConceptDiagram />
             </div>
           </div>
@@ -396,63 +396,88 @@ function HeroGraphic() {
   );
 }
 
-/* ---- Before/After 図 ---- */
+/* ---- 3列比較図 ---- */
 function ConceptDiagram() {
   return (
-    <svg viewBox="0 0 720 310" width="100%" xmlns="http://www.w3.org/2000/svg" style={{ fontFamily: "sans-serif" }}>
-      <text x="16" y="26" fontSize="10" fill="#9ca3af" fontWeight="700" letterSpacing="3">BEFORE</text>
-      <ActorCard x={14} y={42} icon="🏢" topLabel="クライアント" bottomLabel="依頼する側" color="#f8fafc" border="#e2e8f0" />
-      <ThinArrow x1={122} y1={78} x2={178} y2={78} />
-      <FeeBox x={178} y={52} label="仲介会社" sub="手数料 20〜30%" color="#fef2f2" border="#fca5a5" textColor="#dc2626" />
-      <ThinArrow x1={318} y1={78} x2={374} y2={78} />
-      <FeeBox x={374} y={52} label="エージェント" sub="登録料・成約料" color="#fffbeb" border="#fcd34d" textColor="#b45309" />
-      <ThinArrow x1={514} y1={78} x2={570} y2={78} />
-      <ActorCard x={582} y={42} icon="💼" topLabel="経験者" bottomLabel="スキルを持つ側" color="#f8fafc" border="#e2e8f0" />
+    <div className="grid grid-cols-3 gap-4">
 
-      <line x1="24" y1="148" x2="696" y2="148" stroke="#e5e7eb" strokeWidth="1" strokeDasharray="6 4" />
+      {/* 従来型 */}
+      <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5 flex flex-col">
+        <p className="text-[10px] font-bold text-gray-400 tracking-widest mb-4">従来型</p>
+        <div className="flex flex-col items-center gap-1 flex-1">
+          <DiagBox icon="🏢" label="クライアント" />
+          <DiagArrow />
+          <DiagFee label="仲介会社" sub="手数料 20〜30%" red />
+          <DiagArrow />
+          <DiagFee label="エージェント" sub="登録料・成約料" amber />
+          <DiagArrow />
+          <DiagBox icon="💼" label="経験者" />
+        </div>
+      </div>
 
-      <text x="16" y="174" fontSize="10" fill="#16a34a" fontWeight="700" letterSpacing="3">AFTER</text>
-      <ActorCard x={14} y={188} icon="🏢" topLabel="クライアント" bottomLabel="依頼する側" color="#eff6ff" border="#bfdbfe" />
-      <text x="360" y="208" fontSize="13" fill="#1d4ed8" fontWeight="800" textAnchor="middle">直接発注</text>
-      <text x="360" y="222" fontSize="10" fill="#3b82f6" textAnchor="middle">手数料・仲介料 すべて ¥0</text>
-      <line x1="122" y1="232" x2="568" y2="232" stroke="#3b82f6" strokeWidth="2" />
-      <polygon points="566,225 582,232 566,239" fill="#3b82f6" />
-      <ActorCard x={582} y={188} icon="💼" topLabel="経験者" bottomLabel="スキルを持つ側" color="#eff6ff" border="#bfdbfe" />
-    </svg>
+      {/* 直接系他社 */}
+      <div className="rounded-2xl border border-yellow-200 bg-yellow-50/40 p-5 flex flex-col">
+        <p className="text-[10px] font-bold text-yellow-600 tracking-widest mb-4">直接発注系 他社</p>
+        <div className="flex flex-col items-center gap-1 flex-1">
+          <DiagBox icon="🏢" label="クライアント" />
+          <DiagArrow />
+          <DiagFee label="プラットフォーム" sub="サービス料 〜20%" amber />
+          <DiagArrow />
+          <DiagBox icon="💼" label="経験者" />
+        </div>
+      </div>
+
+      {/* 経験イチバ */}
+      <div className="rounded-2xl border-2 border-blue-400 bg-blue-50 p-5 flex flex-col relative">
+        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 whitespace-nowrap">
+          <span className="bg-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-full">経験イチバ</span>
+        </div>
+        <p className="text-[10px] font-bold text-blue-500 tracking-widest mb-4 mt-1">手数料ゼロ</p>
+        <div className="flex flex-col items-center gap-1">
+          <DiagBox icon="🏢" label="クライアント" blue />
+          <DiagArrow blue />
+          <div className="bg-blue-600 text-white text-xs font-bold px-5 py-2 rounded-xl text-center leading-snug">
+            直接発注<br /><span className="font-normal text-blue-200 text-[10px]">手数料・仲介料 すべて ¥0</span>
+          </div>
+          <DiagArrow blue />
+          <DiagBox icon="💼" label="経験者" blue />
+        </div>
+        <div className="mt-4 border-t border-blue-200 pt-3">
+          <p className="text-[11px] font-bold text-blue-700 mb-1">なぜ¥0にできる？</p>
+          <p className="text-[11px] text-gray-500 leading-relaxed">AIが設計・開発・運営を担うため、人件費・オフィス費用がかかりません。コストはサーバー代のみ。</p>
+        </div>
+      </div>
+
+    </div>
   );
 }
 
-function ActorCard({ x, y, icon, topLabel, bottomLabel, color, border }: {
-  x: number; y: number; icon: string; topLabel: string; bottomLabel: string; color: string; border: string;
-}) {
+function DiagBox({ icon, label, blue }: { icon: string; label: string; blue?: boolean }) {
   return (
-    <g>
-      <rect x={x} y={y} width={108} height={72} rx={12} fill={color} stroke={border} strokeWidth="1" />
-      <text x={x + 54} y={y + 28} fontSize="22" textAnchor="middle">{icon}</text>
-      <text x={x + 54} y={y + 48} fontSize="11.5" fill="#111827" textAnchor="middle" fontWeight="700">{topLabel}</text>
-      <text x={x + 54} y={y + 63} fontSize="9.5" fill="#6b7280" textAnchor="middle">{bottomLabel}</text>
-    </g>
+    <div className={`w-full rounded-xl border px-3 py-2 flex items-center gap-2 ${blue ? "bg-white border-blue-200" : "bg-white border-gray-200"}`}>
+      <span className="text-lg">{icon}</span>
+      <span className={`text-xs font-bold ${blue ? "text-blue-800" : "text-gray-700"}`}>{label}</span>
+    </div>
   );
 }
 
-function ThinArrow({ x1, y1, x2, y2 }: { x1: number; y1: number; x2: number; y2: number }) {
+function DiagArrow({ blue }: { blue?: boolean }) {
   return (
-    <g>
-      <line x1={x1} y1={y1} x2={x2 - 6} y2={y2} stroke="#d1d5db" strokeWidth="1" />
-      <polygon points={`${x2 - 6},${y2 - 4} ${x2},${y2} ${x2 - 6},${y2 + 4}`} fill="#d1d5db" />
-    </g>
+    <div className={`w-0.5 h-4 ${blue ? "bg-blue-400" : "bg-gray-300"}`} />
   );
 }
 
-function FeeBox({ x, y, label, sub, color, border, textColor }: {
-  x: number; y: number; label: string; sub: string; color: string; border: string; textColor: string;
-}) {
+function DiagFee({ label, sub, red, amber }: { label: string; sub: string; red?: boolean; amber?: boolean }) {
+  const cls = red
+    ? "bg-red-50 border-red-200 text-red-700"
+    : amber
+    ? "bg-amber-50 border-amber-200 text-amber-700"
+    : "bg-gray-50 border-gray-200 text-gray-700";
   return (
-    <g>
-      <rect x={x} y={y} width={140} height={50} rx={10} fill={color} stroke={border} strokeWidth="1" />
-      <text x={x + 70} y={y + 21} fontSize="12" fill={textColor} textAnchor="middle" fontWeight="700">{label}</text>
-      <text x={x + 70} y={y + 37} fontSize="10" fill={textColor} textAnchor="middle" opacity="0.85">{sub}</text>
-    </g>
+    <div className={`w-full rounded-xl border px-3 py-2 text-center ${cls}`}>
+      <p className="text-xs font-bold">{label}</p>
+      <p className="text-[10px] opacity-80">{sub}</p>
+    </div>
   );
 }
 
