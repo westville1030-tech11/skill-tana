@@ -426,9 +426,12 @@ function ConceptDiagram() {
           <span className="bg-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-full">経験イチバ</span>
         </div>
         <div className="flex items-center gap-1.5 mt-1">
-          <DiagBox icon="🏢" label="クライアント" blue />
+          <DiagBox icon="🏢" label="クライアント" blue ai />
           <div className="flex-1 flex flex-col items-center gap-0.5">
-            <span className="text-[11px] font-bold text-blue-700">直接発注</span>
+            <div className="flex items-center gap-1.5 mb-0.5">
+              <span className="text-[11px] font-bold text-blue-700">直接発注</span>
+              <span className="bg-blue-100 text-blue-700 text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none">🤖 AI運営</span>
+            </div>
             <span className="text-[10px] text-blue-400">手数料・仲介料 すべて ¥0</span>
             <div className="w-full flex items-center">
               <div className="flex-1 h-px bg-blue-400" />
@@ -437,7 +440,7 @@ function ConceptDiagram() {
               </svg>
             </div>
           </div>
-          <DiagBox icon="💼" label="経験者" blue />
+          <DiagBox icon="💼" label="経験者" blue ai />
         </div>
         <div className="mt-3 border-t border-blue-200 pt-2.5 flex gap-1.5 items-start">
           <span className="text-[11px] font-bold text-blue-700 whitespace-nowrap">なぜ¥0？</span>
@@ -449,11 +452,14 @@ function ConceptDiagram() {
   );
 }
 
-function DiagBox({ icon, label, blue }: { icon: string; label: string; blue?: boolean }) {
+function DiagBox({ icon, label, blue, ai }: { icon: string; label: string; blue?: boolean; ai?: boolean }) {
   return (
-    <div className={`flex-shrink-0 rounded-xl border px-3 py-2 flex flex-col items-center gap-0.5 w-[88px] ${
+    <div className={`flex-shrink-0 rounded-xl border px-3 py-2 flex flex-col items-center gap-0.5 w-[88px] relative ${
       blue ? "bg-white border-blue-200" : "bg-white border-gray-200"
     }`}>
+      {ai && (
+        <span className="absolute -top-2.5 -right-2 bg-blue-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none">🤖 AI</span>
+      )}
       <span className="text-xl">{icon}</span>
       <span className={`text-[11px] font-bold text-center leading-tight ${blue ? "text-blue-800" : "text-gray-700"}`}>{label}</span>
     </div>
