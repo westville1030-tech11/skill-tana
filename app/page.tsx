@@ -79,7 +79,7 @@ export default function Home() {
       {/* 仕組み図 */}
       <section className="py-28 px-4 bg-white">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">費用ゼロの仕組</h2>
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">利用料ゼロの仕組</h2>
           <div className="overflow-x-auto -mx-4 px-4">
             <div className="min-w-[600px]">
               <ConceptDiagram />
