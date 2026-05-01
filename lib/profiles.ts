@@ -13,7 +13,6 @@ export async function getProfiles(category?: string): Promise<Profile[]> {
   let query = supabase
     .from("profiles")
     .select("*")
-    .not("category", "is", null)
     .order("updated_at", { ascending: false });
 
   if (category && category !== "all") {
@@ -22,7 +21,9 @@ export async function getProfiles(category?: string): Promise<Profile[]> {
 
   const { data, error } = await query;
   if (error) throw error;
-  return (data ?? []) as Profile[];
+  const profiles = (data ?? []) as Profile[];
+  // 成果物が1件以上あるプロフィールのみ表示
+  return profiles.filter((p) => p.services && p.services.length > 0);
 }
 
 export async function getProfileByLinkedInId(linkedinId: string): Promise<Profile | null> {

@@ -12,6 +12,9 @@ type Inquiry = {
   deadline: string | null;
   budget: string | null;
   status: "new" | "read";
+  pro_reply: string | null;
+  pro_replied_at: string | null;
+  client_token: string | null;
   created_at: string;
 };
 
@@ -20,6 +23,9 @@ export default function InboxPage() {
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [replyInputs, setReplyInputs] = useState<Record<string, string>>({});
+  const [replying, setReplying] = useState<string | null>(null);
+  const [copied, setCopied] = useState<string | null>(null);
 
   useEffect(() => {
     if (session?.user) {
@@ -44,6 +50,37 @@ export default function InboxPage() {
     );
   };
 
+  const sendReply = async (id: string) => {
+    const text = replyInputs[id]?.trim();
+    if (!text) return;
+    setReplying(id);
+    try {
+      await fetch("/api/inquiries", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, pro_reply: text }),
+      });
+      setInquiries((prev) =>
+        prev.map((q) =>
+          q.id === id
+            ? { ...q, pro_reply: text, pro_replied_at: new Date().toISOString(), status: "read" }
+            : q
+        )
+      );
+      setReplyInputs((prev) => ({ ...prev, [id]: "" }));
+    } finally {
+      setReplying(null);
+    }
+  };
+
+  const copyLink = (id: string, token: string | null) => {
+    if (!token) return;
+    const url = `${window.location.origin}/inquiry/${id}?token=${token}`;
+    navigator.clipboard.writeText(url);
+    setCopied(id);
+    setTimeout(() => setCopied(null), 2000);
+  };
+
   const toggle = (id: string) => {
     setExpanded((prev) => (prev === id ? null : id));
     const inq = inquiries.find((q) => q.id === id);
@@ -59,10 +96,7 @@ export default function InboxPage() {
       <div className="max-w-md mx-auto px-4 py-24 text-center">
         <h1 className="text-2xl font-bold text-gray-900 mb-4">受信箱</h1>
         <p className="text-gray-500 mb-8">ログインすると問い合わせを確認できます。</p>
-        <a
-          href="/login"
-          className="inline-flex items-center bg-blue-700 text-white px-8 py-3 rounded-xl font-medium hover:bg-blue-800 transition-colors"
-        >
+        <a href="/login" className="inline-flex items-center bg-blue-700 text-white px-8 py-3 rounded-xl font-medium hover:bg-blue-800 transition-colors">
           ログイン
         </a>
       </div>
@@ -114,6 +148,11 @@ export default function InboxPage() {
                         {q.service_title}
                       </span>
                     )}
+                    {q.pro_reply && (
+                      <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full flex-shrink-0">
+                        返信済み
+                      </span>
+                    )}
                   </div>
                   <p className="text-sm text-gray-500 truncate">{q.message}</p>
                 </div>
@@ -151,13 +190,49 @@ export default function InboxPage() {
                     )}
                   </div>
 
-                  {/* 返信ボタン */}
-                  <a
-                    href={`mailto:${q.client_email}?subject=${encodeURIComponent(`【経験イチバ】${q.service_title ?? "ご相談"}へのご返信`)}&body=${encodeURIComponent(`${q.client_name ?? ""}様\n\nお問い合わせありがとうございます。\n\n`)}`}
-                    className="flex items-center justify-center gap-2 w-full bg-blue-700 text-white py-3 rounded-xl font-medium hover:bg-blue-800 transition-colors text-sm"
-                  >
-                    ✉ {q.client_email} にメールで返信する
-                  </a>
+                  {/* 既存の返信 */}
+                  {q.pro_reply && (
+                    <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3">
+                      <p className="text-xs text-green-700 font-medium mb-1">
+                        あなたの返信 · {q.pro_replied_at ? new Date(q.pro_replied_at).toLocaleDateString("ja-JP", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : ""}
+                      </p>
+                      <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">{q.pro_reply}</p>
+                    </div>
+                  )}
+
+                  {/* 返信フォーム */}
+                  <div className="space-y-2">
+                    <p className="text-xs text-gray-500 font-medium">{q.pro_reply ? "返信を更新する" : "返信する"}</p>
+                    <textarea
+                      value={replyInputs[q.id] ?? ""}
+                      onChange={(e) => setReplyInputs((prev) => ({ ...prev, [q.id]: e.target.value }))}
+                      placeholder="依頼者への返信を入力してください"
+                      className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none min-h-20"
+                      rows={3}
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => sendReply(q.id)}
+                        disabled={!replyInputs[q.id]?.trim() || replying === q.id}
+                        className="flex-1 bg-blue-700 text-white py-2.5 rounded-xl text-sm font-medium hover:bg-blue-800 transition-colors disabled:opacity-40"
+                      >
+                        {replying === q.id ? "送信中..." : "返信を送る"}
+                      </button>
+                      {q.client_token && (
+                        <button
+                          onClick={() => copyLink(q.id, q.client_token)}
+                          className="px-4 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition-colors flex-shrink-0"
+                        >
+                          {copied === q.id ? "コピーしました ✓" : "依頼者用リンクをコピー"}
+                        </button>
+                      )}
+                    </div>
+                    {q.client_token && (
+                      <p className="text-xs text-gray-400">
+                        依頼者用リンクをコピーして、依頼者に送ると返信内容を確認してもらえます
+                      </p>
+                    )}
+                  </div>
                 </div>
               )}
             </div>

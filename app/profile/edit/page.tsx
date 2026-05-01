@@ -18,6 +18,7 @@ export default function EditProfilePage() {
   const { data: session, status } = useSession();
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState("");
 
   // プロフィール基本情報
   const [displayName, setDisplayName] = useState("");
@@ -88,6 +89,15 @@ export default function EditProfilePage() {
           }
         })
         .catch(() => {});
+
+      // /try から sessionStorage 経由で渡されたドラフトを読み込む
+      const pending = sessionStorage.getItem("pendingDraft");
+      if (pending) {
+        sessionStorage.removeItem("pendingDraft");
+        try {
+          setChatDraft(JSON.parse(pending));
+        } catch {}
+      }
     }
   }, [session]);
 
@@ -114,6 +124,7 @@ export default function EditProfilePage() {
 
   const save = async (extra?: Record<string, unknown>) => {
     setSaving(true);
+    setSaveError("");
     try {
       const res = await fetch("/api/my-profile", {
         method: "PUT",
@@ -123,19 +134,31 @@ export default function EditProfilePage() {
           headline,
           bio,
           skills,
-          category,
+          category: category || null,
           availability,
           linkedin_url: linkedinUrl,
           company,
           role,
-          linkedin_connections: linkedinConnections,
+          linkedin_connections: linkedinConnections || null,
           services,
           past_companies: pastCompanies,
           ...extra,
         }),
       });
-      if (res.ok) { setSaved(true); setTimeout(() => setSaved(false), 2000); }
-    } finally { setSaving(false); }
+      if (res.ok) {
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2000);
+      } else {
+        const d = await res.json().catch(() => ({}));
+        setSaveError(d.error ?? "保存に失敗しました。もう一度お試しください。");
+        setTimeout(() => setSaveError(""), 4000);
+      }
+    } catch {
+      setSaveError("通信エラーが発生しました。接続を確認してください。");
+      setTimeout(() => setSaveError(""), 4000);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleResumeFile = (file: File) => {
@@ -290,9 +313,20 @@ export default function EditProfilePage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-12 space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">マイ棚の設定</h1>
-        <p className="text-gray-500 text-sm">成果物をイチバの棚に並べて、クライアントから直接発注を受けましょう</p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-1">マイ棚の設定</h1>
+          <p className="text-gray-500 text-sm">成果物をイチバの棚に並べて、クライアントから直接発注を受けましょう</p>
+        </div>
+        {session.user.id && (
+          <a
+            href={`/profile/${session.user.id}`}
+            target="_blank"
+            className="flex-shrink-0 text-sm text-blue-600 border border-blue-200 px-3 py-1.5 rounded-lg hover:bg-blue-50 transition-colors"
+          >
+            マイ棚を見る →
+          </a>
+        )}
       </div>
 
       {/* ── AIドラフト（履歴書・職務経歴書から一括入力）── */}
@@ -881,6 +915,7 @@ export default function EditProfilePage() {
 
       {saved && <div className="fixed bottom-6 right-6 bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">✓ 保存しました</div>}
       {saving && <div className="fixed bottom-6 right-6 bg-gray-700 text-white px-5 py-3 rounded-xl shadow-lg text-sm">保存中...</div>}
+      {saveError && <div className="fixed bottom-6 right-6 bg-red-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium max-w-xs">{saveError}</div>}
     </div>
   );
 }

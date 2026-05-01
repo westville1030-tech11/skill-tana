@@ -21,6 +21,7 @@ export function InquiryForm({ proLinkedInId, services }: Props) {
   const [sending, setSending] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState("");
+  const [threadUrl, setThreadUrl] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,6 +37,10 @@ export function InquiryForm({ proLinkedInId, services }: Props) {
         const d = await res.json();
         throw new Error(d.error);
       }
+      const d = await res.json();
+      if (d.id && d.client_token) {
+        setThreadUrl(`${window.location.origin}/inquiry/${d.id}?token=${d.client_token}`);
+      }
       setDone(true);
     } catch (e) {
       setError(e instanceof Error ? e.message : "送信に失敗しました");
@@ -46,12 +51,32 @@ export function InquiryForm({ proLinkedInId, services }: Props) {
 
   if (done) {
     return (
-      <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 text-center">
-        <div className="text-3xl mb-3">✅</div>
-        <h3 className="font-bold text-emerald-800 mb-2">問い合わせを送信しました</h3>
-        <p className="text-sm text-emerald-700">
-          経験者からの返信を <strong>{form.client_email}</strong> でお待ちください。
-        </p>
+      <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 space-y-4">
+        <div className="text-center">
+          <div className="text-3xl mb-3">✅</div>
+          <h3 className="font-bold text-emerald-800 mb-2">問い合わせを送信しました</h3>
+          <p className="text-sm text-emerald-700">経験者からの返信をお待ちください。</p>
+        </div>
+        {threadUrl && (
+          <div className="bg-white border border-emerald-200 rounded-xl p-4 space-y-2">
+            <p className="text-xs font-semibold text-emerald-700">返信確認用リンク（保存してください）</p>
+            <p className="text-xs text-gray-500 leading-relaxed">このURLから経験者の返信を確認できます。ブックマークしておいてください。</p>
+            <div className="flex gap-2">
+              <input
+                readOnly
+                value={threadUrl}
+                className="flex-1 text-xs border border-gray-200 rounded-lg px-3 py-2 bg-gray-50 text-gray-600 focus:outline-none"
+                onFocus={(e) => e.target.select()}
+              />
+              <button
+                onClick={() => { navigator.clipboard.writeText(threadUrl); }}
+                className="px-3 py-2 bg-emerald-600 text-white text-xs rounded-lg hover:bg-emerald-700 transition-colors flex-shrink-0"
+              >
+                コピー
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
