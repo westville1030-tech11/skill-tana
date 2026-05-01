@@ -46,7 +46,9 @@ export default function EditProfilePage() {
   const [editForm, setEditForm] = useState(emptyForm);
 
   // AIドラフト
-  const [linkedinPaste, setLinkedinPaste] = useState("");
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [resumeBase64, setResumeBase64] = useState("");
+  const [resumeMediaType, setResumeMediaType] = useState("");
   const [drafting, setDrafting] = useState(false);
   const [draftDone, setDraftDone] = useState(false);
 
@@ -121,14 +123,28 @@ export default function EditProfilePage() {
     } finally { setSaving(false); }
   };
 
+  const handleResumeFile = (file: File) => {
+    setResumeFile(file);
+    setDraftDone(false);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const dataUrl = e.target?.result as string;
+      const [header, base64] = dataUrl.split(",");
+      const mime = header.match(/:(.*?);/)?.[1] ?? "application/pdf";
+      setResumeBase64(base64);
+      setResumeMediaType(mime);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const runAIDraft = async () => {
-    if (!linkedinPaste.trim()) return;
+    if (!resumeBase64) return;
     setDrafting(true);
     try {
       const res = await fetch("/api/ai-profile-draft", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: linkedinPaste }),
+        body: JSON.stringify({ fileBase64: resumeBase64, mediaType: resumeMediaType }),
       });
       const data = await res.json();
       if (res.ok) {
@@ -140,7 +156,8 @@ export default function EditProfilePage() {
         if (data.past_companies?.length) setPastCompanies(data.past_companies);
         if (data.skills?.length) setSkills(data.skills);
         setDraftDone(true);
-        setLinkedinPaste("");
+        setResumeFile(null);
+        setResumeBase64("");
       }
     } finally { setDrafting(false); }
   };
@@ -214,14 +231,14 @@ export default function EditProfilePage() {
         <p className="text-gray-500 text-sm">成果物をイチバの棚に並べて、クライアントから直接発注を受けましょう</p>
       </div>
 
-      {/* ── AIドラフト（LinkedInから一括入力）── */}
+      {/* ── AIドラフト（履歴書・職務経歴書から一括入力）── */}
       <section className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-200 p-6">
         <div className="flex items-center gap-2 mb-1">
           <span className="text-lg">✨</span>
-          <h2 className="text-sm font-bold text-blue-800">LinkedInからAIで自動入力</h2>
+          <h2 className="text-sm font-bold text-blue-800">履歴書・職務経歴書からAIで自動入力</h2>
         </div>
         <p className="text-xs text-blue-600 mb-4 leading-relaxed">
-          LinkedInのプロフィールページを開いて全選択（Ctrl+A）→コピー（Ctrl+C）し、下に貼り付けてください。AIが名前・経歴・スキルを自動で入力します。
+          PDFまたは画像（JPEG・PNG）をアップロードすると、AIが名前・経歴・スキルを自動で入力します。
         </p>
         {draftDone ? (
           <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-sm text-green-700 font-medium">
@@ -229,15 +246,30 @@ export default function EditProfilePage() {
           </div>
         ) : (
           <>
-            <textarea
-              value={linkedinPaste}
-              onChange={(e) => setLinkedinPaste(e.target.value)}
-              placeholder="ここにLinkedInプロフィールのテキストを貼り付け..."
-              className="w-full border border-blue-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-28 resize-y"
-            />
+            <label className="block cursor-pointer">
+              <div className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors ${resumeFile ? "border-blue-400 bg-blue-50" : "border-blue-200 hover:border-blue-300 bg-white"}`}>
+                {resumeFile ? (
+                  <div className="flex items-center justify-center gap-2 text-blue-700">
+                    <span className="text-lg">📄</span>
+                    <span className="text-sm font-medium">{resumeFile.name}</span>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-sm text-blue-600 mb-1">クリックしてファイルを選択</p>
+                    <p className="text-xs text-blue-400">PDF・JPEG・PNG対応</p>
+                  </>
+                )}
+              </div>
+              <input
+                type="file"
+                accept="application/pdf,image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={(e) => { const f = e.target.files?.[0]; if (f) handleResumeFile(f); }}
+              />
+            </label>
             <button
               onClick={runAIDraft}
-              disabled={drafting || !linkedinPaste.trim()}
+              disabled={drafting || !resumeBase64}
               className="mt-3 flex items-center gap-2 bg-blue-700 text-white px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-blue-800 transition-colors disabled:opacity-50"
             >
               {drafting ? (

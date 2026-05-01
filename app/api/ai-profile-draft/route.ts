@@ -1,21 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 
-export async function POST(req: NextRequest) {
-  const { text } = await req.json();
-  if (!text) return NextResponse.json({ error: "テキストが必要です" }, { status: 400 });
-
-  const client = new Anthropic();
-
-  const message = await client.messages.create({
-    model: "claude-haiku-4-5-20251001",
-    max_tokens: 1024,
-    messages: [
-      {
-        role: "user",
-        content: `以下はLinkedInプロフィールのテキストです。情報を抽出してJSON形式で返してください。
-
-${text}
+const PROMPT = `以下は履歴書または職務経歴書です。情報を抽出してJSON形式で返してください。
 
 必ずJSON形式のみで返してください（説明文不要）:
 {
@@ -26,7 +12,33 @@ ${text}
   "current_role": "現在の役職",
   "past_companies": ["過去の会社1", "過去の会社2"],
   "skills": ["スキル1", "スキル2", "スキル3", "スキル4", "スキル5"]
-}`,
+}`;
+
+export async function POST(req: NextRequest) {
+  const { fileBase64, mediaType } = await req.json();
+  if (!fileBase64 || !mediaType) {
+    return NextResponse.json({ error: "ファイルが必要です" }, { status: 400 });
+  }
+
+  const client = new Anthropic();
+
+  const contentBlock = mediaType === "application/pdf"
+    ? {
+        type: "document" as const,
+        source: { type: "base64" as const, media_type: "application/pdf" as const, data: fileBase64 },
+      }
+    : {
+        type: "image" as const,
+        source: { type: "base64" as const, media_type: mediaType as "image/jpeg" | "image/png" | "image/webp", data: fileBase64 },
+      };
+
+  const message = await client.messages.create({
+    model: "claude-haiku-4-5-20251001",
+    max_tokens: 1024,
+    messages: [
+      {
+        role: "user",
+        content: [contentBlock, { type: "text", text: PROMPT }],
       },
     ],
   });
