@@ -51,10 +51,12 @@ export default function EditProfilePage() {
   const [chatInput, setChatInput] = useState("");
   const [chatRounds, setChatRounds] = useState(0);
   const [chatThinking, setChatThinking] = useState(false);
-  const [chatDraft, setChatDraft] = useState<{
+  type ChatDraftType = {
     title: string; description: string; experience_story: string;
     price_suggestion: number; days_suggestion: number; service_type: "spot" | "ongoing";
-  } | null>(null);
+  };
+  const [chatDrafts, setChatDrafts] = useState<{ deliverable: ChatDraftType; consulting: ChatDraftType } | null>(null);
+  const [chatDraft, setChatDraft] = useState<ChatDraftType | null>(null);
 
   // AIドラフト
   const [resumeFile, setResumeFile] = useState<File | null>(null);
@@ -204,22 +206,23 @@ export default function EditProfilePage() {
       const newRounds = chatRounds + 1;
       setChatRounds(newRounds);
       setChatMessages([...next, { role: "assistant", content: data.text }]);
-      if (data.serviceDraft) setChatDraft(data.serviceDraft);
+      if (data.deliverableDraft && data.consultingDraft) {
+        setChatDrafts({ deliverable: data.deliverableDraft, consulting: data.consultingDraft });
+      }
     } finally {
       setChatThinking(false);
     }
   };
 
-  const confirmChatDraft = () => {
-    if (!chatDraft) return;
+  const confirmChatDraft = (draft: NonNullable<typeof chatDraft>) => {
     const s: Service = {
       id: crypto.randomUUID(),
-      title: chatDraft.title,
-      description: chatDraft.description,
-      experience_story: chatDraft.experience_story,
-      price: chatDraft.price_suggestion,
-      days: chatDraft.days_suggestion,
-      service_type: chatDraft.service_type,
+      title: draft.title,
+      description: draft.description,
+      experience_story: draft.experience_story,
+      price: draft.price_suggestion,
+      days: draft.days_suggestion,
+      service_type: draft.service_type,
     };
     const next = [...services, s];
     setServices(next);
@@ -228,6 +231,7 @@ export default function EditProfilePage() {
     setChatMessages([]);
     setChatRounds(0);
     setChatDraft(null);
+    setChatDrafts(null);
     setChatInput("");
   };
 
@@ -578,13 +582,13 @@ export default function EditProfilePage() {
         </div>
 
         {/* AI壁打ちチャット */}
-        {showAIChat && !chatDraft && (
+        {showAIChat && !chatDrafts && !chatDraft && (
           <div className="mb-4 border border-blue-200 bg-blue-50 rounded-xl p-4 space-y-3">
             <div className="flex items-center justify-between">
               <p className="text-xs font-semibold text-blue-700">✨ 実体験から商品を作る</p>
               <button onClick={() => setShowAIChat(false)} className="text-xs text-gray-400 hover:text-gray-600">キャンセル</button>
             </div>
-            <p className="text-xs text-blue-600">あなたが直面した問題と解決策をAIに話すと、商品案を自動で作ります。</p>
+            <p className="text-xs text-blue-600">あなたの経験をAIに話すと、成果物型・コンサル型の2案を自動で作ります。</p>
 
             <div className="space-y-2 max-h-64 overflow-y-auto">
               {chatMessages.map((m, i) => (
@@ -610,7 +614,7 @@ export default function EditProfilePage() {
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendChatMessage(); } }}
-                placeholder={chatMessages.length === 0 ? "例: 製造ラインの不良率が高くて困っていた..." : "続きを入力...（Enterで送信）"}
+                placeholder={chatMessages.length === 0 ? "例: 前職で採用担当として〇〇をしていました" : "続きを入力...（Enterで送信）"}
                 className="flex-1 border border-blue-200 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400 resize-none"
                 rows={2}
               />
@@ -627,10 +631,42 @@ export default function EditProfilePage() {
           </div>
         )}
 
-        {/* AI生成の商品案レビュー */}
+        {/* AI生成の2案選択 */}
+        {showAIChat && chatDrafts && !chatDraft && (
+          <div className="mb-4 space-y-3">
+            <p className="text-xs font-semibold text-emerald-700">✓ 2つの商品案ができました — どちらかを選んでください</p>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { d: chatDrafts.deliverable, badge: "📄 成果物型", color: "border-blue-200 bg-blue-50" },
+                { d: chatDrafts.consulting,  badge: "💬 コンサル型", color: "border-purple-200 bg-purple-50" },
+              ].map(({ d, badge, color }) => (
+                <div key={badge} className={`border rounded-xl p-3 space-y-2 ${color}`}>
+                  <span className="text-[10px] font-bold text-gray-600">{badge}</span>
+                  <p className="text-xs font-semibold text-gray-900 leading-snug">{d.title}</p>
+                  <p className="text-[11px] text-gray-500 leading-relaxed">{d.description}</p>
+                  <div className="flex gap-2 text-[11px] text-gray-500">
+                    <span className="font-bold text-blue-700">¥{d.price_suggestion.toLocaleString()}</span>
+                    <span>{d.days_suggestion}日以内</span>
+                  </div>
+                  <button
+                    onClick={() => setChatDraft(d)}
+                    className="w-full bg-white border border-gray-300 text-gray-700 text-xs py-1.5 rounded-lg hover:bg-gray-50"
+                  >
+                    この案を選ぶ
+                  </button>
+                </div>
+              ))}
+            </div>
+            <button onClick={() => { setShowAIChat(false); setChatDrafts(null); setChatMessages([]); setChatRounds(0); }} className="text-xs text-gray-400 hover:text-gray-600">
+              キャンセル
+            </button>
+          </div>
+        )}
+
+        {/* 選んだ案の詳細確認・編集 */}
         {showAIChat && chatDraft && (
           <div className="mb-4 border border-emerald-200 bg-emerald-50 rounded-xl p-4 space-y-3">
-            <p className="text-xs font-semibold text-emerald-700">✓ 商品案ができました — 内容を確認してください</p>
+            <p className="text-xs font-semibold text-emerald-700">✓ 内容を確認・編集してください</p>
             <div className="bg-white border border-emerald-100 rounded-lg p-3 space-y-2">
               <input
                 className="w-full text-sm font-semibold text-gray-900 border-b border-gray-100 pb-1 focus:outline-none"
@@ -658,11 +694,11 @@ export default function EditProfilePage() {
               </div>
             </div>
             <div className="flex gap-2">
-              <button onClick={confirmChatDraft} className="flex-1 bg-emerald-600 text-white text-sm py-2 rounded-lg hover:bg-emerald-700 transition-colors font-medium">
+              <button onClick={() => confirmChatDraft(chatDraft)} className="flex-1 bg-emerald-600 text-white text-sm py-2 rounded-lg hover:bg-emerald-700 transition-colors font-medium">
                 この内容で出品する
               </button>
-              <button onClick={() => { setShowAIChat(false); setChatDraft(null); }} className="flex-1 border border-gray-300 text-gray-600 text-sm py-2 rounded-lg hover:bg-gray-50">
-                キャンセル
+              <button onClick={() => setChatDraft(null)} className="flex-1 border border-gray-300 text-gray-600 text-sm py-2 rounded-lg hover:bg-gray-50">
+                選び直す
               </button>
             </div>
           </div>

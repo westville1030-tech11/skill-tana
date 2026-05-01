@@ -14,11 +14,57 @@ type ServiceDraft = {
   service_type: string;
 };
 
+type Drafts = { deliverable: ServiceDraft; consulting: ServiceDraft } | null;
+
+function DraftCard({
+  draft,
+  label,
+  badge,
+  badgeColor,
+  onSelect,
+}: {
+  draft: ServiceDraft;
+  label: string;
+  badge: string;
+  badgeColor: string;
+  onSelect: () => void;
+}) {
+  return (
+    <div className="bg-white border border-gray-100 rounded-2xl p-5 flex flex-col gap-3">
+      <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full self-start ${badgeColor}`}>{badge}</span>
+      <div>
+        <p className="text-xs text-gray-400 mb-0.5">タイトル</p>
+        <p className="font-semibold text-gray-900 text-sm leading-snug">{draft.title}</p>
+      </div>
+      <div>
+        <p className="text-xs text-gray-400 mb-0.5">説明</p>
+        <p className="text-xs text-gray-600 leading-relaxed">{draft.description}</p>
+      </div>
+      {draft.experience_story && (
+        <div className="bg-amber-50 border border-amber-100 rounded-lg px-3 py-2.5">
+          <p className="text-[10px] font-semibold text-amber-700 mb-1">💬 実体験</p>
+          <p className="text-[11px] text-gray-600 leading-relaxed">{draft.experience_story}</p>
+        </div>
+      )}
+      <div className="flex gap-3 text-xs text-gray-500 border-t border-gray-100 pt-2">
+        <span className="font-bold text-blue-700">¥{draft.price_suggestion.toLocaleString()}</span>
+        <span>{draft.days_suggestion}日以内</span>
+      </div>
+      <button
+        onClick={onSelect}
+        className="w-full bg-amber-500 hover:bg-amber-600 transition-colors text-white font-bold py-3 rounded-xl text-sm mt-1"
+      >
+        {label}で登録する →
+      </button>
+    </div>
+  );
+}
+
 export default function TryPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [thinking, setThinking] = useState(false);
-  const [draft, setDraft] = useState<ServiceDraft | null>(null);
+  const [drafts, setDrafts] = useState<Drafts>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -40,17 +86,16 @@ export default function TryPage() {
       });
       const data = await res.json();
       setMessages([...next, { role: "assistant", content: data.text }]);
-      if (data.serviceDraft) setDraft(data.serviceDraft);
+      if (data.deliverableDraft && data.consultingDraft) {
+        setDrafts({ deliverable: data.deliverableDraft, consulting: data.consultingDraft });
+      }
     } finally {
       setThinking(false);
     }
   };
 
-  // 下書きをsessionStorageに保存してprofile/editへ
-  const goRegister = () => {
-    if (draft) {
-      sessionStorage.setItem("pendingDraft", JSON.stringify(draft));
-    }
+  const goRegister = (draft: ServiceDraft) => {
+    sessionStorage.setItem("pendingDraft", JSON.stringify(draft));
     window.location.href = "/profile/edit";
   };
 
@@ -58,25 +103,25 @@ export default function TryPage() {
     <div className="min-h-screen bg-slate-50 flex flex-col">
       {/* ヘッダー */}
       <div className="bg-white border-b border-gray-100 px-4 py-4">
-        <div className="max-w-xl mx-auto flex items-center justify-between">
+        <div className="max-w-2xl mx-auto flex items-center justify-between">
           <Link href="/" className="text-sm text-gray-400 hover:text-gray-600">← トップに戻る</Link>
           <span className="text-sm font-bold text-gray-800">経験イチバ</span>
           <Link href="/profile/edit" className="text-xs text-gray-400 hover:text-gray-600">スキップ →</Link>
         </div>
       </div>
 
-      <div className="flex-1 max-w-xl mx-auto w-full px-4 py-8 flex flex-col gap-6">
+      <div className="flex-1 max-w-2xl mx-auto w-full px-4 py-8 flex flex-col gap-6">
 
         {/* イントロ（チャット開始前のみ） */}
-        {messages.length === 0 && !draft && (
+        {messages.length === 0 && !drafts && (
           <div className="bg-white border border-gray-100 rounded-2xl p-6 space-y-3">
             <p className="text-xs font-semibold text-blue-600 bg-blue-50 border border-blue-100 inline-block px-3 py-1 rounded-full">登録 ステップ1 / 2</p>
             <h1 className="text-xl font-bold text-gray-900 leading-snug">
               まず、あなたの経験を<br />AIと一緒に商品にしてみましょう
             </h1>
             <p className="text-sm text-gray-500 leading-relaxed">
-              AIがあなたの経験をヒアリングして、商品案を自動で作ります。<br />
-              商品案ができたら、そのままアカウント登録に進めます。
+              AIがあなたの経験をヒアリングして、成果物型とコンサル型の2案を自動で作ります。<br />
+              気に入った方でそのまま登録に進めます。
             </p>
             <Link href="/profile/edit" className="inline-block text-xs text-gray-400 hover:text-gray-600 underline underline-offset-2 pt-1">
               スキップしてプロフィール登録へ →
@@ -85,7 +130,7 @@ export default function TryPage() {
         )}
 
         {/* チャットエリア */}
-        {!draft && (
+        {!drafts && (
           <div className="bg-white border border-gray-100 rounded-2xl p-5 flex flex-col gap-4">
             <div className="space-y-3 min-h-[200px] max-h-[400px] overflow-y-auto">
               {messages.length === 0 && (
@@ -138,55 +183,35 @@ export default function TryPage() {
           </div>
         )}
 
-        {/* 商品案プレビュー */}
-        {draft && (
+        {/* 2案プレビュー */}
+        {drafts && (
           <div className="space-y-4">
-            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 space-y-4">
-              <div className="flex items-center gap-2">
-                <span className="text-emerald-600 text-lg">✓</span>
-                <p className="text-sm font-bold text-emerald-700">商品案ができました</p>
-              </div>
-
-              <div className="bg-white border border-emerald-100 rounded-xl p-4 space-y-3">
-                <div>
-                  <p className="text-xs text-gray-400 mb-0.5">タイトル</p>
-                  <p className="font-semibold text-gray-900">{draft.title}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-400 mb-0.5">説明</p>
-                  <p className="text-sm text-gray-600 leading-relaxed">{draft.description}</p>
-                </div>
-                {draft.experience_story && (
-                  <div className="bg-amber-50 border border-amber-100 rounded-lg px-3 py-2.5">
-                    <p className="text-xs font-semibold text-amber-700 mb-1">💬 実体験</p>
-                    <p className="text-xs text-gray-600 leading-relaxed">{draft.experience_story}</p>
-                  </div>
-                )}
-                <div className="flex gap-4 text-sm text-gray-500 border-t border-gray-100 pt-2">
-                  <span className="font-bold text-blue-700">¥{draft.price_suggestion.toLocaleString()}</span>
-                  <span>{draft.days_suggestion}日以内</span>
-                </div>
-              </div>
+            <div className="text-center">
+              <p className="text-sm font-bold text-gray-900">2つの商品案ができました</p>
+              <p className="text-xs text-gray-400 mt-1">どちらかを選んでそのまま登録できます。内容は後で編集できます。</p>
             </div>
-
-            <div className="bg-white border border-gray-100 rounded-2xl p-6 space-y-4">
-              <p className="text-sm font-bold text-gray-900">この商品案でイチバに出品しませんか？</p>
-              <p className="text-xs text-gray-500 leading-relaxed">
-                登録は無料・30秒で完了します。内容は登録後にいつでも編集できます。
-              </p>
-              <button
-                onClick={goRegister}
-                className="w-full bg-amber-500 hover:bg-amber-600 transition-colors text-white font-bold py-4 rounded-xl text-sm"
-              >
-                登録して出品する →
-              </button>
-              <button
-                onClick={() => { setDraft(null); setMessages([]); setInput(""); }}
-                className="w-full text-xs text-gray-400 hover:text-gray-600 py-2"
-              >
-                もう一度やり直す
-              </button>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <DraftCard
+                draft={drafts.deliverable}
+                label="成果物型"
+                badge="📄 成果物型"
+                badgeColor="bg-blue-50 text-blue-700"
+                onSelect={() => goRegister(drafts.deliverable)}
+              />
+              <DraftCard
+                draft={drafts.consulting}
+                label="コンサル型"
+                badge="💬 コンサル型"
+                badgeColor="bg-purple-50 text-purple-700"
+                onSelect={() => goRegister(drafts.consulting)}
+              />
             </div>
+            <button
+              onClick={() => { setDrafts(null); setMessages([]); setInput(""); }}
+              className="w-full text-xs text-gray-400 hover:text-gray-600 py-2"
+            >
+              もう一度やり直す
+            </button>
           </div>
         )}
       </div>
