@@ -2,6 +2,7 @@
 
 import { useSession, signIn } from "next-auth/react";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import type { Service } from "@/lib/database.types";
 
 const CATEGORIES = [
@@ -746,9 +747,68 @@ export default function EditProfilePage() {
         )}
       </section>
 
+      {/* ── アカウント削除 ── */}
+      <DeleteAccountSection />
+
       {saved && <div className="fixed bottom-6 right-6 bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">✓ 保存しました</div>}
       {saving && <div className="fixed bottom-6 right-6 bg-gray-700 text-white px-5 py-3 rounded-xl shadow-lg text-sm">保存中...</div>}
     </div>
+  );
+}
+
+function DeleteAccountSection() {
+  const [open, setOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  const handleDelete = async () => {
+    setDeleting(true);
+    try {
+      const res = await fetch("/api/delete-account", { method: "DELETE" });
+      if (!res.ok) return;
+      const { signOut } = await import("next-auth/react");
+      await signOut({ redirect: false });
+      router.push("/");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  if (!session) return null;
+
+  return (
+    <section className="bg-white rounded-2xl border border-red-100 p-6">
+      <h2 className="text-sm font-semibold text-gray-700 mb-1">アカウント削除</h2>
+      <p className="text-xs text-gray-400 mb-4">削除するとプロフィール・成果物がすべて消去されます。取り消しはできません。</p>
+      {!open ? (
+        <button
+          onClick={() => setOpen(true)}
+          className="text-sm text-red-500 border border-red-200 px-4 py-2 rounded-xl hover:bg-red-50 transition-colors"
+        >
+          アカウントを削除する
+        </button>
+      ) : (
+        <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-4 space-y-3">
+          <p className="text-sm font-semibold text-red-700">本当に削除しますか？この操作は取り消せません。</p>
+          <div className="flex gap-2">
+            <button
+              onClick={handleDelete}
+              disabled={deleting}
+              className="flex-1 bg-red-600 text-white text-sm py-2 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+            >
+              {deleting ? "削除中..." : "はい、削除します"}
+            </button>
+            <button
+              onClick={() => setOpen(false)}
+              className="flex-1 border border-gray-300 text-gray-600 text-sm py-2 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              キャンセル
+            </button>
+          </div>
+        </div>
+      )}
+    </section>
   );
 }
 
