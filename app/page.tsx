@@ -396,18 +396,18 @@ function HeroGraphic() {
   );
 }
 
-/* ---- 3列比較図 ---- */
+/* ---- 3行比較図（横フロー） ---- */
 function ConceptDiagram() {
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="space-y-3">
 
       {/* 従来型 */}
-      <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5 flex flex-col">
-        <p className="text-[10px] font-bold text-gray-400 tracking-widest mb-4">従来型</p>
-        <div className="flex flex-col items-center gap-1 flex-1">
+      <div className="rounded-2xl border border-gray-200 bg-gray-50 px-5 py-4">
+        <p className="text-[10px] font-bold text-gray-400 tracking-widest mb-3">従来型</p>
+        <div className="flex items-center gap-1.5">
           <DiagBox icon="🏢" label="クライアント" />
           <DiagArrow />
-          <DiagFee label="仲介会社" sub="手数料 20〜30%" red />
+          <DiagFee label="仲介会社" sub="20〜30%" red />
           <DiagArrow />
           <DiagFee label="エージェント" sub="登録料・成約料" amber />
           <DiagArrow />
@@ -416,9 +416,9 @@ function ConceptDiagram() {
       </div>
 
       {/* 直接系他社 */}
-      <div className="rounded-2xl border border-yellow-200 bg-yellow-50/40 p-5 flex flex-col">
-        <p className="text-[10px] font-bold text-yellow-600 tracking-widest mb-4">直接発注系 他社</p>
-        <div className="flex flex-col items-center gap-1 flex-1">
+      <div className="rounded-2xl border border-yellow-200 bg-yellow-50/40 px-5 py-4">
+        <p className="text-[10px] font-bold text-yellow-600 tracking-widest mb-3">直接発注系 他社</p>
+        <div className="flex items-center gap-1.5">
           <DiagBox icon="🏢" label="クライアント" />
           <DiagArrow />
           <DiagFee label="プラットフォーム" sub="サービス料 〜20%" amber />
@@ -428,22 +428,26 @@ function ConceptDiagram() {
       </div>
 
       {/* 経験イチバ */}
-      <div className="rounded-2xl border-2 border-blue-400 bg-blue-50 p-5 flex flex-col relative">
-        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 whitespace-nowrap">
+      <div className="rounded-2xl border-2 border-blue-400 bg-blue-50 px-5 py-4 relative">
+        <div className="absolute -top-3.5 left-6 whitespace-nowrap">
           <span className="bg-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-full">経験イチバ</span>
         </div>
-        <p className="text-[10px] font-bold text-blue-500 tracking-widest mb-4 mt-1">手数料ゼロ</p>
-        <div className="flex flex-col items-center gap-1">
+        <div className="flex items-center gap-1.5 mt-1">
           <DiagBox icon="🏢" label="クライアント" blue />
-          <DiagArrow blue />
-          <div className="bg-blue-600 text-white text-xs font-bold px-5 py-2 rounded-xl text-center leading-snug">
-            直接発注<br /><span className="font-normal text-blue-200 text-[10px]">手数料・仲介料 すべて ¥0</span>
+          <div className="flex-1 flex flex-col items-center gap-0.5">
+            <span className="text-[11px] font-bold text-blue-700">直接発注</span>
+            <span className="text-[10px] text-blue-400">手数料・仲介料 すべて ¥0</span>
+            <div className="w-full flex items-center">
+              <div className="flex-1 h-px bg-blue-400" />
+              <svg className="w-2.5 h-2.5 text-blue-400 -ml-px flex-shrink-0" fill="currentColor" viewBox="0 0 10 10">
+                <path d="M0 2 L6 5 L0 8 Z" />
+              </svg>
+            </div>
           </div>
-          <DiagArrow blue />
           <DiagBox icon="💼" label="経験者" blue />
         </div>
-        <div className="mt-4 border-t border-blue-200 pt-3">
-          <p className="text-[11px] font-bold text-blue-700 mb-1">なぜ¥0にできる？</p>
+        <div className="mt-3 border-t border-blue-200 pt-2.5 flex gap-1.5 items-start">
+          <span className="text-[11px] font-bold text-blue-700 whitespace-nowrap">なぜ¥0？</span>
           <p className="text-[11px] text-gray-500 leading-relaxed">AIが設計・開発・運営を担うため、人件費・オフィス費用がかかりません。コストはサーバー代のみ。</p>
         </div>
       </div>
@@ -454,16 +458,23 @@ function ConceptDiagram() {
 
 function DiagBox({ icon, label, blue }: { icon: string; label: string; blue?: boolean }) {
   return (
-    <div className={`w-full rounded-xl border px-3 py-2 flex items-center gap-2 ${blue ? "bg-white border-blue-200" : "bg-white border-gray-200"}`}>
-      <span className="text-lg">{icon}</span>
-      <span className={`text-xs font-bold ${blue ? "text-blue-800" : "text-gray-700"}`}>{label}</span>
+    <div className={`flex-shrink-0 rounded-xl border px-3 py-2 flex flex-col items-center gap-0.5 w-[88px] ${
+      blue ? "bg-white border-blue-200" : "bg-white border-gray-200"
+    }`}>
+      <span className="text-xl">{icon}</span>
+      <span className={`text-[11px] font-bold text-center leading-tight ${blue ? "text-blue-800" : "text-gray-700"}`}>{label}</span>
     </div>
   );
 }
 
 function DiagArrow({ blue }: { blue?: boolean }) {
   return (
-    <div className={`w-0.5 h-4 ${blue ? "bg-blue-400" : "bg-gray-300"}`} />
+    <div className={`flex items-center flex-shrink-0 ${blue ? "text-blue-300" : "text-gray-300"}`}>
+      <div className={`w-4 h-px ${blue ? "bg-blue-300" : "bg-gray-300"}`} />
+      <svg className="w-2 h-2 -ml-px" fill="currentColor" viewBox="0 0 10 10">
+        <path d="M0 2 L6 5 L0 8 Z" />
+      </svg>
+    </div>
   );
 }
 
@@ -474,9 +485,9 @@ function DiagFee({ label, sub, red, amber }: { label: string; sub: string; red?:
     ? "bg-amber-50 border-amber-200 text-amber-700"
     : "bg-gray-50 border-gray-200 text-gray-700";
   return (
-    <div className={`w-full rounded-xl border px-3 py-2 text-center ${cls}`}>
-      <p className="text-xs font-bold">{label}</p>
-      <p className="text-[10px] opacity-80">{sub}</p>
+    <div className={`flex-shrink-0 rounded-xl border px-3 py-2 text-center w-[108px] ${cls}`}>
+      <p className="text-[11px] font-bold leading-tight">{label}</p>
+      <p className="text-[10px] opacity-80 mt-0.5">{sub}</p>
     </div>
   );
 }
