@@ -234,6 +234,17 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 修正1回保証 */}
+      <section className="py-5 px-4 bg-blue-50 border-y border-blue-100">
+        <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-6 text-center sm:text-left">
+          <span className="text-xs font-bold text-blue-700 bg-blue-100 px-3 py-1 rounded-full flex-shrink-0">プラットフォーム保証</span>
+          <p className="text-xs text-gray-500 leading-relaxed">
+            経験イチバのすべての取引には、<span className="text-blue-600 font-medium">修正1回が標準で含まれます。</span>
+            着手前に要件を確認した上で進めるため、納品後の認識ズレを最小化します。
+          </p>
+        </div>
+      </section>
+
       {/* 経験→商品化 事例 */}
       <section className="py-28 px-4 bg-white border-t border-gray-100">
         <div className="max-w-4xl mx-auto">
