@@ -53,7 +53,7 @@ export default function EditProfilePage() {
   const [chatThinking, setChatThinking] = useState(false);
   type ChatDraftType = {
     title: string; description: string; experience_story: string;
-    ai_usage?: string;
+    ai_usage?: string; recommended_tools?: string[];
     price_suggestion: number; days_suggestion: number; service_type: "spot" | "ongoing";
   };
   const [chatDrafts, setChatDrafts] = useState<{ deliverable: ChatDraftType; consulting: ChatDraftType } | null>(null);
@@ -717,6 +717,13 @@ export default function EditProfilePage() {
                     <div className="bg-blue-50 border border-blue-100 rounded-lg px-2 py-1.5">
                       <p className="text-[10px] font-semibold text-blue-700 mb-0.5">🤖 AIの活用方法</p>
                       <p className="text-[10px] text-gray-600 leading-relaxed">{d.ai_usage}</p>
+                      {d.recommended_tools && d.recommended_tools.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-1.5">
+                          {d.recommended_tools.map(tool => (
+                            <span key={tool} className="bg-white border border-blue-200 text-blue-700 text-[9px] font-bold px-1.5 py-0.5 rounded-full">{tool}</span>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   )}
                   <div className="flex gap-2 text-[11px] text-gray-500">

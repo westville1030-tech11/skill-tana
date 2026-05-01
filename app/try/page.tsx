@@ -10,6 +10,7 @@ type ServiceDraft = {
   description: string;
   experience_story: string;
   ai_usage?: string;
+  recommended_tools?: string[];
   price_suggestion: number;
   days_suggestion: number;
   service_type: string;
@@ -51,6 +52,13 @@ function DraftCard({
         <div className="bg-blue-50 border border-blue-100 rounded-lg px-3 py-2.5">
           <p className="text-[10px] font-semibold text-blue-700 mb-1">🤖 AIの活用方法</p>
           <p className="text-[11px] text-gray-600 leading-relaxed">{draft.ai_usage}</p>
+          {draft.recommended_tools && draft.recommended_tools.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-2">
+              {draft.recommended_tools.map(tool => (
+                <span key={tool} className="bg-white border border-blue-200 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full">{tool}</span>
+              ))}
+            </div>
+          )}
         </div>
       )}
       <div className="flex gap-3 text-xs text-gray-500 border-t border-gray-100 pt-2">

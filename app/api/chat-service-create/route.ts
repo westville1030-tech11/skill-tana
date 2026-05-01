@@ -13,12 +13,19 @@ const SYSTEM = `あなたは「経験商品化アシスタント」です。
 説明文・前置き・マークダウン記法は一切不要です。区切り文字とJSONだけ出力してください。
 
 DELIVERABLE_START
-{"title":"商品タイトル（30字以内）","description":"成果物の説明（80字以内）","experience_story":"実体験ストーリー（150字程度、一人称なし）","ai_usage":"AIをどう使って納品するか（例：AIでドラフト生成→経験者が実務知見で仕上げ）（60字以内）","price_suggestion":30000,"days_suggestion":3,"service_type":"spot"}
+{"title":"商品タイトル（30字以内）","description":"成果物の説明（80字以内）","experience_story":"実体験ストーリー（150字程度、一人称なし）","ai_usage":"AIをどう使って納品するか（例：Claudeでドラフト生成→経験者が実務知見で仕上げ）（60字以内）","recommended_tools":["Claude","Perplexity"],"price_suggestion":30000,"days_suggestion":3,"service_type":"spot"}
 DELIVERABLE_END
 
 CONSULTING_START
-{"title":"コンサル商品タイトル（30字以内）","description":"コンサル・壁打ちセッションの説明（80字以内）","experience_story":"実体験ストーリー（150字程度、一人称なし）","ai_usage":"AIをどう使って納品するか（例：事前にAIでリサーチ・想定QAを準備→セッション本番の質を高める）（60字以内）","price_suggestion":15000,"days_suggestion":1,"service_type":"spot"}
+{"title":"コンサル商品タイトル（30字以内）","description":"コンサル・壁打ちセッションの説明（80字以内）","experience_story":"実体験ストーリー（150字程度、一人称なし）","ai_usage":"AIをどう使って納品するか（例：Geminiで事前リサーチ→セッション本番の質を高める）（60字以内）","recommended_tools":["Gemini","ChatGPT"],"price_suggestion":15000,"days_suggestion":1,"service_type":"spot"}
 CONSULTING_END
+
+recommended_toolsは成果物の内容に合わせて適切なAIツールを2〜3個選んでください。
+- ドキュメント・テンプレート・コード生成: Claude, Claude Code
+- リサーチ・情報収集: Perplexity, Gemini
+- ヒアリング・セッション準備: Gemini, ChatGPT
+- 議事録・サマリー: ChatGPT, NotebookLM
+- 資料・スライド: Gamma, ChatGPT
 
 トーンは親しみやすく、簡潔に。`;
 
