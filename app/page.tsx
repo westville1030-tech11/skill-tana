@@ -198,10 +198,10 @@ export default function Home() {
           <h2 className="text-3xl font-bold text-gray-900 mb-3 text-center">イチバの棚に並ぶ成果物の例</h2>
           <p className="text-center text-gray-400 mb-10">週末数時間〜のスポット対応</p>
 
-          <div className="flex gap-2 flex-wrap justify-center mb-8">
-            {["すべて", "データ分析", "戦略", "エンジニアリング", "相談"].map((cat, i) => (
+          <div className="flex gap-2 flex-wrap justify-center mb-8 overflow-x-auto">
+            {["すべて", "営業", "経理", "人事", "総務", "法務", "経企", "マーケ", "購買", "エンジニア"].map((cat, i) => (
               <span key={cat}
-                className={`px-4 py-1.5 rounded-full text-sm font-medium cursor-default ${i === 0 ? "bg-blue-600 text-white" : "bg-white border border-gray-200 text-gray-600"}`}>
+                className={`px-4 py-1.5 rounded-full text-sm font-medium cursor-default whitespace-nowrap ${i === 0 ? "bg-blue-600 text-white" : "bg-white border border-gray-200 text-gray-600"}`}>
                 {cat}
               </span>
             ))}
@@ -548,7 +548,13 @@ const commercializationCases = [
 ];
 
 const serviceExamples = [
-  { category: "データ分析", title: "CSV・Excelデータ分析レポート", desc: "AIで集計・可視化ドラフトを作成。経験者が示唆を付与して納品", price: "¥30,000", days: "3日以内" },
-  { category: "エンジニアリング", title: "業務自動化スクリプト作成", desc: "AIでコードをドラフト生成、経験者が検証・実業務に合わせて調整", price: "¥40,000", days: "4日以内" },
-  { category: "相談", title: "壁打ち相談セッション（60分）", desc: "AIでリサーチ・資料を事前準備。経験者との対話で課題を深堀り", price: "¥15,000", days: "当日〜翌日" },
+  { category: "営業", title: "商談提案書テンプレート作成", desc: "扱う商材・想定顧客・よく出る質問をヒアリングし、次の商談から使える提案構成を設計", price: "¥20,000", days: "4日以内" },
+  { category: "経理", title: "月次レポート自動集計フォーマット設計", desc: "現状の集計フローと欲しいアウトプットを確認した上で、Excelテンプレを設計・納品", price: "¥25,000", days: "5日以内" },
+  { category: "人事", title: "中途採用の面接評価シート設計", desc: "採用したい人物像・職種要件をヒアリングし、選考基準を言語化した評価シートを設計", price: "¥20,000", days: "3日以内" },
+  { category: "総務", title: "社内Q&Aドキュメント整備", desc: "よくある問い合わせ内容と対象読者を確認し、実務ですぐ使えるQ&A形式で整理", price: "¥18,000", days: "4日以内" },
+  { category: "法務", title: "契約書リスクチェック＆コメント整理", desc: "契約目的・取引関係をヒアリングし、リスク箇所と修正案をコメント形式で納品", price: "¥30,000", days: "3日以内" },
+  { category: "経企", title: "事業計画書フレーム整理＆フィードバック", desc: "目的・対象読者・現状の課題を確認した上で、構成と数字の整合性をレビュー", price: "¥30,000", days: "5日以内" },
+  { category: "マーケ", title: "競合調査＆差別化軸の整理", desc: "業界・ターゲット・現状の訴求を確認した上で、競合との差別化ポイントを整理", price: "¥25,000", days: "5日以内" },
+  { category: "購買", title: "調達コスト削減の打ち手整理", desc: "現状の調達フロー・主要仕入先・課題をヒアリングし、見直しポイントを提案", price: "¥20,000", days: "5日以内" },
+  { category: "エンジニア", title: "業務自動化の方法相談（60分）", desc: "現状フローと困りごとをヒアリングし、最適な自動化手段を一緒に選定", price: "¥15,000", days: "当日〜翌日" },
 ];
