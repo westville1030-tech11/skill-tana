@@ -4,7 +4,7 @@ import { SessionProvider } from "@/components/SessionProvider";
 import { Navbar } from "@/components/Navbar";
 
 export const metadata: Metadata = {
-  title: "スキル棚 — 経験者のスキルと成果物が並ぶ棚",
+  title: "経験イチバ — 経験者のスキルと成果物が並ぶ棚",
   description:
     "一流企業で活躍する経験者に直接依頼。手数料ゼロ、固定価格、法人メール認証で安心。CSV分析・戦略相談・開発など週末スポット対応。",
 };
@@ -21,7 +21,7 @@ export default function RootLayout({
           <Navbar />
           <main className="flex-1">{children}</main>
           <footer className="border-t border-gray-100 bg-white py-8 text-center text-sm text-gray-400">
-            © 2025 スキル棚 · 登録料・利用料・手数料、すべて永久無料
+            © 2025 経験イチバ · 登録料・利用料・手数料、すべて永久無料
           </footer>
         </SessionProvider>
       </body>

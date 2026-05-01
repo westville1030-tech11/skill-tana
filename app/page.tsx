@@ -21,8 +21,8 @@ export default function Home() {
               </div>
 
               <h1 className="text-4xl md:text-5xl font-black text-white leading-tight mb-5 tracking-tight">
-                あなたの職業で培ったスキルを<br />
-                <span className="text-blue-300">成果物単位で切り売りする</span>
+                あなたが培ってきた知見を<br />
+                <span className="text-blue-300">パッケージ化し、より多くの人へ</span>
               </h1>
               <p className="text-slate-300 mb-10 leading-relaxed text-lg">
                 生成AIで高速ドラフト、経験者が確認・仕上げて納品。<br className="hidden md:block" />

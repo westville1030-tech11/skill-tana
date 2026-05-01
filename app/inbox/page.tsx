@@ -153,7 +153,7 @@ export default function InboxPage() {
 
                   {/* 返信ボタン */}
                   <a
-                    href={`mailto:${q.client_email}?subject=${encodeURIComponent(`【スキル棚】${q.service_title ?? "ご相談"}へのご返信`)}&body=${encodeURIComponent(`${q.client_name ?? ""}様\n\nお問い合わせありがとうございます。\n\n`)}`}
+                    href={`mailto:${q.client_email}?subject=${encodeURIComponent(`【経験イチバ】${q.service_title ?? "ご相談"}へのご返信`)}&body=${encodeURIComponent(`${q.client_name ?? ""}様\n\nお問い合わせありがとうございます。\n\n`)}`}
                     className="flex items-center justify-center gap-2 w-full bg-blue-700 text-white py-3 rounded-xl font-medium hover:bg-blue-800 transition-colors text-sm"
                   >
                     ✉ {q.client_email} にメールで返信する

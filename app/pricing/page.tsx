@@ -28,7 +28,7 @@ export default function PricingPage() {
         </div>
 
         <div className="bg-blue-900 border border-blue-700 rounded-2xl p-7 text-white">
-          <p className="text-xs font-bold text-blue-300 uppercase tracking-widest mb-4">スキル棚（本サービス）</p>
+          <p className="text-xs font-bold text-blue-300 uppercase tracking-widest mb-4">経験イチバ（本サービス）</p>
           <div className="space-y-3 text-sm">
             {[
               { label: "担当者層", value: "同じシニアマネジャー級（副業）" },
@@ -66,7 +66,7 @@ export default function PricingPage() {
             </div>
           ))}
         </div>
-        <p className="text-xs text-gray-400 text-center mt-5">スキル棚では「あなたへの知見」の部分だけに払う</p>
+        <p className="text-xs text-gray-400 text-center mt-5">経験イチバでは「あなたへの知見」の部分だけに払う</p>
       </div>
 
       {/* 計算式 */}
@@ -85,7 +85,7 @@ export default function PricingPage() {
             </div>
           </div>
           <div className="bg-blue-900 border border-blue-700 rounded-xl p-5 text-white">
-            <p className="text-xs font-bold text-blue-300 uppercase tracking-wide mb-3">スキル棚の作り方</p>
+            <p className="text-xs font-bold text-blue-300 uppercase tracking-wide mb-3">経験イチバの作り方</p>
             <div className="space-y-1 text-sm text-blue-200 mb-4">
               <p>AIが初稿（5分）</p>
               <p>＋ 経験者が検証・仕上げ（1時間）</p>

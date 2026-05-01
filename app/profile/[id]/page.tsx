@@ -120,7 +120,7 @@ export default async function ProfilePage(props: PageProps<"/profile/[id]">) {
         <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-2">
             <span className="text-blue-600">✓</span>
-            <span className="font-semibold text-blue-800 text-sm">スキル棚 認証済みのプロ</span>
+            <span className="font-semibold text-blue-800 text-sm">経験イチバ 認証済みのプロ</span>
           </div>
           <p className="text-sm text-blue-700 leading-relaxed">
             このプロは法人メールアドレスで所属を確認済みです。

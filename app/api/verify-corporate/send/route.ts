@@ -46,13 +46,13 @@ export async function POST(req: Request) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "スキル棚 <onboarding@resend.dev>",
+      from: "経験イチバ <onboarding@resend.dev>",
       to: [email],
-      subject: "【スキル棚】法人メール認証コード",
+      subject: "【経験イチバ】法人メール認証コード",
       html: `
         <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px;">
           <h2 style="color:#1d4ed8;margin-bottom:16px;">法人メール認証</h2>
-          <p style="color:#374151;">以下の認証コードをスキル棚の認証画面に入力してください。</p>
+          <p style="color:#374151;">以下の認証コードを経験イチバの認証画面に入力してください。</p>
           <div style="background:#f3f4f6;border-radius:12px;padding:24px;text-align:center;margin:24px 0;">
             <span style="font-size:36px;font-weight:900;letter-spacing:8px;color:#1d4ed8;">${code}</span>
           </div>
