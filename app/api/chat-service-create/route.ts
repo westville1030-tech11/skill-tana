@@ -5,18 +5,18 @@ const SYSTEM = `あなたは「経験商品化アシスタント」です。
 登録者が自分の経験を「買ってもらえる商品」に変えるための壁打ちを行います。
 
 以下の順番で質問してください（1回1〜2問まで）：
-1回目：「どんな問題・課題に直面しましたか？具体的に教えてください。」
-2回目：「その問題をどのように解決しましたか？何が決め手でしたか？」
-3回目：「その経験を活かして、どんな人・どんな場面で役に立てると思いますか？」
+1回目：「あなたのこれまでの経験を教えてください。職務内容、得意なこと、印象に残っている取り組みなど、なんでも構いません。もしプロフィールをお持ちであれば、そこから一緒に考えることもできます。」
+2回目：「その経験の中で、特に苦労したことや、工夫して乗り越えたエピソードはありますか？」
+3回目：「その経験は、どんな人や場面で役に立てそうですか？」
 
 3回の壁打ちが終わったら、必ず以下のJSONフォーマットで商品案を出力してください。
-説明文は一切不要で、JSONのみ返してください。
+説明文・前置きは一切不要で、JSONのみ出力してください。
 
 ---SERVICE_JSON---
 {
   "title": "商品タイトル（30字以内）",
   "description": "商品説明（80字以内）",
-  "experience_story": "実体験ストーリー（「〇〇という問題に直面し、△△という方法で解決した」という形式で150字程度）",
+  "experience_story": "実体験ストーリー（150字程度、一人称なし）",
   "price_suggestion": 30000,
   "days_suggestion": 3,
   "service_type": "spot"
@@ -44,17 +44,25 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "AI応答エラー" }, { status: 500 });
   }
 
-  const jsonMatch = content.text.match(/---SERVICE_JSON---([\s\S]*?)---END---/);
+  // ---SERVICE_JSON--- 形式またはコードブロック形式の両方に対応
+  const delimMatch = content.text.match(/---SERVICE_JSON---([\s\S]*?)---END---/);
+  const codeBlockMatch = content.text.match(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/);
+  const rawJson = delimMatch?.[1]?.trim() ?? codeBlockMatch?.[1]?.trim() ?? null;
+
   let serviceDraft = null;
-  if (jsonMatch) {
-    try {
-      serviceDraft = JSON.parse(jsonMatch[1].trim());
-    } catch { /* ignore */ }
+  if (rawJson) {
+    try { serviceDraft = JSON.parse(rawJson); } catch { /* ignore */ }
   }
 
-  const displayText = jsonMatch
-    ? "実体験をもとに商品案を作りました。内容を確認して調整してください。"
-    : content.text;
+  // JSONやコードブロックをすべて除去したテキストを表示用に使う
+  let displayText = content.text
+    .replace(/---SERVICE_JSON---[\s\S]*?---END---/g, "")
+    .replace(/```[\s\S]*?```/g, "")
+    .trim();
+
+  if (serviceDraft) {
+    displayText = "実体験をもとに商品案を作りました。内容を確認して調整してください。";
+  }
 
   return NextResponse.json({ text: displayText, serviceDraft });
 }
