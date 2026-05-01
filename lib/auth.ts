@@ -14,13 +14,41 @@ function getSupabaseAdmin() {
 const linkedInOIDC: any = {
   id: "linkedin",
   name: "LinkedIn",
-  type: "oidc",
-  issuer: "https://www.linkedin.com/oauth",
-  wellKnown: "https://www.linkedin.com/oauth/.well-known/openid-configuration",
-  authorization: { params: { scope: "openid profile email" } },
+  type: "oauth",
+  authorization: {
+    url: "https://www.linkedin.com/oauth/v2/authorization",
+    params: { scope: "openid profile email" },
+  },
+  token: {
+    url: "https://www.linkedin.com/oauth/v2/accessToken",
+    // Strip id_token from response — next-auth v4 tries to validate it but
+    // fails because it doesn't know LinkedIn's issuer. We use the userinfo
+    // endpoint instead, so the id_token is unnecessary.
+    async request(context: Record<string, unknown>) {
+      const provider = context.provider as Record<string, unknown>;
+      const params = context.params as Record<string, string>;
+      const body = new URLSearchParams({
+        grant_type: "authorization_code",
+        code: params.code,
+        redirect_uri: provider.callbackUrl as string,
+        client_id: process.env.LINKEDIN_CLIENT_ID!,
+        client_secret: process.env.LINKEDIN_CLIENT_SECRET!,
+      });
+      if (params.code_verifier) body.set("code_verifier", params.code_verifier);
+      const res = await fetch("https://www.linkedin.com/oauth/v2/accessToken", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body,
+      });
+      const tokens = await res.json();
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { id_token: _dropped, ...rest } = tokens;
+      return { tokens: rest };
+    },
+  },
+  userinfo: "https://api.linkedin.com/v2/userinfo",
   clientId: process.env.LINKEDIN_CLIENT_ID,
   clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
-  client: { token_endpoint_auth_method: "client_secret_post" },
   profile(profile: Record<string, unknown>) {
     return {
       id: profile.sub as string,
