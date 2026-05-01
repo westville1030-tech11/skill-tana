@@ -9,34 +9,31 @@ const SYSTEM = `あなたは「経験商品化アシスタント」です。
 2回目：「その経験の中で、特に苦労したことや、工夫して乗り越えたエピソードはありますか？」
 3回目：「その経験は、どんな人や場面で役に立てそうですか？」
 
-3回の壁打ちが終わったら、必ず以下の2つのJSONフォーマットで商品案を出力してください。
-説明文・前置きは一切不要で、JSONのみ出力してください。
+3回の壁打ちが終わったら、以下のフォーマットで必ず2つの商品案を出力してください。
+説明文・前置き・マークダウン記法は一切不要です。区切り文字とJSONだけ出力してください。
 
-1つ目：成果物型（レポート・テンプレート・ドキュメント・設計書など、納品できる形があるもの）
----DELIVERABLE_JSON---
-{
-  "title": "商品タイトル（30字以内）",
-  "description": "商品説明（80字以内）",
-  "experience_story": "実体験ストーリー（150字程度、一人称なし）",
-  "price_suggestion": 30000,
-  "days_suggestion": 3,
-  "service_type": "spot"
-}
----DELIVERABLE_END---
+DELIVERABLE_START
+{"title":"商品タイトル（30字以内）","description":"成果物の説明（80字以内）","experience_story":"実体験ストーリー（150字程度、一人称なし）","price_suggestion":30000,"days_suggestion":3,"service_type":"spot"}
+DELIVERABLE_END
 
-2つ目：コンサルティング型（対話・壁打ち・アドバイスセッション・レビューなど）
----CONSULTING_JSON---
-{
-  "title": "商品タイトル（30字以内）",
-  "description": "商品説明（80字以内）",
-  "experience_story": "実体験ストーリー（150字程度、一人称なし）",
-  "price_suggestion": 15000,
-  "days_suggestion": 1,
-  "service_type": "spot"
-}
----CONSULTING_END---
+CONSULTING_START
+{"title":"コンサル商品タイトル（30字以内）","description":"コンサル・壁打ちセッションの説明（80字以内）","experience_story":"実体験ストーリー（150字程度、一人称なし）","price_suggestion":15000,"days_suggestion":1,"service_type":"spot"}
+CONSULTING_END
 
 トーンは親しみやすく、簡潔に。`;
+
+function extractJson(text: string, startTag: string, endTag: string) {
+  // パターン1: カスタム区切り文字
+  const m1 = text.match(new RegExp(startTag + "\\s*([\\s\\S]*?)\\s*" + endTag));
+  if (m1) { try { return JSON.parse(m1[1].trim()); } catch {} }
+
+  // パターン2: コードブロック内のJSON（フォールバック）
+  const blocks = [...text.matchAll(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/g)];
+  const idx = startTag.includes("DELIVERABLE") ? 0 : 1;
+  if (blocks[idx]) { try { return JSON.parse(blocks[idx][1]); } catch {} }
+
+  return null;
+}
 
 export async function POST(req: NextRequest) {
   const { messages } = await req.json() as {
@@ -47,7 +44,7 @@ export async function POST(req: NextRequest) {
 
   const response = await client.messages.create({
     model: "claude-haiku-4-5-20251001",
-    max_tokens: 1024,
+    max_tokens: 1500,
     system: SYSTEM,
     messages,
   });
@@ -57,18 +54,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "AI応答エラー" }, { status: 500 });
   }
 
-  const parseJson = (text: string, start: string, end: string) => {
-    const match = text.match(new RegExp(`${start}([\\s\\S]*?)${end}`));
-    if (!match) return null;
-    try { return JSON.parse(match[1].trim()); } catch { return null; }
-  };
-
-  const deliverableDraft = parseJson(content.text, "---DELIVERABLE_JSON---", "---DELIVERABLE_END---");
-  const consultingDraft = parseJson(content.text, "---CONSULTING_JSON---", "---CONSULTING_END---");
+  const deliverableDraft = extractJson(content.text, "DELIVERABLE_START", "DELIVERABLE_END");
+  const consultingDraft = extractJson(content.text, "CONSULTING_START", "CONSULTING_END");
 
   let displayText = content.text
-    .replace(/---DELIVERABLE_JSON---[\s\S]*?---DELIVERABLE_END---/g, "")
-    .replace(/---CONSULTING_JSON---[\s\S]*?---CONSULTING_END---/g, "")
+    .replace(/DELIVERABLE_START[\s\S]*?DELIVERABLE_END/g, "")
+    .replace(/CONSULTING_START[\s\S]*?CONSULTING_END/g, "")
     .replace(/```[\s\S]*?```/g, "")
     .trim();
 

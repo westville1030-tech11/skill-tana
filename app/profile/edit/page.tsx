@@ -206,8 +206,11 @@ export default function EditProfilePage() {
       const newRounds = chatRounds + 1;
       setChatRounds(newRounds);
       setChatMessages([...next, { role: "assistant", content: data.text }]);
-      if (data.deliverableDraft && data.consultingDraft) {
-        setChatDrafts({ deliverable: data.deliverableDraft, consulting: data.consultingDraft });
+      if (data.deliverableDraft || data.consultingDraft) {
+        setChatDrafts({
+          deliverable: data.deliverableDraft ?? data.consultingDraft,
+          consulting: data.consultingDraft ?? data.deliverableDraft,
+        });
       }
     } finally {
       setChatThinking(false);

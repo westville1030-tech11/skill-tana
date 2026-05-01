@@ -86,8 +86,11 @@ export default function TryPage() {
       });
       const data = await res.json();
       setMessages([...next, { role: "assistant", content: data.text }]);
-      if (data.deliverableDraft && data.consultingDraft) {
-        setDrafts({ deliverable: data.deliverableDraft, consulting: data.consultingDraft });
+      if (data.deliverableDraft || data.consultingDraft) {
+        setDrafts({
+          deliverable: data.deliverableDraft ?? data.consultingDraft,
+          consulting: data.consultingDraft ?? data.deliverableDraft,
+        });
       }
     } finally {
       setThinking(false);
