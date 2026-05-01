@@ -9,7 +9,7 @@ export async function POST(req: Request) {
 
   try {
     const message = await client.messages.create({
-      model: "claude-haiku-4-5",
+      model: "claude-haiku-4-5-20251001",
       max_tokens: 300,
       messages: [
         {
@@ -20,11 +20,14 @@ export async function POST(req: Request) {
 【依頼文】
 ${request}
 
-以下の基準で評価し、JSONで返してください：
-- quality: "good"（十分具体的）または "poor"（曖昧・不十分）
-- feedback: poorの場合のみ、何が不足しているか1〜2文で日本語で指摘する。goodの場合は空文字
+【評価基準】
+以下のいずれかに該当する場合は quality: "poor" にしてください：
+1. 意味のない文字列が含まれている（「あああ」「aaaa」などの繰り返し）
+2. 何をしてほしいか具体的な作業内容がわからない
+3. 「格安で」「なんとなく」「適当に」など品質を下げる表現がある
+4. 依頼内容が極めて抽象的で受注者が何を作れば良いか判断できない
 
-曖昧・不十分な例：「あああ」「格安でやって」「なんか分析して」「適当によろしく」「安くて早い人」
+上記に該当しない場合（具体的な作業・目的・背景が含まれている）は quality: "good"
 
 必ずJSON形式のみで返してください：
 {"quality":"good","feedback":""}
