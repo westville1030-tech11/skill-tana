@@ -49,7 +49,6 @@ export default function Home() {
                 {stats.map((s) => (
                   <div key={s.label} className="bg-white/8 border border-white/10 rounded-xl px-4 py-4 text-center">
                     <div className="num text-2xl font-black text-white">{s.value}</div>
-                    <div className="text-xs text-blue-300 mt-1">{s.label}</div>
                   </div>
                 ))}
               </div>
