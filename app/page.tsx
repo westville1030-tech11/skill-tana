@@ -152,7 +152,7 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-              <Link href="/profile/edit" className="mt-auto block text-center bg-amber-500 text-white py-3 rounded-xl text-sm font-bold hover:bg-amber-600 transition-colors">
+              <Link href="/try" className="mt-auto block text-center bg-amber-500 text-white py-3 rounded-xl text-sm font-bold hover:bg-amber-600 transition-colors">
                 AIに経験を話してみる →
               </Link>
             </div>
