@@ -30,7 +30,7 @@ export default function Home() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-12">
-                <Link href="/profile/edit"
+                <Link href="/try"
                   className="bg-gradient-to-r from-blue-500 to-blue-400 text-white px-8 py-4 rounded-xl font-bold hover:opacity-90 transition-opacity text-center shadow-lg shadow-blue-900/50">
                   イチバに登録
                 </Link>
@@ -316,7 +316,7 @@ export default function Home() {
           <h2 className="text-3xl font-black text-white mb-4">今すぐイチバの棚に並べる</h2>
           <p className="text-slate-300 mb-6">メールアドレスがあれば30秒で登録完了。</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/profile/edit"
+            <Link href="/try"
               className="bg-gradient-to-r from-blue-500 to-blue-400 text-white px-10 py-4 rounded-xl font-bold hover:opacity-90 transition-opacity shadow-lg shadow-blue-900/50">
               スキルを登録
             </Link>

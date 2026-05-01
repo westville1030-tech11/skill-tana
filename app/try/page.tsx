@@ -61,7 +61,7 @@ export default function TryPage() {
         <div className="max-w-xl mx-auto flex items-center justify-between">
           <Link href="/" className="text-sm text-gray-400 hover:text-gray-600">← トップに戻る</Link>
           <span className="text-sm font-bold text-gray-800">経験イチバ</span>
-          <Link href="/profile/edit" className="text-sm text-blue-600 hover:underline">登録する</Link>
+          <Link href="/profile/edit" className="text-xs text-gray-400 hover:text-gray-600">スキップ →</Link>
         </div>
       </div>
 
@@ -70,14 +70,17 @@ export default function TryPage() {
         {/* イントロ（チャット開始前のみ） */}
         {messages.length === 0 && !draft && (
           <div className="bg-white border border-gray-100 rounded-2xl p-6 space-y-3">
-            <p className="text-xs font-semibold text-amber-600 bg-amber-50 border border-amber-100 inline-block px-3 py-1 rounded-full">登録前の無料体験</p>
+            <p className="text-xs font-semibold text-blue-600 bg-blue-50 border border-blue-100 inline-block px-3 py-1 rounded-full">登録 ステップ1 / 2</p>
             <h1 className="text-xl font-bold text-gray-900 leading-snug">
-              あなたの経験、<br />AIと一緒に整理してみませんか？
+              まず、あなたの経験を<br />AIと一緒に商品にしてみましょう
             </h1>
             <p className="text-sm text-gray-500 leading-relaxed">
-              登録不要・無料で試せます。<br />
-              AIがあなたの経験をヒアリングして、商品案を自動で作ります。
+              AIがあなたの経験をヒアリングして、商品案を自動で作ります。<br />
+              商品案ができたら、そのままアカウント登録に進めます。
             </p>
+            <Link href="/profile/edit" className="inline-block text-xs text-gray-400 hover:text-gray-600 underline underline-offset-2 pt-1">
+              スキップしてプロフィール登録へ →
+            </Link>
           </div>
         )}
 
