@@ -699,7 +699,7 @@ export default function EditProfilePage() {
         )}
 
         {/* 選んだ案の詳細確認・編集 */}
-        {showAIChat && chatDraft && (
+        {chatDraft && (
           <div className="mb-4 border border-emerald-200 bg-emerald-50 rounded-xl p-4 space-y-3">
             <p className="text-xs font-semibold text-emerald-700">✓ 内容を確認・編集してください</p>
             <div className="bg-white border border-emerald-100 rounded-lg p-3 space-y-2">
