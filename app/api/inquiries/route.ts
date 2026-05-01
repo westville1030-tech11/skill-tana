@@ -11,12 +11,17 @@ function getAdmin() {
   );
 }
 
-// クライアントが問い合わせを送信
+// クライアントが問い合わせを送信（要ログイン）
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const { pro_linkedin_id, service_title, client_name, client_email, message, deadline, budget } = body;
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: "ログインが必要です" }, { status: 401 });
+  }
 
-  if (!pro_linkedin_id || !client_email || !message) {
+  const body = await req.json();
+  const { pro_linkedin_id, service_title, message, deadline, budget } = body;
+
+  if (!pro_linkedin_id || !message) {
     return NextResponse.json({ error: "必須項目が不足しています" }, { status: 400 });
   }
 
@@ -25,8 +30,8 @@ export async function POST(req: NextRequest) {
   const { data, error } = await getAdmin().from("inquiries").insert({
     pro_linkedin_id,
     service_title: service_title ?? null,
-    client_name: client_name ?? null,
-    client_email,
+    client_name: session.user.name ?? null,
+    client_email: session.user.email,
     message,
     deadline: deadline ?? null,
     budget: budget ?? null,

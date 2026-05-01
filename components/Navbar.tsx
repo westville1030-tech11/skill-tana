@@ -26,6 +26,9 @@ export function Navbar() {
           </Link>
           {session && (
             <>
+              <Link href="/sent" className="hover:text-blue-700 transition-colors">
+                送った問い合わせ
+              </Link>
               <Link href="/inbox" className="hover:text-blue-700 transition-colors">
                 受信箱
               </Link>

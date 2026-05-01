@@ -1,6 +1,7 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 import type { Service } from "@/lib/database.types";
 
 type Props = {
@@ -9,11 +10,10 @@ type Props = {
 };
 
 export function InquiryForm({ proLinkedInId, services }: Props) {
+  const { data: session, status } = useSession();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
     service_title: services[0]?.title ?? "",
-    client_name: "",
-    client_email: "",
     message: "",
     deadline: "",
     budget: "",
@@ -21,7 +21,6 @@ export function InquiryForm({ proLinkedInId, services }: Props) {
   const [sending, setSending] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState("");
-  const [threadUrl, setThreadUrl] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,10 +36,6 @@ export function InquiryForm({ proLinkedInId, services }: Props) {
         const d = await res.json();
         throw new Error(d.error);
       }
-      const d = await res.json();
-      if (d.id && d.client_token) {
-        setThreadUrl(`${window.location.origin}/inquiry/${d.id}?token=${d.client_token}`);
-      }
       setDone(true);
     } catch (e) {
       setError(e instanceof Error ? e.message : "送信に失敗しました");
@@ -51,32 +46,36 @@ export function InquiryForm({ proLinkedInId, services }: Props) {
 
   if (done) {
     return (
-      <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 space-y-4">
-        <div className="text-center">
-          <div className="text-3xl mb-3">✅</div>
-          <h3 className="font-bold text-emerald-800 mb-2">問い合わせを送信しました</h3>
-          <p className="text-sm text-emerald-700">経験者からの返信をお待ちください。</p>
+      <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 text-center">
+        <div className="text-3xl mb-3">✅</div>
+        <h3 className="font-bold text-emerald-800 mb-2">問い合わせを送信しました</h3>
+        <p className="text-sm text-emerald-700">
+          経験者からの返信は <a href="/inbox" className="underline font-medium">受信箱</a> で確認できます。
+        </p>
+      </div>
+    );
+  }
+
+  // 未ログイン
+  if (status !== "loading" && !session) {
+    return (
+      <div className="border border-blue-200 rounded-2xl p-6 bg-blue-50 text-center space-y-3">
+        <p className="text-sm text-gray-700 font-medium">問い合わせにはログインが必要です</p>
+        <p className="text-xs text-gray-500">登録・ログインは無料です（30秒）</p>
+        <div className="flex gap-3 justify-center">
+          <a
+            href={`/login?next=${encodeURIComponent(typeof window !== "undefined" ? window.location.pathname : "/")}`}
+            className="bg-blue-700 text-white px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-blue-800 transition-colors"
+          >
+            ログイン
+          </a>
+          <a
+            href="/signup"
+            className="border border-blue-300 text-blue-700 px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-blue-100 transition-colors"
+          >
+            新規登録
+          </a>
         </div>
-        {threadUrl && (
-          <div className="bg-white border border-emerald-200 rounded-xl p-4 space-y-2">
-            <p className="text-xs font-semibold text-emerald-700">返信確認用リンク（保存してください）</p>
-            <p className="text-xs text-gray-500 leading-relaxed">このURLから経験者の返信を確認できます。ブックマークしておいてください。</p>
-            <div className="flex gap-2">
-              <input
-                readOnly
-                value={threadUrl}
-                className="flex-1 text-xs border border-gray-200 rounded-lg px-3 py-2 bg-gray-50 text-gray-600 focus:outline-none"
-                onFocus={(e) => e.target.select()}
-              />
-              <button
-                onClick={() => { navigator.clipboard.writeText(threadUrl); }}
-                className="px-3 py-2 bg-emerald-600 text-white text-xs rounded-lg hover:bg-emerald-700 transition-colors flex-shrink-0"
-              >
-                コピー
-              </button>
-            </div>
-          </div>
-        )}
       </div>
     );
   }
@@ -99,6 +98,13 @@ export function InquiryForm({ proLinkedInId, services }: Props) {
         <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-gray-600 text-xl leading-none">×</button>
       </div>
 
+      {/* ログイン中のユーザー情報 */}
+      <div className="flex items-center gap-2 bg-white border border-blue-100 rounded-xl px-4 py-2.5 mb-4">
+        <span className="text-xs text-gray-500">送信者：</span>
+        <span className="text-sm font-medium text-gray-800">{session?.user?.name ?? ""}</span>
+        <span className="text-xs text-gray-400">{session?.user?.email ?? ""}</span>
+      </div>
+
       <form onSubmit={handleSubmit} className="space-y-4">
         {services.length > 0 && (
           <div>
@@ -115,32 +121,6 @@ export function InquiryForm({ proLinkedInId, services }: Props) {
             </select>
           </div>
         )}
-
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">お名前（任意）</label>
-            <input
-              type="text"
-              value={form.client_name}
-              onChange={(e) => setForm((p) => ({ ...p, client_name: e.target.value }))}
-              placeholder="山田 太郎"
-              className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
-              メールアドレス <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="email"
-              value={form.client_email}
-              onChange={(e) => setForm((p) => ({ ...p, client_email: e.target.value }))}
-              placeholder="your@email.com"
-              required
-              className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-        </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1.5">
@@ -194,7 +174,6 @@ export function InquiryForm({ proLinkedInId, services }: Props) {
             </>
           ) : "送信する"}
         </button>
-        <p className="text-xs text-gray-400 text-center">送信後、経験者からメールで返信が届きます</p>
       </form>
     </div>
   );
