@@ -127,7 +127,7 @@ export default async function ProfilePage(props: PageProps<"/profile/[id]">) {
                 </h2>
                 <div className="space-y-3">
                   {services.filter((s) => s.service_type !== "ongoing").map((s) => (
-                    <div key={s.id} className="border border-gray-200 rounded-xl p-5">
+                    <div key={s.id} className="border border-gray-200 rounded-xl p-5 space-y-3">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
                           <h3 className="font-semibold text-gray-900">{s.title}</h3>
@@ -140,6 +140,12 @@ export default async function ProfilePage(props: PageProps<"/profile/[id]">) {
                           <div className="text-xs text-gray-400 mt-0.5">{s.days}日以内</div>
                         </div>
                       </div>
+                      {s.experience_story && (
+                        <div className="bg-amber-50 border border-amber-100 rounded-lg px-4 py-3">
+                          <p className="text-xs font-semibold text-amber-700 mb-1">💬 実体験</p>
+                          <p className="text-xs text-gray-600 leading-relaxed">{s.experience_story}</p>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -154,7 +160,7 @@ export default async function ProfilePage(props: PageProps<"/profile/[id]">) {
                 </h2>
                 <div className="space-y-3">
                   {services.filter((s) => s.service_type === "ongoing").map((s) => (
-                    <div key={s.id} className="border border-purple-200 bg-purple-50 rounded-xl p-5">
+                    <div key={s.id} className="border border-purple-200 bg-purple-50 rounded-xl p-5 space-y-3">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
@@ -173,6 +179,12 @@ export default async function ProfilePage(props: PageProps<"/profile/[id]">) {
                           <div className="text-xs text-gray-400 mt-0.5">{s.days}ヶ月〜</div>
                         </div>
                       </div>
+                      {s.experience_story && (
+                        <div className="bg-amber-50 border border-amber-100 rounded-lg px-4 py-3">
+                          <p className="text-xs font-semibold text-amber-700 mb-1">💬 実体験</p>
+                          <p className="text-xs text-gray-600 leading-relaxed">{s.experience_story}</p>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

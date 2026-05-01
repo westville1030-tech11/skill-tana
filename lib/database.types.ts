@@ -6,6 +6,7 @@ export type Service = {
   days: number;
   service_type?: "spot" | "ongoing";
   frequency?: string;
+  experience_story?: string; // 「どんな問題に直面し、どう解決したか」の実体験
 };
 
 export type Profile = {

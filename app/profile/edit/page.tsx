@@ -41,9 +41,20 @@ export default function EditProfilePage() {
   // 成果物
   const [services, setServices] = useState<Service[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showAIChat, setShowAIChat] = useState(false);
   const [newForm, setNewForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState(emptyForm);
+
+  // AI壁打ち（成果物作成）
+  const [chatMessages, setChatMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
+  const [chatInput, setChatInput] = useState("");
+  const [chatRounds, setChatRounds] = useState(0);
+  const [chatThinking, setChatThinking] = useState(false);
+  const [chatDraft, setChatDraft] = useState<{
+    title: string; description: string; experience_story: string;
+    price_suggestion: number; days_suggestion: number; service_type: "spot" | "ongoing";
+  } | null>(null);
 
   // AIドラフト
   const [resumeFile, setResumeFile] = useState<File | null>(null);
@@ -174,6 +185,50 @@ export default function EditProfilePage() {
     const next = skills.filter((x) => x !== s);
     setSkills(next);
     save({ skills: next });
+  };
+
+  const sendChatMessage = async () => {
+    const text = chatInput.trim();
+    if (!text || chatThinking) return;
+    setChatInput("");
+    const next = [...chatMessages, { role: "user" as const, content: text }];
+    setChatMessages(next);
+    setChatThinking(true);
+    try {
+      const res = await fetch("/api/chat-service-create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: next }),
+      });
+      const data = await res.json();
+      const newRounds = chatRounds + 1;
+      setChatRounds(newRounds);
+      setChatMessages([...next, { role: "assistant", content: data.text }]);
+      if (data.serviceDraft) setChatDraft(data.serviceDraft);
+    } finally {
+      setChatThinking(false);
+    }
+  };
+
+  const confirmChatDraft = () => {
+    if (!chatDraft) return;
+    const s: Service = {
+      id: crypto.randomUUID(),
+      title: chatDraft.title,
+      description: chatDraft.description,
+      experience_story: chatDraft.experience_story,
+      price: chatDraft.price_suggestion,
+      days: chatDraft.days_suggestion,
+      service_type: chatDraft.service_type,
+    };
+    const next = [...services, s];
+    setServices(next);
+    save({ services: next });
+    setShowAIChat(false);
+    setChatMessages([]);
+    setChatRounds(0);
+    setChatDraft(null);
+    setChatInput("");
   };
 
   const addCompany = (val: string) => {
@@ -505,14 +560,114 @@ export default function EditProfilePage() {
         <div className="flex items-start justify-between mb-4">
           <div>
             <h2 className="text-sm font-semibold text-gray-700">成果物メニュー</h2>
-            <p className="text-xs text-gray-400 mt-0.5">イチバの棚に並べる成果物を登録してください</p>
+            <p className="text-xs text-gray-400 mt-0.5">実体験をもとにAIが商品案を作ります</p>
           </div>
-          {!showAddForm && (
-            <button onClick={() => setShowAddForm(true)} className="text-sm bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors">
-              + 追加
-            </button>
+          {!showAddForm && !showAIChat && (
+            <div className="flex gap-2">
+              <button
+                onClick={() => { setShowAIChat(true); setChatMessages([]); setChatRounds(0); setChatDraft(null); }}
+                className="text-sm bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors"
+              >
+                ✨ AI壁打ちで追加
+              </button>
+              <button onClick={() => setShowAddForm(true)} className="text-sm border border-gray-300 text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+                手動で追加
+              </button>
+            </div>
           )}
         </div>
+
+        {/* AI壁打ちチャット */}
+        {showAIChat && !chatDraft && (
+          <div className="mb-4 border border-blue-200 bg-blue-50 rounded-xl p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-semibold text-blue-700">✨ 実体験から商品を作る</p>
+              <button onClick={() => setShowAIChat(false)} className="text-xs text-gray-400 hover:text-gray-600">キャンセル</button>
+            </div>
+            <p className="text-xs text-blue-600">あなたが直面した問題と解決策をAIに話すと、商品案を自動で作ります。</p>
+
+            <div className="space-y-2 max-h-64 overflow-y-auto">
+              {chatMessages.map((m, i) => (
+                <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+                  <div className={`max-w-[85%] rounded-xl px-3 py-2 text-xs leading-relaxed ${
+                    m.role === "user" ? "bg-blue-600 text-white" : "bg-white border border-blue-100 text-gray-700"
+                  }`}>
+                    {m.content}
+                  </div>
+                </div>
+              ))}
+              {chatThinking && (
+                <div className="flex justify-start">
+                  <div className="bg-white border border-blue-100 rounded-xl px-3 py-2">
+                    <span className="flex gap-1">{[0,1,2].map(i => <span key={i} className="w-1 h-1 bg-gray-400 rounded-full animate-bounce" style={{animationDelay:`${i*0.15}s`}} />)}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-2">
+              <textarea
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendChatMessage(); } }}
+                placeholder={chatMessages.length === 0 ? "例: 製造ラインの不良率が高くて困っていた..." : "続きを入力...（Enterで送信）"}
+                className="flex-1 border border-blue-200 rounded-lg px-3 py-2 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-400 resize-none"
+                rows={2}
+              />
+              <button
+                onClick={sendChatMessage}
+                disabled={!chatInput.trim() || chatThinking}
+                className="bg-blue-600 text-white px-3 rounded-lg disabled:opacity-40 flex-shrink-0"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* AI生成の商品案レビュー */}
+        {showAIChat && chatDraft && (
+          <div className="mb-4 border border-emerald-200 bg-emerald-50 rounded-xl p-4 space-y-3">
+            <p className="text-xs font-semibold text-emerald-700">✓ 商品案ができました — 内容を確認してください</p>
+            <div className="bg-white border border-emerald-100 rounded-lg p-3 space-y-2">
+              <input
+                className="w-full text-sm font-semibold text-gray-900 border-b border-gray-100 pb-1 focus:outline-none"
+                value={chatDraft.title}
+                onChange={(e) => setChatDraft(d => d ? { ...d, title: e.target.value } : d)}
+              />
+              <textarea
+                className="w-full text-xs text-gray-600 resize-none focus:outline-none leading-relaxed"
+                rows={2}
+                value={chatDraft.description}
+                onChange={(e) => setChatDraft(d => d ? { ...d, description: e.target.value } : d)}
+              />
+              <div className="border-t border-gray-100 pt-2">
+                <p className="text-xs text-gray-400 mb-1 font-medium">実体験ストーリー</p>
+                <textarea
+                  className="w-full text-xs text-gray-600 resize-none focus:outline-none leading-relaxed bg-amber-50 rounded px-2 py-1"
+                  rows={3}
+                  value={chatDraft.experience_story}
+                  onChange={(e) => setChatDraft(d => d ? { ...d, experience_story: e.target.value } : d)}
+                />
+              </div>
+              <div className="flex gap-3 text-xs text-gray-500">
+                <span>¥{chatDraft.price_suggestion.toLocaleString()}</span>
+                <span>{chatDraft.days_suggestion}日以内</span>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <button onClick={confirmChatDraft} className="flex-1 bg-emerald-600 text-white text-sm py-2 rounded-lg hover:bg-emerald-700 transition-colors font-medium">
+                この内容で出品する
+              </button>
+              <button onClick={() => { setShowAIChat(false); setChatDraft(null); }} className="flex-1 border border-gray-300 text-gray-600 text-sm py-2 rounded-lg hover:bg-gray-50">
+                キャンセル
+              </button>
+            </div>
+          </div>
+        )}
+
 
         <div className="space-y-3">
           {services.map((s) =>
