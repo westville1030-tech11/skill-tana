@@ -165,7 +165,7 @@ export default function Home() {
       <section className="py-28 px-4 bg-slate-50">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">発注から納品まで</h2>
-          <p className="text-center text-gray-400 mb-14">メールで直接やりとり。プラットフォームの外に出ません</p>
+          <p className="text-center text-gray-400 mb-14">AIが両側の精度を上げ、経験者の知見が価値を生む</p>
 
           <div className="flex flex-col md:flex-row items-start">
             {deliveryFlow.map((step, i) => (
@@ -175,6 +175,11 @@ export default function Home() {
                     {i + 1}
                   </div>
                   <div className="flex-1 pb-8 md:pb-0 md:px-3">
+                    {step.badge && (
+                      <span className="inline-block text-[10px] font-bold px-2 py-0.5 rounded-full mb-1.5 bg-blue-100 text-blue-700">
+                        {step.badge}
+                      </span>
+                    )}
                     <h3 className="font-bold text-gray-900 text-sm leading-snug">{step.title}</h3>
                     <p className="text-xs text-gray-400 mt-1 leading-relaxed">{step.desc}</p>
                     <span className="num text-xs text-blue-500 font-bold">{step.time}</span>
@@ -515,11 +520,11 @@ const steps = [
 ];
 
 const deliveryFlow = [
-  { title: "イチバの棚で成果物を選ぶ", desc: "気になる成果物を見つける", time: "〜5分" },
-  { title: "サイト上で問い合わせ", desc: "フォームから希望・予算・納期を送信", time: "当日中" },
-  { title: "要件すり合わせ", desc: "チャットまたは30分MTGで詳細確認", time: "〜1日" },
-  { title: "AI作成・経験者が仕上げ", desc: "AIでドラフト生成、経験者が検証・示唆付与", time: "1〜5日" },
-  { title: "納品・完了", desc: "成果物を受け取り、お支払い", time: "完了" },
+  { title: "AIと壁打ちして依頼を整理", desc: "課題・期待値・制約をAIと一緒に言語化。ミスマッチを事前に防ぐ", time: "〜5分", badge: "発注者側AI" },
+  { title: "経験者へ問い合わせ", desc: "整理した要件をもとにフォームで送信。当日中に返信", time: "当日中", badge: null },
+  { title: "着手前の要件確認", desc: "経験者が「この理解で進めます」を一往復。認識ズレをゼロにしてから着手", time: "〜1日", badge: null },
+  { title: "AIドラフト＋経験者の付加価値", desc: "AIが叩き台を生成し、経験者が実体験・知見で仕上げ。ここが価値の源泉", time: "1〜5日", badge: "経験者の知見" },
+  { title: "納品＋修正1回対応", desc: "成果物を受け取り。内容に対して修正が1回まで含まれます", time: "完了", badge: "修正1回保証" },
 ];
 
 const commercializationCases = [
