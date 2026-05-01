@@ -17,10 +17,7 @@ export default function Home() {
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <div className="inline-flex items-center gap-1.5 bg-white/10 border border-white/15 text-white text-xs font-medium px-4 py-1.5 rounded-full">
-                    ✓ 現役社員 — 法人メール認証
-                  </div>
-                  <div className="inline-flex items-center gap-1.5 bg-white/10 border border-white/15 text-white text-xs font-medium px-4 py-1.5 rounded-full">
-                    ✓ 退職者・OB — 過去名刺認証
+                    ✓ 過去名刺認証で経歴を証明
                   </div>
                 </div>
               </div>
@@ -299,8 +296,7 @@ export default function Home() {
       <section className="py-28 px-4 bg-gradient-to-br from-slate-900 via-blue-950 to-blue-800">
         <div className="max-w-xl mx-auto text-center">
           <h2 className="text-3xl font-black text-white mb-4">今すぐイチバの棚に並べる</h2>
-          <p className="text-slate-300 mb-2">メールアドレスがあれば30秒で登録完了。</p>
-          <p className="text-slate-400 text-sm mb-2">法人メール認証済みのため、経歴詐称・なりすましゼロ。</p>
+          <p className="text-slate-300 mb-6">メールアドレスがあれば30秒で登録完了。</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link href="/profile/edit"
               className="bg-gradient-to-r from-blue-500 to-blue-400 text-white px-10 py-4 rounded-xl font-bold hover:opacity-90 transition-opacity shadow-lg shadow-blue-900/50">

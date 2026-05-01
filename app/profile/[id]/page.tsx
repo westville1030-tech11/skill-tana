@@ -117,15 +117,12 @@ export default async function ProfilePage(props: PageProps<"/profile/[id]">) {
         )}
 
         {/* 信頼バッジ */}
-        {(profile.corporate_email_verified || profile.card_verified) && (
+        {profile.card_verified && (
           <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 space-y-2">
             <div className="flex items-center gap-2">
               <span className="text-blue-600">✓</span>
               <span className="font-semibold text-blue-800 text-sm">経験イチバ 認証済みのプロ</span>
             </div>
-            {profile.corporate_email_verified && (
-              <p className="text-sm text-blue-700">法人メールアドレスで現所属を確認済みです。</p>
-            )}
             {profile.card_verified && (
               <p className="text-sm text-blue-700">
                 名刺で過去所属（{[profile.card_company, profile.card_role].filter(Boolean).join(" / ")}）を確認済みです。
