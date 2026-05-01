@@ -10,13 +10,18 @@ export default function Home() {
 
             {/* Left */}
             <div className="flex-1 text-center lg:text-left">
-              <div className="flex flex-col sm:flex-row items-center lg:items-start gap-2 mb-8">
+              <div className="flex flex-col items-center lg:items-start gap-2 mb-8">
                 <div className="inline-flex items-center gap-2 bg-white/10 border border-white/15 text-white text-sm font-medium px-5 py-2 rounded-full">
                   <span className="w-2 h-2 bg-emerald-400 rounded-full inline-block flex-shrink-0" />
                   AIが運営・設計を担うため、利用料はすべて無料です
                 </div>
-                <div className="inline-flex items-center gap-1.5 bg-white/10 border border-white/15 text-white text-xs font-medium px-4 py-1.5 rounded-full">
-                  ✓ 法人メール認証 — 経歴詐称ゼロ
+                <div className="flex flex-wrap gap-2">
+                  <div className="inline-flex items-center gap-1.5 bg-white/10 border border-white/15 text-white text-xs font-medium px-4 py-1.5 rounded-full">
+                    ✓ 現役社員 — 法人メール認証
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 bg-white/10 border border-white/15 text-white text-xs font-medium px-4 py-1.5 rounded-full">
+                    ✓ 退職者・OB — 過去名刺認証
+                  </div>
                 </div>
               </div>
 
@@ -25,8 +30,8 @@ export default function Home() {
                 <span className="text-blue-300">パッケージ化し、より多くの人へ</span>
               </h1>
               <p className="text-slate-300 mb-10 leading-relaxed text-lg">
-                生成AIで高速ドラフト、経験者が確認・仕上げて納品。<br className="hidden md:block" />
-                週末1〜2時間から。仲介手数料はゼロ。
+                現役もOBも、定年後も。積み上げてきた経験は<br className="hidden md:block" />
+                次の世代にとって、何よりの教科書になる。
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-12">
