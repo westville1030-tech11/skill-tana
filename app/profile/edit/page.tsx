@@ -49,6 +49,17 @@ export default function EditProfilePage() {
   const [drafting, setDrafting] = useState(false);
   const [draftDone, setDraftDone] = useState(false);
 
+  // 法人メール認証
+  const [corpEmail, setCorpEmail] = useState("");
+  const [corpCode, setCorpCode] = useState("");
+  const [corpCodeSent, setCorpCodeSent] = useState(false);
+  const [corpSending, setCorpSending] = useState(false);
+  const [corpVerifying, setCorpVerifying] = useState(false);
+  const [corpVerified, setCorpVerified] = useState(false);
+  const [corpDomain, setCorpDomain] = useState("");
+  const [corpSendError, setCorpSendError] = useState("");
+  const [corpVerifyError, setCorpVerifyError] = useState("");
+
   useEffect(() => {
     if (session?.user) {
       fetch("/api/my-profile")
@@ -67,6 +78,8 @@ export default function EditProfilePage() {
             setLinkedinConnections(data.linkedin_connections ?? "");
             setServices(data.services ?? []);
             setPastCompanies(data.past_companies ?? []);
+            setCorpVerified(data.corporate_email_verified ?? false);
+            setCorpDomain(data.corporate_email_domain ?? "");
           }
         })
         .catch(() => {});
@@ -163,6 +176,47 @@ export default function EditProfilePage() {
     const next = skills.filter((x) => x !== s);
     setSkills(next);
     save({ skills: next });
+  };
+
+  const sendCorpCode = async () => {
+    setCorpSending(true);
+    setCorpSendError("");
+    try {
+      const res = await fetch("/api/verify-corporate/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: corpEmail }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setCorpSendError(data.error); return; }
+      setCorpCodeSent(true);
+    } catch {
+      setCorpSendError("送信に失敗しました");
+    } finally {
+      setCorpSending(false);
+    }
+  };
+
+  const confirmCorpCode = async () => {
+    setCorpVerifying(true);
+    setCorpVerifyError("");
+    try {
+      const res = await fetch("/api/verify-corporate/confirm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: corpCode }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setCorpVerifyError(data.error); return; }
+      setCorpVerified(true);
+      setCorpDomain(data.domain);
+      setCorpCodeSent(false);
+      setCorpCode("");
+    } catch {
+      setCorpVerifyError("認証に失敗しました");
+    } finally {
+      setCorpVerifying(false);
+    }
   };
 
   const addCompany = (val: string) => {
@@ -272,6 +326,85 @@ export default function EditProfilePage() {
             </span>
           </div>
         </div>
+      </section>
+
+      {/* ── 法人メール認証 ── */}
+      <section className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-sm font-semibold text-gray-700">法人メール認証</h2>
+            <p className="text-xs text-gray-400 mt-0.5">会社のメールアドレスを認証すると「企業認証済み」バッジが付きます</p>
+          </div>
+          {corpVerified && (
+            <span className="flex items-center gap-1 text-xs text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 font-semibold">
+              ✓ 企業認証済み
+            </span>
+          )}
+        </div>
+
+        {corpVerified ? (
+          <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 text-sm text-emerald-700">
+            <span className="font-semibold">@{corpDomain}</span> で認証済みです
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {!corpCodeSent ? (
+              <div>
+                <label className="block text-sm text-gray-600 mb-1.5">会社のメールアドレス</label>
+                <div className="flex gap-2">
+                  <input
+                    type="email"
+                    value={corpEmail}
+                    onChange={(e) => { setCorpEmail(e.target.value); setCorpSendError(""); }}
+                    placeholder="you@yourcompany.com"
+                    className="flex-1 border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <button
+                    onClick={sendCorpCode}
+                    disabled={corpSending || !corpEmail.includes("@")}
+                    className="bg-blue-700 text-white px-4 py-2.5 rounded-xl text-sm hover:bg-blue-800 transition-colors disabled:opacity-50 whitespace-nowrap"
+                  >
+                    {corpSending ? "送信中..." : "コードを送る"}
+                  </button>
+                </div>
+                {corpSendError && <p className="text-xs text-red-500 mt-1.5">{corpSendError}</p>}
+              </div>
+            ) : (
+              <>
+                <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 text-sm text-blue-700">
+                  <span className="font-semibold">{corpEmail}</span> に6桁の認証コードを送信しました
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1.5">認証コード（6桁）</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={corpCode}
+                      onChange={(e) => { setCorpCode(e.target.value.replace(/\D/g, "").slice(0, 6)); setCorpVerifyError(""); }}
+                      placeholder="123456"
+                      maxLength={6}
+                      className="flex-1 border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 tracking-widest font-mono"
+                    />
+                    <button
+                      onClick={confirmCorpCode}
+                      disabled={corpVerifying || corpCode.length !== 6}
+                      className="bg-blue-700 text-white px-4 py-2.5 rounded-xl text-sm hover:bg-blue-800 transition-colors disabled:opacity-50 whitespace-nowrap"
+                    >
+                      {corpVerifying ? "確認中..." : "認証する"}
+                    </button>
+                  </div>
+                  {corpVerifyError && <p className="text-xs text-red-500 mt-1.5">{corpVerifyError}</p>}
+                </div>
+                <button
+                  onClick={() => { setCorpCodeSent(false); setCorpCode(""); setCorpVerifyError(""); }}
+                  className="text-xs text-gray-400 hover:text-gray-600"
+                >
+                  メールアドレスを変更する
+                </button>
+              </>
+            )}
+          </div>
+        )}
       </section>
 
       {/* ── プロフィール基本情報 ── */}
