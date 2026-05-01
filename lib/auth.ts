@@ -84,6 +84,14 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/login",
   },
+  logger: {
+    error(code, metadata) {
+      console.error("[next-auth] ERROR:", code, JSON.stringify(metadata));
+    },
+    warn(code) {
+      console.warn("[next-auth] WARN:", code);
+    },
+  },
   secret: process.env.NEXTAUTH_SECRET,
   cookies: {
     pkceCodeVerifier: {
