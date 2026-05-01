@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useSession, signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import type { Service } from "@/lib/database.types";
@@ -97,15 +97,8 @@ export default function EditProfilePage() {
         <h1 className="text-2xl font-bold text-gray-900 mb-4">棚に並べる</h1>
         <p className="text-gray-600 mb-8">ログインして、成果物を棚に並べましょう。</p>
         <div className="space-y-3">
-          <button
-            onClick={() => signIn("linkedin")}
-            className="w-full flex items-center justify-center gap-2 bg-blue-700 text-white px-8 py-3 rounded-xl font-medium hover:bg-blue-800 transition-colors"
-          >
-            <LinkedInIcon />
-            LinkedInでログイン（認証バッジ付き）
-          </button>
-          <a href="/login" className="w-full flex items-center justify-center bg-gray-900 text-white px-8 py-3 rounded-xl font-medium hover:bg-gray-700 transition-colors">
-            メールでログイン
+          <a href="/login" className="w-full flex items-center justify-center bg-blue-700 text-white px-8 py-3 rounded-xl font-medium hover:bg-blue-800 transition-colors">
+            ログイン
           </a>
           <a href="/signup" className="w-full flex items-center justify-center border border-gray-300 text-gray-700 px-8 py-3 rounded-xl font-medium hover:bg-gray-50 transition-colors">
             新規登録（無料）
@@ -323,7 +316,7 @@ export default function EditProfilePage() {
             <p className="font-semibold text-gray-800">{session.user?.name}</p>
             <p className="text-sm text-gray-500">{session.user?.email}</p>
             <span className="inline-flex items-center gap-1 text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full mt-1.5 border border-blue-100">
-              <LinkedInIcon small /> LinkedIn認証済み
+              ✓ ログイン済み
             </span>
           </div>
         </div>
@@ -834,13 +827,5 @@ function CompanyLogo({ name, size = 20 }: { name: string; size?: number }) {
         {initials}
       </span>
     </span>
-  );
-}
-
-function LinkedInIcon({ small }: { small?: boolean }) {
-  return (
-    <svg className={small ? "w-3 h-3" : "w-5 h-5"} fill="currentColor" viewBox="0 0 24 24">
-      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-    </svg>
   );
 }

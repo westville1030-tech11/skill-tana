@@ -203,7 +203,7 @@ export default function RequestPage() {
           </h2>
           {results.length > 0 && (
             <p className="text-sm text-gray-400 mb-6">
-              各経験者のLinkedInページから直接ご連絡ください
+              各経験者に直接ご連絡ください
             </p>
           )}
 

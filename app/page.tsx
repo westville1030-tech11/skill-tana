@@ -16,8 +16,7 @@ export default function Home() {
                   AIが運営・設計を担うため、利用料はすべて無料です
                 </div>
                 <div className="inline-flex items-center gap-1.5 bg-white/10 border border-white/15 text-white text-xs font-medium px-4 py-1.5 rounded-full">
-                  <LinkedInIcon small />
-                  LinkedIn認証 — 経歴詐称ゼロ
+                  ✓ 法人メール認証 — 経歴詐称ゼロ
                 </div>
               </div>
 
@@ -199,7 +198,7 @@ export default function Home() {
       <section className="py-28 px-4 bg-slate-50">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">発注から納品まで</h2>
-          <p className="text-center text-gray-400 mb-14">LinkedIn経由でシンプルに進行。プラットフォームの外に出ません</p>
+          <p className="text-center text-gray-400 mb-14">メールで直接やりとり。プラットフォームの外に出ません</p>
 
           <div className="flex flex-col md:flex-row items-start">
             {deliveryFlow.map((step, i) => (
@@ -291,8 +290,8 @@ export default function Home() {
       <section className="py-28 px-4 bg-gradient-to-br from-slate-900 via-blue-950 to-blue-800">
         <div className="max-w-xl mx-auto text-center">
           <h2 className="text-3xl font-black text-white mb-4">今すぐ棚に並べる</h2>
-          <p className="text-slate-300 mb-2">LinkedInアカウントがあれば30秒で登録完了。</p>
-          <p className="text-slate-400 text-sm mb-2">LinkedIn認証済みのため、経歴詐称・なりすましゼロ。</p>
+          <p className="text-slate-300 mb-2">メールアドレスがあれば30秒で登録完了。</p>
+          <p className="text-slate-400 text-sm mb-2">法人メール認証済みのため、経歴詐称・なりすましゼロ。</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link href="/profile/edit"
               className="bg-gradient-to-r from-blue-500 to-blue-400 text-white px-10 py-4 rounded-xl font-bold hover:opacity-90 transition-opacity shadow-lg shadow-blue-900/50">
@@ -481,18 +480,10 @@ function IconFileText() {
   );
 }
 
-function LinkedInIcon({ small }: { small?: boolean }) {
-  return (
-    <svg className={small ? "w-3 h-3" : "w-5 h-5"} fill="currentColor" viewBox="0 0 24 24">
-      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-    </svg>
-  );
-}
-
 /* ---- データ ---- */
 const stats = [
   { value: "¥0", label: "手数料・仲介料" },
-  { value: "経歴証明", label: "LinkedIn認証済み" },
+  { value: "経歴証明", label: "法人メール認証済み" },
   { value: "固定価格", label: "成果物単位" },
   { value: "週末OK", label: "スポット対応" },
 ];
@@ -500,7 +491,7 @@ const stats = [
 const zeroItems = ["登録料", "月額利用料", "成約手数料", "中間マージン"];
 
 const steps = [
-  { title: "LinkedInでログイン", desc: "LinkedInアカウントで認証。30秒で完了。職歴・つながり数が自動で信頼の証明になる。" },
+  { title: "メールで登録", desc: "メールアドレスで30秒登録。会社メールで法人認証すると信頼バッジが付く。" },
   { title: "成果物を棚に並べる", desc: "「CSV分析¥30,000・3日」のように成果物・価格・納期を登録する。自由記述なし、詐称不可。" },
   { title: "AIで作成、経験者が仕上げて納品", desc: "発注を受けたら生成AIで高速ドラフト。経験者の知見でファクトチェック・示唆を付与して納品。" },
 ];

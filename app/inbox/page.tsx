@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession, signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 
 type Inquiry = {
@@ -58,13 +58,13 @@ export default function InboxPage() {
     return (
       <div className="max-w-md mx-auto px-4 py-24 text-center">
         <h1 className="text-2xl font-bold text-gray-900 mb-4">受信箱</h1>
-        <p className="text-gray-500 mb-8">LinkedInでログインすると問い合わせを確認できます。</p>
-        <button
-          onClick={() => signIn("linkedin")}
-          className="flex items-center gap-2 bg-blue-700 text-white px-8 py-3 rounded-xl font-medium mx-auto hover:bg-blue-800 transition-colors"
+        <p className="text-gray-500 mb-8">ログインすると問い合わせを確認できます。</p>
+        <a
+          href="/login"
+          className="inline-flex items-center bg-blue-700 text-white px-8 py-3 rounded-xl font-medium hover:bg-blue-800 transition-colors"
         >
-          LinkedInでログイン
-        </button>
+          ログイン
+        </a>
       </div>
     );
   }
