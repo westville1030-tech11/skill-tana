@@ -1,5 +1,4 @@
 import type { NextAuthOptions } from "next-auth";
-import LinkedInProvider from "next-auth/providers/linkedin";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { createClient } from "@supabase/supabase-js";
 import bcrypt from "bcryptjs";
@@ -11,12 +10,30 @@ function getSupabaseAdmin() {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const linkedInOIDC: any = {
+  id: "linkedin",
+  name: "LinkedIn",
+  type: "oidc",
+  issuer: "https://www.linkedin.com/oauth",
+  wellKnown: "https://www.linkedin.com/oauth/.well-known/openid-configuration",
+  authorization: { params: { scope: "openid profile email" } },
+  clientId: process.env.LINKEDIN_CLIENT_ID,
+  clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
+  client: { token_endpoint_auth_method: "client_secret_post" },
+  profile(profile: Record<string, unknown>) {
+    return {
+      id: profile.sub as string,
+      name: (profile.name as string) ?? "",
+      email: (profile.email as string) ?? "",
+      image: (profile.picture as string) ?? null,
+    };
+  },
+};
+
 export const authOptions: NextAuthOptions = {
   providers: [
-    LinkedInProvider({
-      clientId: process.env.LINKEDIN_CLIENT_ID!,
-      clientSecret: process.env.LINKEDIN_CLIENT_SECRET!,
-    }),
+    linkedInOIDC,
     CredentialsProvider({
       name: "credentials",
       credentials: {
