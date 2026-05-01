@@ -102,47 +102,62 @@ export default function Home() {
         </div>
       </section>
 
-      {/* AI × 経験者の価値 */}
+      {/* AIが伴走する両側設計 */}
       <section className="py-28 px-4 bg-slate-50">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">なぜ安く、早いのか</h2>
-          <p className="text-center text-gray-400 mb-12">AI × 経験者の専門知識 = 高品質・低コスト</p>
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">AIが、あなたの一歩目を手伝います</h2>
+          <p className="text-center text-gray-400 mb-14">発注も、出品も、AIが伴走。はじめての人でも迷わず使えます。</p>
 
-          <div className="flex flex-col md:flex-row items-stretch gap-4 mb-8">
-            <div className="flex-1 bg-white border border-gray-100 rounded-2xl p-6 text-center">
-              <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center mx-auto mb-4">
-                <IconCpu />
-              </div>
-              <h3 className="font-bold text-gray-900 mb-2">AIが高速ドラフト</h3>
-              <p className="text-sm text-gray-500 leading-relaxed">数時間かかる作業を生成AIが数分で初稿を生成</p>
-            </div>
-            <div className="hidden md:flex items-center justify-center text-gray-200 text-xl flex-shrink-0">→</div>
-            <div className="flex-1 bg-white border border-gray-100 rounded-2xl p-6 text-center">
-              <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center mx-auto mb-4">
-                <IconShieldCheck />
-              </div>
-              <h3 className="font-bold text-gray-900 mb-2">経験者がファクトチェック</h3>
-              <p className="text-sm text-gray-500 leading-relaxed">AIの誤情報・文脈のズレを経験者が検証・修正</p>
-            </div>
-            <div className="hidden md:flex items-center justify-center text-gray-200 text-xl flex-shrink-0">→</div>
-            <div className="flex-1 bg-white border border-gray-100 rounded-2xl p-6 text-center">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center mx-auto mb-4">
-                <IconLightbulb />
-              </div>
-              <h3 className="font-bold text-gray-900 mb-2">経験者が示唆を付与</h3>
-              <p className="text-sm text-gray-500 leading-relaxed">業界知見・状況判断はAIにはできない。経験者が実態に即した価値を加える</p>
-            </div>
-          </div>
+          <div className="grid md:grid-cols-2 gap-6">
 
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div className="bg-white border border-gray-100 rounded-2xl p-5">
-              <p className="text-sm font-bold text-gray-800 mb-2">「AIだけで十分では？」</p>
-              <p className="text-sm text-gray-500 leading-relaxed">AIは平均的な回答しか出せません。貴社の状況・業界固有の文脈に即した示唆や、数字の意味を読む判断は、経験者の経験があって初めて可能です。</p>
+            {/* 発注したい人 */}
+            <div className="bg-white rounded-2xl border border-blue-100 p-7 flex flex-col gap-5">
+              <div>
+                <span className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">発注したい人へ</span>
+                <h3 className="text-lg font-bold text-gray-900 mt-3 mb-2 leading-snug">「課題はある。でも、うまく<br className="hidden sm:block" />伝えられるか不安…」</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">何を頼めばいいかあいまいでも大丈夫。AIが質問を返しながら、依頼内容を一緒に整理します。</p>
+              </div>
+              <div className="space-y-2">
+                {[
+                  { step: "1", label: "課題を自由に入力" },
+                  { step: "2", label: "AIが3回、深掘り質問" },
+                  { step: "3", label: "整理された依頼で経験者を探す" },
+                ].map((s) => (
+                  <div key={s.step} className="flex items-center gap-3">
+                    <span className="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-black flex items-center justify-center flex-shrink-0">{s.step}</span>
+                    <span className="text-sm text-gray-700">{s.label}</span>
+                  </div>
+                ))}
+              </div>
+              <Link href="/request" className="mt-auto block text-center bg-blue-600 text-white py-3 rounded-xl text-sm font-bold hover:bg-blue-700 transition-colors">
+                AIに発注相談してみる →
+              </Link>
             </div>
-            <div className="bg-white border border-gray-100 rounded-2xl p-5">
-              <p className="text-sm font-bold text-gray-800 mb-2">「AIの修正作業が大変では？」</p>
-              <p className="text-sm text-gray-500 leading-relaxed">AIの活用で作業時間は約80%削減。経験者は検証・仕上げの20%に集中するだけ。だから週末2時間で完結する案件設計が実現できます。</p>
+
+            {/* 経験者として登録したい人 */}
+            <div className="bg-white rounded-2xl border border-amber-100 p-7 flex flex-col gap-5">
+              <div>
+                <span className="text-xs font-bold text-amber-700 bg-amber-50 px-3 py-1 rounded-full">経験者として登録したい人へ</span>
+                <h3 className="text-lg font-bold text-gray-900 mt-3 mb-2 leading-snug">「経験を商品化するなんて、<br className="hidden sm:block" />考えたこともなかった…」</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">自分の経験をAIに話すだけ、または職務経歴書を貼るだけ。AIがあなたの経験を整理して、商品案を提案します。</p>
+              </div>
+              <div className="space-y-2">
+                {[
+                  { step: "1", label: "経験を話す or 職務経歴書をアップ" },
+                  { step: "2", label: "AIが商品タイトル・価格・実体験を生成" },
+                  { step: "3", label: "確認してイチバに出品" },
+                ].map((s) => (
+                  <div key={s.step} className="flex items-center gap-3">
+                    <span className="w-6 h-6 rounded-full bg-amber-500 text-white text-xs font-black flex items-center justify-center flex-shrink-0">{s.step}</span>
+                    <span className="text-sm text-gray-700">{s.label}</span>
+                  </div>
+                ))}
+              </div>
+              <Link href="/profile/edit" className="mt-auto block text-center bg-amber-500 text-white py-3 rounded-xl text-sm font-bold hover:bg-amber-600 transition-colors">
+                AIに経験を話してみる →
+              </Link>
             </div>
+
           </div>
         </div>
       </section>
