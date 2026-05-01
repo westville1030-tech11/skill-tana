@@ -29,15 +29,19 @@ export default function Home() {
                 あなたが培ってきた知見を<br />
                 <span className="text-blue-300">パッケージ化し、より多くの人へ</span>
               </h1>
-              <p className="text-slate-300 mb-10 leading-relaxed text-lg">
+              <p className="text-slate-300 mb-4 leading-relaxed text-lg">
                 現役もOBも、定年後も。積み上げてきた経験は<br className="hidden md:block" />
                 次の世代にとって、何よりの教科書になる。
+              </p>
+              <p className="text-slate-400 text-sm mb-10 leading-relaxed">
+                生成AIが成果物のドラフトを高速作成 → 経験者が示唆・検証を加えて納品。<br className="hidden md:block" />
+                AIの速度と、ヒトの知見が融合した新しい働き方。
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-12">
                 <Link href="/profile/edit"
                   className="bg-gradient-to-r from-blue-500 to-blue-400 text-white px-8 py-4 rounded-xl font-bold hover:opacity-90 transition-opacity text-center shadow-lg shadow-blue-900/50">
-                  スキルを登録
+                  イチバに登録
                 </Link>
                 <Link href="/request"
                   className="bg-white/15 border border-white/25 text-white px-8 py-4 rounded-xl font-bold hover:bg-white/20 transition-colors text-center">
