@@ -393,15 +393,13 @@ function ConceptDiagram() {
       {/* 従来型 */}
       <div className="rounded-2xl border border-gray-200 bg-gray-50 px-5 py-4">
         <p className="text-[10px] font-bold text-gray-400 tracking-widest mb-3">従来型</p>
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center">
           <DiagBox icon="🏢" label="クライアント" />
-          <div className="flex-1 flex items-center justify-center gap-1.5">
-            <DiagArrow />
-            <DiagFee label="仲介会社" sub="20〜30%" red />
-            <DiagArrow />
-            <DiagFee label="エージェント" sub="登録料・成約料" amber />
-            <DiagArrow />
-          </div>
+          <DiagArrow stretch />
+          <DiagFee label="仲介会社" sub="20〜30%" red />
+          <DiagArrow stretch />
+          <DiagFee label="エージェント" sub="登録料・成約料" amber />
+          <DiagArrow stretch />
           <DiagBox icon="💼" label="経験者" />
         </div>
       </div>
@@ -409,13 +407,11 @@ function ConceptDiagram() {
       {/* 直接系他社 */}
       <div className="rounded-2xl border border-yellow-200 bg-yellow-50/40 px-5 py-4">
         <p className="text-[10px] font-bold text-yellow-600 tracking-widest mb-3">直接発注系 他社</p>
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center">
           <DiagBox icon="🏢" label="クライアント" />
-          <div className="flex-1 flex items-center justify-center gap-1.5">
-            <DiagArrow />
-            <DiagFee label="プラットフォーム" sub="サービス料 〜20%" amber />
-            <DiagArrow />
-          </div>
+          <DiagArrow stretch />
+          <DiagFee label="プラットフォーム" sub="サービス料 〜20%" amber />
+          <DiagArrow stretch />
           <DiagBox icon="💼" label="経験者" />
         </div>
       </div>
@@ -466,11 +462,13 @@ function DiagBox({ icon, label, blue, ai }: { icon: string; label: string; blue?
   );
 }
 
-function DiagArrow({ blue }: { blue?: boolean }) {
+function DiagArrow({ blue, stretch }: { blue?: boolean; stretch?: boolean }) {
+  const color = blue ? "bg-blue-300" : "bg-gray-300";
+  const fill = blue ? "#93c5fd" : "#d1d5db";
   return (
-    <div className={`flex items-center flex-shrink-0 ${blue ? "text-blue-300" : "text-gray-300"}`}>
-      <div className={`w-4 h-px ${blue ? "bg-blue-300" : "bg-gray-300"}`} />
-      <svg className="w-2 h-2 -ml-px" fill="currentColor" viewBox="0 0 10 10">
+    <div className={`flex items-center ${stretch ? "flex-1 min-w-[16px]" : "flex-shrink-0 w-5"}`}>
+      <div className={`flex-1 h-px ${color}`} />
+      <svg className="w-2 h-2 flex-shrink-0 -ml-px" fill={fill} viewBox="0 0 10 10">
         <path d="M0 2 L6 5 L0 8 Z" />
       </svg>
     </div>
