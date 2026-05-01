@@ -50,17 +50,6 @@ export default function EditProfilePage() {
   const [drafting, setDrafting] = useState(false);
   const [draftDone, setDraftDone] = useState(false);
 
-  // 名刺認証
-  const [cardVerified, setCardVerified] = useState(false);
-  const [cardCompany, setCardCompany] = useState("");
-  const [cardRole, setCardRole] = useState("");
-  const [cardReading, setCardReading] = useState(false);
-  const [cardPreview, setCardPreview] = useState("");
-  const [cardImageBase64, setCardImageBase64] = useState("");
-  const [cardMediaType, setCardMediaType] = useState("");
-  const [cardExtracted, setCardExtracted] = useState<{ company: string; role: string; name: string } | null>(null);
-  const [cardError, setCardError] = useState("");
-
   useEffect(() => {
     if (session?.user) {
       fetch("/api/my-profile")
@@ -79,9 +68,6 @@ export default function EditProfilePage() {
             setLinkedinConnections(data.linkedin_connections ?? "");
             setServices(data.services ?? []);
             setPastCompanies(data.past_companies ?? []);
-            setCardVerified(data.card_verified ?? false);
-            setCardCompany(data.card_company ?? "");
-            setCardRole(data.card_role ?? "");
           }
         })
         .catch(() => {});
@@ -171,45 +157,6 @@ export default function EditProfilePage() {
     const next = skills.filter((x) => x !== s);
     setSkills(next);
     save({ skills: next });
-  };
-
-  const handleCardFile = (file: File) => {
-    if (!file) return;
-    setCardError("");
-    setCardExtracted(null);
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const dataUrl = e.target?.result as string;
-      setCardPreview(dataUrl);
-      const [header, base64] = dataUrl.split(",");
-      const mime = header.match(/:(.*?);/)?.[1] ?? "image/jpeg";
-      setCardImageBase64(base64);
-      setCardMediaType(mime);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const readCard = async () => {
-    if (!cardImageBase64) return;
-    setCardReading(true);
-    setCardError("");
-    try {
-      const res = await fetch("/api/verify-card", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageBase64: cardImageBase64, mediaType: cardMediaType }),
-      });
-      const data = await res.json();
-      if (!res.ok) { setCardError(data.error); return; }
-      setCardExtracted(data);
-      setCardVerified(true);
-      setCardCompany(data.company);
-      setCardRole(data.role);
-    } catch {
-      setCardError("読み取りに失敗しました");
-    } finally {
-      setCardReading(false);
-    }
   };
 
   const addCompany = (val: string) => {
@@ -319,71 +266,6 @@ export default function EditProfilePage() {
             </span>
           </div>
         </div>
-      </section>
-
-      {/* ── 名刺認証 ── */}
-      <section className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-sm font-semibold text-gray-700">名刺認証（退職者・OB向け）</h2>
-            <p className="text-xs text-gray-400 mt-0.5">過去の名刺をアップロードすると「過去所属確認済み」バッジが付きます</p>
-          </div>
-          {cardVerified && (
-            <span className="flex items-center gap-1 text-xs text-blue-700 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200 font-semibold">
-              ✓ 過去所属確認済み
-            </span>
-          )}
-        </div>
-
-        {cardVerified ? (
-          <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 text-sm text-blue-700">
-            {cardCompany && <span className="font-semibold">{cardCompany}</span>}
-            {cardRole && <span className="text-blue-600"> / {cardRole}</span>}
-            <span className="text-blue-500"> で確認済みです</span>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            <label className="block cursor-pointer">
-              <div className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors ${cardPreview ? "border-blue-300 bg-blue-50" : "border-gray-200 hover:border-gray-300"}`}>
-                {cardPreview ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={cardPreview} alt="名刺プレビュー" className="max-h-40 mx-auto rounded-lg object-contain" />
-                ) : (
-                  <>
-                    <p className="text-sm text-gray-500 mb-1">名刺画像をアップロード</p>
-                    <p className="text-xs text-gray-400">JPEG・PNG・WebP対応</p>
-                  </>
-                )}
-              </div>
-              <input
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                className="hidden"
-                onChange={(e) => { const f = e.target.files?.[0]; if (f) handleCardFile(f); }}
-              />
-            </label>
-
-            {cardPreview && !cardExtracted && (
-              <button
-                onClick={readCard}
-                disabled={cardReading}
-                className="w-full bg-blue-700 text-white py-2.5 rounded-xl text-sm font-medium hover:bg-blue-800 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-              >
-                {cardReading ? (
-                  <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />AIで読み取り中...</>
-                ) : "AIで名刺を読み取る"}
-              </button>
-            )}
-
-            {cardExtracted && (
-              <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 text-sm text-emerald-700">
-                ✓ 読み取り完了：{cardExtracted.company}{cardExtracted.role ? ` / ${cardExtracted.role}` : ""}
-              </div>
-            )}
-
-            {cardError && <p className="text-xs text-red-500">{cardError}</p>}
-          </div>
-        )}
       </section>
 
       {/* ── プロフィール基本情報 ── */}

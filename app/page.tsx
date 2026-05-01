@@ -15,11 +15,6 @@ export default function Home() {
                   <span className="w-2 h-2 bg-emerald-400 rounded-full inline-block flex-shrink-0" />
                   当サイトは、AIが運営・設計の大半を担っているため、発注・受注者側の当サイト利用に伴う費用負担は一切ありません
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  <div className="inline-flex items-center gap-1.5 bg-white/10 border border-white/15 text-white text-xs font-medium px-4 py-1.5 rounded-full">
-                    ✓ 過去名刺認証で経歴を証明
-                  </div>
-                </div>
               </div>
 
               <h1 className="text-4xl md:text-5xl font-black text-white leading-tight mb-5 tracking-tight">
