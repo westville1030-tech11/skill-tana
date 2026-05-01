@@ -147,54 +147,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 制作プロセス ティーザー */}
-      <section className="py-16 px-4 bg-white">
-        <div className="max-w-3xl mx-auto">
-          <Link href="/process" className="group block bg-slate-50 border border-gray-200 rounded-2xl p-7 hover:border-emerald-300 hover:bg-emerald-50/40 transition-all">
-            <div className="flex items-start justify-between gap-6">
-              <div>
-                <p className="text-xs font-bold text-emerald-600 uppercase tracking-widest mb-2">制作プロセス</p>
-                <h2 className="text-xl font-bold text-gray-900 mb-2">プロンプト・修正過程をすべて公開</h2>
-                <p className="text-sm text-gray-500 leading-relaxed">「どうやって作ったか」を隠さないことが信頼につながる。成果物テンプレートの無料配布も。</p>
-              </div>
-              <span className="text-emerald-400 text-2xl flex-shrink-0 group-hover:translate-x-1 transition-transform">→</span>
-            </div>
-          </Link>
-        </div>
-      </section>
-
-      {/* 発注レシピ ティーザー */}
-      <section className="py-4 px-4 bg-white">
-        <div className="max-w-3xl mx-auto">
-          <Link href="/patterns" className="group block bg-slate-50 border border-gray-200 rounded-2xl p-7 hover:border-purple-300 hover:bg-purple-50/40 transition-all">
-            <div className="flex items-start justify-between gap-6">
-              <div>
-                <p className="text-xs font-bold text-purple-600 uppercase tracking-widest mb-2">発注レシピ</p>
-                <h2 className="text-xl font-bold text-gray-900 mb-2">「どうなりたいか」から逆引きする発注の型</h2>
-                <p className="text-sm text-gray-500 leading-relaxed">上司への提案を通したい、新規事業のタネを探したい——目的別に使えるレシピ5種。</p>
-              </div>
-              <span className="text-purple-400 text-2xl flex-shrink-0 group-hover:translate-x-1 transition-transform">→</span>
-            </div>
-          </Link>
-        </div>
-      </section>
-
-      {/* 価格設定 ティーザー */}
-      <section className="py-4 px-4 bg-white">
-        <div className="max-w-3xl mx-auto">
-          <Link href="/pricing" className="group block bg-slate-50 border border-gray-200 rounded-2xl p-7 hover:border-blue-300 hover:bg-blue-50/40 transition-all">
-            <div className="flex items-start justify-between gap-6">
-              <div>
-                <p className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-2">価格設定について</p>
-                <h2 className="text-xl font-bold text-gray-900 mb-2">大手コンサルと「中身は同じ人材」なのに、なぜ1/4以下の価格なのか</h2>
-                <p className="text-sm text-gray-500 leading-relaxed">コンサル料金の内訳、AIによるコスト構造の変化、実際の価格比較を詳しく解説しています。</p>
-              </div>
-              <span className="text-blue-400 text-2xl flex-shrink-0 group-hover:translate-x-1 transition-transform">→</span>
-            </div>
-          </Link>
-        </div>
-      </section>
-
       {/* 発注から納品までのフロー */}
       <section className="py-28 px-4 bg-slate-50">
         <div className="max-w-4xl mx-auto">
