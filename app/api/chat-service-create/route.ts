@@ -13,21 +13,19 @@ const SYSTEM = `あなたは「経験商品化アシスタント」です。
 説明文・前置き・マークダウン記法は一切不要です。区切り文字とJSONだけ出力してください。
 
 DELIVERABLE_START
-{"title":"商品タイトル（30字以内）","description":"成果物の説明（80字以内）","experience_story":"実体験ストーリー（150字程度、一人称なし）","price_suggestion":30000,"days_suggestion":3,"service_type":"spot"}
+{"title":"商品タイトル（30字以内）","description":"成果物の説明（80字以内）","experience_story":"実体験ストーリー（150字程度、一人称なし）","ai_usage":"AIをどう使って納品するか（例：AIでドラフト生成→経験者が実務知見で仕上げ）（60字以内）","price_suggestion":30000,"days_suggestion":3,"service_type":"spot"}
 DELIVERABLE_END
 
 CONSULTING_START
-{"title":"コンサル商品タイトル（30字以内）","description":"コンサル・壁打ちセッションの説明（80字以内）","experience_story":"実体験ストーリー（150字程度、一人称なし）","price_suggestion":15000,"days_suggestion":1,"service_type":"spot"}
+{"title":"コンサル商品タイトル（30字以内）","description":"コンサル・壁打ちセッションの説明（80字以内）","experience_story":"実体験ストーリー（150字程度、一人称なし）","ai_usage":"AIをどう使って納品するか（例：事前にAIでリサーチ・想定QAを準備→セッション本番の質を高める）（60字以内）","price_suggestion":15000,"days_suggestion":1,"service_type":"spot"}
 CONSULTING_END
 
 トーンは親しみやすく、簡潔に。`;
 
 function extractJson(text: string, startTag: string, endTag: string) {
-  // パターン1: カスタム区切り文字
   const m1 = text.match(new RegExp(startTag + "\\s*([\\s\\S]*?)\\s*" + endTag));
   if (m1) { try { return JSON.parse(m1[1].trim()); } catch {} }
 
-  // パターン2: コードブロック内のJSON（フォールバック）
   const blocks = [...text.matchAll(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/g)];
   const idx = startTag.includes("DELIVERABLE") ? 0 : 1;
   if (blocks[idx]) { try { return JSON.parse(blocks[idx][1]); } catch {} }

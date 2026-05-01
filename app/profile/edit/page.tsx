@@ -53,6 +53,7 @@ export default function EditProfilePage() {
   const [chatThinking, setChatThinking] = useState(false);
   type ChatDraftType = {
     title: string; description: string; experience_story: string;
+    ai_usage?: string;
     price_suggestion: number; days_suggestion: number; service_type: "spot" | "ongoing";
   };
   const [chatDrafts, setChatDrafts] = useState<{ deliverable: ChatDraftType; consulting: ChatDraftType } | null>(null);
@@ -647,6 +648,12 @@ export default function EditProfilePage() {
                   <span className="text-[10px] font-bold text-gray-600">{badge}</span>
                   <p className="text-xs font-semibold text-gray-900 leading-snug">{d.title}</p>
                   <p className="text-[11px] text-gray-500 leading-relaxed">{d.description}</p>
+                  {d.ai_usage && (
+                    <div className="bg-blue-50 border border-blue-100 rounded-lg px-2 py-1.5">
+                      <p className="text-[10px] font-semibold text-blue-700 mb-0.5">🤖 AIの活用方法</p>
+                      <p className="text-[10px] text-gray-600 leading-relaxed">{d.ai_usage}</p>
+                    </div>
+                  )}
                   <div className="flex gap-2 text-[11px] text-gray-500">
                     <span className="font-bold text-blue-700">¥{d.price_suggestion.toLocaleString()}</span>
                     <span>{d.days_suggestion}日以内</span>
@@ -691,6 +698,17 @@ export default function EditProfilePage() {
                   onChange={(e) => setChatDraft(d => d ? { ...d, experience_story: e.target.value } : d)}
                 />
               </div>
+              {chatDraft.ai_usage !== undefined && (
+                <div className="border-t border-gray-100 pt-2">
+                  <p className="text-xs text-gray-400 mb-1 font-medium">🤖 AIの活用方法</p>
+                  <textarea
+                    className="w-full text-xs text-gray-600 resize-none focus:outline-none leading-relaxed bg-blue-50 rounded px-2 py-1"
+                    rows={2}
+                    value={chatDraft.ai_usage ?? ""}
+                    onChange={(e) => setChatDraft(d => d ? { ...d, ai_usage: e.target.value } : d)}
+                  />
+                </div>
+              )}
               <div className="flex gap-3 text-xs text-gray-500">
                 <span>¥{chatDraft.price_suggestion.toLocaleString()}</span>
                 <span>{chatDraft.days_suggestion}日以内</span>

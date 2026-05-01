@@ -9,6 +9,7 @@ type ServiceDraft = {
   title: string;
   description: string;
   experience_story: string;
+  ai_usage?: string;
   price_suggestion: number;
   days_suggestion: number;
   service_type: string;
@@ -44,6 +45,12 @@ function DraftCard({
         <div className="bg-amber-50 border border-amber-100 rounded-lg px-3 py-2.5">
           <p className="text-[10px] font-semibold text-amber-700 mb-1">💬 実体験</p>
           <p className="text-[11px] text-gray-600 leading-relaxed">{draft.experience_story}</p>
+        </div>
+      )}
+      {draft.ai_usage && (
+        <div className="bg-blue-50 border border-blue-100 rounded-lg px-3 py-2.5">
+          <p className="text-[10px] font-semibold text-blue-700 mb-1">🤖 AIの活用方法</p>
+          <p className="text-[11px] text-gray-600 leading-relaxed">{draft.ai_usage}</p>
         </div>
       )}
       <div className="flex gap-3 text-xs text-gray-500 border-t border-gray-100 pt-2">
