@@ -1,7 +1,9 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import Link from "next/link";
+
+const MIN_CHARS = 100;
 
 type MatchResult = {
   rank: number;
@@ -30,15 +32,19 @@ export default function RequestPage() {
   const [deadline, setDeadline] = useState("");
   const [budget, setBudget] = useState("");
   const [loading, setLoading] = useState(false);
+  const [checking, setChecking] = useState(false);
   const [results, setResults] = useState<MatchResult[] | null>(null);
   const [error, setError] = useState("");
+  const [qualityWarning, setQualityWarning] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!request.trim()) return;
+  const charCount = request.trim().length;
+  const isEnough = charCount >= MIN_CHARS;
+
+  const runMatch = async () => {
     setLoading(true);
     setError("");
     setResults(null);
+    setQualityWarning("");
     try {
       const res = await fetch("/api/match", {
         method: "POST",
@@ -55,6 +61,30 @@ export default function RequestPage() {
     }
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isEnough) return;
+    setChecking(true);
+    setQualityWarning("");
+    try {
+      const res = await fetch("/api/check-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ request }),
+      });
+      const data = await res.json();
+      if (data.quality === "poor" && data.feedback) {
+        setQualityWarning(data.feedback);
+        setChecking(false);
+        return;
+      }
+    } catch {
+      // チェック失敗時はそのまま進む
+    }
+    setChecking(false);
+    await runMatch();
+  };
+
   return (
     <div className="max-w-2xl mx-auto px-4 py-12">
       <Link href="/" className="text-sm text-blue-600 hover:underline mb-8 inline-block">
@@ -68,17 +98,51 @@ export default function RequestPage() {
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">
-            依頼内容 <span className="text-red-500">*</span>
-          </label>
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="block text-sm font-medium text-gray-700">
+              依頼内容 <span className="text-red-500">*</span>
+            </label>
+            <span className={`text-xs font-medium ${isEnough ? "text-emerald-600" : "text-gray-400"}`}>
+              {charCount} / {MIN_CHARS}文字以上
+            </span>
+          </div>
           <textarea
             value={request}
-            onChange={(e) => setRequest(e.target.value)}
+            onChange={(e) => { setRequest(e.target.value); setQualityWarning(""); }}
             placeholder="例: 来月末までにExcelの売上データ(5万行)を分析して、どの製品・顧客に注力すべきかレポートにまとめてほしい"
             className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-28 resize-y"
             required
           />
+          {!isEnough && charCount > 0 && (
+            <p className="text-xs text-gray-400 mt-1">
+              あと{MIN_CHARS - charCount}文字以上入力してください。具体的な内容ほど、よいマッチングができます。
+            </p>
+          )}
         </div>
+
+        {/* AI品質チェックの警告 */}
+        {qualityWarning && (
+          <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-4">
+            <p className="text-sm font-semibold text-amber-700 mb-1">⚠️ 内容をもう少し具体的にしてみましょう</p>
+            <p className="text-sm text-amber-700 mb-3">{qualityWarning}</p>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setQualityWarning("")}
+                className="flex-1 bg-amber-600 text-white text-sm py-2 rounded-lg hover:bg-amber-700 transition-colors font-medium"
+              >
+                修正する
+              </button>
+              <button
+                type="button"
+                onClick={() => { setQualityWarning(""); runMatch(); }}
+                className="flex-1 bg-white border border-amber-300 text-amber-700 text-sm py-2 rounded-lg hover:bg-amber-50 transition-colors"
+              >
+                このまま送る
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="grid sm:grid-cols-2 gap-4">
           <div>
@@ -103,20 +167,27 @@ export default function RequestPage() {
           </div>
         </div>
 
-        <button
-          type="submit"
-          disabled={loading || !request.trim()}
-          className="w-full bg-gradient-to-r from-blue-600 to-blue-500 text-white py-4 rounded-xl font-bold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
-        >
-          {loading ? (
-            <>
-              <span className="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-              AIが候補を探しています...
-            </>
-          ) : (
-            "AIで候補を探す"
-          )}
-        </button>
+        {!qualityWarning && (
+          <button
+            type="submit"
+            disabled={loading || checking || !isEnough}
+            className="w-full bg-gradient-to-r from-blue-600 to-blue-500 text-white py-4 rounded-xl font-bold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+          >
+            {checking ? (
+              <>
+                <span className="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                内容を確認中...
+              </>
+            ) : loading ? (
+              <>
+                <span className="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                AIが候補を探しています...
+              </>
+            ) : (
+              "AIで候補を探す"
+            )}
+          </button>
+        )}
       </form>
 
       {error && (
@@ -156,7 +227,6 @@ export default function RequestPage() {
 
                 <p className="text-sm text-gray-500 mb-3 leading-relaxed">{r.service.description}</p>
 
-                {/* 推薦理由 */}
                 <div className="bg-blue-50 rounded-xl px-4 py-3 mb-4">
                   <p className="text-xs text-blue-600 font-semibold mb-0.5">AIの推薦理由</p>
                   <p className="text-sm text-blue-800 leading-relaxed">{r.reason}</p>
