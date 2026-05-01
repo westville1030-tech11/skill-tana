@@ -77,17 +77,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* なぜ無料か */}
-      <section className="py-5 px-4 bg-emerald-50/50 border-b border-emerald-100">
-        <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-6 text-center sm:text-left">
-          <span className="text-xs font-bold text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full flex-shrink-0">なぜ無料？</span>
-          <p className="text-xs text-gray-500 leading-relaxed">
-            このサービスの設計・開発・運営はほぼすべてAIが担っています。人件費・オフィス費用がかからないため、発生コストはサーバー維持費のみ。
-            <span className="text-emerald-600 font-medium">だから、永久無料を維持できます。</span>
-          </p>
-        </div>
-      </section>
-
       {/* 仕組み図 */}
       <section className="py-28 px-4 bg-white">
         <div className="max-w-3xl mx-auto">
