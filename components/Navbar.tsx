@@ -16,7 +16,7 @@ export function Navbar() {
 
         <nav className="hidden md:flex items-center gap-6 text-sm text-gray-600">
           <Link href="/browse" className="hover:text-blue-700 transition-colors">
-            棚を見る
+            イチバの棚を見る
           </Link>
           <Link href="/request" className="hover:text-blue-700 transition-colors">
             発注相談

@@ -45,7 +45,7 @@ export default function Home() {
                 </Link>
                 <Link href="/browse"
                   className="border border-white/20 text-white px-8 py-4 rounded-xl font-bold hover:bg-white/10 transition-colors text-center">
-                  棚を見る
+                  イチバの棚を見る
                 </Link>
               </div>
 
@@ -233,7 +233,7 @@ export default function Home() {
       {/* 成果物例 */}
       <section className="py-28 px-4 bg-slate-50">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-gray-900 mb-3 text-center">棚に並ぶ成果物の例</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-3 text-center">イチバの棚に並ぶ成果物の例</h2>
           <p className="text-center text-gray-400 mb-10">週末数時間〜のスポット対応</p>
 
           <div className="flex gap-2 flex-wrap justify-center mb-8">
@@ -276,7 +276,7 @@ export default function Home() {
       <section className="py-28 px-4 bg-white border-t border-gray-100">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">登録方法</h2>
-          <p className="text-center text-gray-400 mb-12">スキルを棚に並べるまで30秒</p>
+          <p className="text-center text-gray-400 mb-12">スキルをイチバの棚に並べるまで30秒</p>
           <div className="grid md:grid-cols-3 gap-6">
             {steps.map((s, i) => (
               <div key={s.title} className="bg-white border border-gray-100 rounded-2xl p-7 hover:border-blue-100 transition-colors">
@@ -294,7 +294,7 @@ export default function Home() {
       {/* CTA */}
       <section className="py-28 px-4 bg-gradient-to-br from-slate-900 via-blue-950 to-blue-800">
         <div className="max-w-xl mx-auto text-center">
-          <h2 className="text-3xl font-black text-white mb-4">今すぐ棚に並べる</h2>
+          <h2 className="text-3xl font-black text-white mb-4">今すぐイチバの棚に並べる</h2>
           <p className="text-slate-300 mb-2">メールアドレスがあれば30秒で登録完了。</p>
           <p className="text-slate-400 text-sm mb-2">法人メール認証済みのため、経歴詐称・なりすましゼロ。</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -304,7 +304,7 @@ export default function Home() {
             </Link>
             <Link href="/browse"
               className="border border-white/20 text-white px-10 py-4 rounded-xl font-bold hover:bg-white/10 transition-colors">
-              棚を見る
+              イチバの棚を見る
             </Link>
           </div>
         </div>
@@ -497,12 +497,12 @@ const zeroItems = ["登録料", "月額利用料", "成約手数料", "中間マ
 
 const steps = [
   { title: "メールで登録", desc: "メールアドレスで30秒登録。会社メールで法人認証すると信頼バッジが付く。" },
-  { title: "成果物を棚に並べる", desc: "「CSV分析¥30,000・3日」のように成果物・価格・納期を登録する。自由記述なし、詐称不可。" },
+  { title: "成果物をイチバの棚に並べる", desc: "「CSV分析¥30,000・3日」のように成果物・価格・納期を登録する。自由記述なし、詐称不可。" },
   { title: "AIで作成、経験者が仕上げて納品", desc: "発注を受けたら生成AIで高速ドラフト。経験者の知見でファクトチェック・示唆を付与して納品。" },
 ];
 
 const deliveryFlow = [
-  { title: "棚で成果物を選ぶ", desc: "気になる成果物を見つける", time: "〜5分" },
+  { title: "イチバの棚で成果物を選ぶ", desc: "気になる成果物を見つける", time: "〜5分" },
   { title: "サイト上で問い合わせ", desc: "フォームから希望・予算・納期を送信", time: "当日中" },
   { title: "要件すり合わせ", desc: "チャットまたは30分MTGで詳細確認", time: "〜1日" },
   { title: "AI作成・経験者が仕上げ", desc: "AIでドラフト生成、経験者が検証・示唆付与", time: "1〜5日" },

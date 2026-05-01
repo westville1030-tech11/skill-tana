@@ -35,7 +35,7 @@ export default function ProcessPage() {
           </div>
           <h2 className="font-bold text-gray-900 mb-3">成果物テンプレートを無料配布</h2>
           <p className="text-sm text-gray-500 leading-relaxed mb-4">
-            棚に並ぶ成果物の「構成案・ひな形」を無料でダウンロード可能に。試して「やはり経験者に仕上げてほしい」となった人を直接キャッチ。
+            イチバの棚に並ぶ成果物の「構成案・ひな形」を無料でダウンロード可能に。試して「やはり経験者に仕上げてほしい」となった人を直接キャッチ。
           </p>
           <div className="space-y-2 border-t border-gray-100 pt-4">
             <div className="flex items-start gap-2 text-sm">
@@ -73,7 +73,7 @@ export default function ProcessPage() {
 
       <div className="text-center mt-12">
         <Link href="/browse" className="bg-blue-700 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-800 transition-colors">
-          棚を見る →
+          イチバの棚を見る →
         </Link>
       </div>
     </div>

@@ -4,7 +4,7 @@ import { SessionProvider } from "@/components/SessionProvider";
 import { Navbar } from "@/components/Navbar";
 
 export const metadata: Metadata = {
-  title: "経験イチバ — 経験者のスキルと成果物が並ぶ棚",
+  title: "経験イチバ — 経験者のスキルと成果物が並ぶイチバの棚",
   description:
     "一流企業で活躍する経験者に直接依頼。手数料ゼロ、固定価格、法人メール認証で安心。CSV分析・戦略相談・開発など週末スポット対応。",
 };

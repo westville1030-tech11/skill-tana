@@ -163,7 +163,7 @@ export default function PatternsPage() {
 
       <div className="text-center mt-12">
         <Link href="/browse" className="bg-blue-700 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-800 transition-colors">
-          棚を見る →
+          イチバの棚を見る →
         </Link>
       </div>
     </div>

@@ -108,8 +108,8 @@ export default function EditProfilePage() {
   if (!session) {
     return (
       <div className="max-w-md mx-auto px-4 py-24 text-center">
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">棚に並べる</h1>
-        <p className="text-gray-600 mb-8">ログインして、成果物を棚に並べましょう。</p>
+        <h1 className="text-2xl font-bold text-gray-900 mb-4">イチバの棚に並べる</h1>
+        <p className="text-gray-600 mb-8">ログインして、成果物をイチバの棚に並べましょう。</p>
         <div className="space-y-3">
           <a href="/login" className="w-full flex items-center justify-center bg-blue-700 text-white px-8 py-3 rounded-xl font-medium hover:bg-blue-800 transition-colors">
             ログイン
@@ -318,7 +318,7 @@ export default function EditProfilePage() {
     <div className="max-w-2xl mx-auto px-4 py-12 space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900 mb-1">マイ棚の設定</h1>
-        <p className="text-gray-500 text-sm">成果物を棚に並べて、クライアントから直接発注を受けましょう</p>
+        <p className="text-gray-500 text-sm">成果物をイチバの棚に並べて、クライアントから直接発注を受けましょう</p>
       </div>
 
       {/* ── AIドラフト（LinkedInから一括入力）── */}
@@ -724,7 +724,7 @@ export default function EditProfilePage() {
         <div className="flex items-start justify-between mb-4">
           <div>
             <h2 className="text-sm font-semibold text-gray-700">成果物メニュー</h2>
-            <p className="text-xs text-gray-400 mt-0.5">棚に並べる成果物を登録してください</p>
+            <p className="text-xs text-gray-400 mt-0.5">イチバの棚に並べる成果物を登録してください</p>
           </div>
           {!showAddForm && (
             <button onClick={() => setShowAddForm(true)} className="text-sm bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors">
@@ -851,7 +851,7 @@ export default function EditProfilePage() {
               </div>
             </div>
             <div className="flex gap-2">
-              <button onClick={addService} className={`flex-1 text-white py-2.5 rounded-lg text-sm font-medium ${newForm.service_type === "ongoing" ? "bg-purple-700 hover:bg-purple-800" : "bg-blue-700 hover:bg-blue-800"}`}>棚に追加する</button>
+              <button onClick={addService} className={`flex-1 text-white py-2.5 rounded-lg text-sm font-medium ${newForm.service_type === "ongoing" ? "bg-purple-700 hover:bg-purple-800" : "bg-blue-700 hover:bg-blue-800"}`}>イチバの棚に追加する</button>
               <button onClick={() => { setShowAddForm(false); setNewForm(emptyForm); }} className="flex-1 border border-gray-300 text-gray-600 py-2.5 rounded-lg text-sm bg-white">キャンセル</button>
             </div>
           </div>

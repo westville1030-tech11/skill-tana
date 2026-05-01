@@ -93,7 +93,7 @@ export default function RequestPage() {
 
       <h1 className="text-2xl font-bold text-gray-900 mb-2">発注相談</h1>
       <p className="text-gray-500 text-sm mb-8">
-        何が欲しいかを自然な言葉で入力するだけ。AIが棚から最適な成果物を提案します。
+        何が欲しいかを自然な言葉で入力するだけ。AIがイチバの棚から最適な成果物を提案します。
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-5">
