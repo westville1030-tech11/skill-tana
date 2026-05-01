@@ -160,35 +160,35 @@ export default function RequestPage() {
         </div>
       )}
 
-      {/* 入力エリア */}
-      {!canSubmit && (
-        <div className="flex gap-2">
-          <textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
-            placeholder={messages.length === 0 ? "例: 来月末までにExcelの売上データを分析して、注力すべき顧客をまとめてほしい" : "返答を入力...（Enterで送信）"}
-            className="flex-1 border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none min-h-14 max-h-32"
-            rows={2}
-          />
-          <button
-            onClick={sendMessage}
-            disabled={!input.trim() || thinking}
-            className="bg-blue-600 text-white px-4 rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-40 flex-shrink-0"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
-      )}
-
-      {/* 壁打ち完了 → 依頼確定ボタン */}
-      {canSubmit && results === null && (
-        <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-5 space-y-4">
-          <div className="flex items-center gap-2">
-            <span className="text-emerald-600 font-bold text-sm">✓ 壁打ち完了</span>
+      {/* 入力エリア（常に表示、マッチング後は非表示） */}
+      {results === null && (
+        <div className="space-y-3">
+          <div className="flex gap-2">
+            <textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
+              placeholder={messages.length === 0 ? "例: 来月末までにExcelの売上データを分析して、注力すべき顧客をまとめてほしい" : "返答を入力...（Enterで送信、Shift+Enterで改行）"}
+              className="flex-1 border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none min-h-14 max-h-32"
+              rows={2}
+            />
+            <button
+              onClick={sendMessage}
+              disabled={!input.trim() || thinking}
+              className="bg-blue-600 text-white px-4 rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-40 flex-shrink-0"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </button>
           </div>
+
+          {/* 壁打ち完了 → 依頼確定ボタン */}
+          {canSubmit && (
+            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-5 space-y-4">
+              <div className="flex items-center gap-2">
+                <span className="text-emerald-600 font-bold text-sm">✓ 最低3回の壁打ち完了 — いつでも依頼を送れます</span>
+              </div>
           {summary && (
             <div>
               <p className="text-xs text-emerald-700 font-semibold mb-1.5">整理された依頼内容</p>
@@ -204,6 +204,8 @@ export default function RequestPage() {
               <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />候補を探しています...</>
             ) : "この内容で経験者を探す →"}
           </button>
+            </div>
+          )}
         </div>
       )}
 
