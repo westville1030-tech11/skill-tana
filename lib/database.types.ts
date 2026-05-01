@@ -28,6 +28,11 @@ export type Profile = {
   linkedin_connections: "under_100" | "100_500" | "500_1000" | "over_1000" | null;
   past_companies: string[] | null;
   linkedin_verified: boolean | null;
+  corporate_email_verified: boolean | null;
+  corporate_email_domain: string | null;
+  card_verified: boolean | null;
+  card_company: string | null;
+  card_role: string | null;
   password_hash: string | null;
   created_at: string;
   updated_at: string;
