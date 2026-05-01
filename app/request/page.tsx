@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 
-const MIN_CHARS = 100;
+const REQUIRED_ROUNDS = 3;
+
+type Message = { role: "user" | "assistant"; content: string };
 
 type MatchResult = {
   rank: number;
@@ -28,28 +30,58 @@ const scoreColor: Record<string, string> = {
 };
 
 export default function RequestPage() {
-  const [request, setRequest] = useState("");
-  const [deadline, setDeadline] = useState("");
-  const [budget, setBudget] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [checking, setChecking] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState("");
+  const [aiRounds, setAiRounds] = useState(0);
+  const [summary, setSummary] = useState("");
+  const [thinking, setThinking] = useState(false);
+  const [matching, setMatching] = useState(false);
   const [results, setResults] = useState<MatchResult[] | null>(null);
   const [error, setError] = useState("");
-  const [qualityWarning, setQualityWarning] = useState("");
+  const bottomRef = useRef<HTMLDivElement>(null);
 
-  const charCount = request.trim().length;
-  const isEnough = charCount >= MIN_CHARS;
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, thinking]);
+
+  const sendMessage = async () => {
+    const text = input.trim();
+    if (!text || thinking) return;
+    setInput("");
+
+    const next: Message[] = [...messages, { role: "user", content: text }];
+    setMessages(next);
+    setThinking(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/chat-consult", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: next }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      const newRounds = aiRounds + 1;
+      setAiRounds(newRounds);
+      setMessages([...next, { role: "assistant", content: data.text }]);
+      if (data.summary) setSummary(data.summary);
+    } catch {
+      setError("エラーが発生しました。もう一度お試しください。");
+    } finally {
+      setThinking(false);
+    }
+  };
 
   const runMatch = async () => {
-    setLoading(true);
+    setMatching(true);
     setError("");
-    setResults(null);
-    setQualityWarning("");
     try {
       const res = await fetch("/api/match", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ request, deadline, budget }),
+        body: JSON.stringify({ request: summary || messages.filter(m => m.role === "user").map(m => m.content).join("\n") }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
@@ -57,33 +89,12 @@ export default function RequestPage() {
     } catch (e) {
       setError(e instanceof Error ? e.message : "エラーが発生しました");
     } finally {
-      setLoading(false);
+      setMatching(false);
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isEnough) return;
-    setChecking(true);
-    setQualityWarning("");
-    try {
-      const res = await fetch("/api/check-request", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ request }),
-      });
-      const data = await res.json();
-      if (data.quality === "poor" && data.feedback) {
-        setQualityWarning(data.feedback);
-        setChecking(false);
-        return;
-      }
-    } catch {
-      // チェック失敗時はそのまま進む
-    }
-    setChecking(false);
-    await runMatch();
-  };
+  const canSubmit = aiRounds >= REQUIRED_ROUNDS;
+  const remaining = Math.max(0, REQUIRED_ROUNDS - aiRounds);
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-12">
@@ -92,127 +103,128 @@ export default function RequestPage() {
       </Link>
 
       <h1 className="text-2xl font-bold text-gray-900 mb-2">発注相談</h1>
-      <p className="text-gray-500 text-sm mb-8">
-        何が欲しいかを自然な言葉で入力するだけ。AIがイチバの棚から最適な成果物を提案します。
+      <p className="text-gray-500 text-sm mb-6">
+        AIと壁打ちしながら依頼内容を整理します。{REQUIRED_ROUNDS}回やりとりすると依頼が送れるようになります。
       </p>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <div>
-          <div className="flex items-center justify-between mb-1.5">
-            <label className="block text-sm font-medium text-gray-700">
-              依頼内容 <span className="text-red-500">*</span>
-            </label>
-            <span className={`text-xs font-medium ${isEnough ? "text-emerald-600" : "text-gray-400"}`}>
-              {charCount} / {MIN_CHARS}文字以上
-            </span>
-          </div>
-          <textarea
-            value={request}
-            onChange={(e) => { setRequest(e.target.value); setQualityWarning(""); }}
-            placeholder="例: 来月末までにExcelの売上データ(5万行)を分析して、どの製品・顧客に注力すべきかレポートにまとめてほしい"
-            className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-28 resize-y"
-            required
+      {/* 進捗インジケーター */}
+      <div className="flex items-center gap-2 mb-6">
+        {Array.from({ length: REQUIRED_ROUNDS }).map((_, i) => (
+          <div
+            key={i}
+            className={`h-1.5 flex-1 rounded-full transition-colors ${i < aiRounds ? "bg-blue-600" : "bg-gray-200"}`}
           />
-          {!isEnough && charCount > 0 && (
-            <p className="text-xs text-gray-400 mt-1">
-              あと{MIN_CHARS - charCount}文字以上入力してください。具体的な内容ほど、よいマッチングができます。
-            </p>
-          )}
-        </div>
+        ))}
+        <span className="text-xs text-gray-400 flex-shrink-0 ml-1">
+          {canSubmit ? "完了" : `あと${remaining}回`}
+        </span>
+      </div>
 
-        {/* AI品質チェックの警告 */}
-        {qualityWarning && (
-          <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-4">
-            <p className="text-sm font-semibold text-amber-700 mb-1">⚠️ 内容をもう少し具体的にしてみましょう</p>
-            <p className="text-sm text-amber-700 mb-3">{qualityWarning}</p>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setQualityWarning("")}
-                className="flex-1 bg-amber-600 text-white text-sm py-2 rounded-lg hover:bg-amber-700 transition-colors font-medium"
+      {/* チャットエリア */}
+      {messages.length === 0 ? (
+        <div className="bg-blue-50 border border-blue-100 rounded-2xl px-5 py-4 mb-4">
+          <p className="text-sm text-blue-700 font-medium mb-1">依頼したいことを教えてください</p>
+          <p className="text-xs text-blue-500">AIが内容を深掘りしながら、経験者に伝わる依頼文に整理します。</p>
+        </div>
+      ) : (
+        <div className="space-y-4 mb-4">
+          {messages.map((m, i) => (
+            <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+              {m.role === "assistant" && (
+                <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mr-2 mt-0.5">AI</div>
+              )}
+              <div
+                className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                  m.role === "user"
+                    ? "bg-blue-600 text-white rounded-br-sm"
+                    : "bg-white border border-gray-200 text-gray-800 rounded-bl-sm"
+                }`}
               >
-                修正する
-              </button>
-              <button
-                type="button"
-                onClick={() => { setQualityWarning(""); runMatch(); }}
-                className="flex-1 bg-white border border-amber-300 text-amber-700 text-sm py-2 rounded-lg hover:bg-amber-50 transition-colors"
-              >
-                このまま送る
-              </button>
+                {m.content}
+              </div>
             </div>
-          </div>
-        )}
-
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">希望納期（任意）</label>
-            <input
-              type="text"
-              value={deadline}
-              onChange={(e) => setDeadline(e.target.value)}
-              placeholder="例: 2週間以内、来月10日まで"
-              className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">予算感（任意）</label>
-            <input
-              type="text"
-              value={budget}
-              onChange={(e) => setBudget(e.target.value)}
-              placeholder="例: 3〜5万円、10万円以内"
-              className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+          ))}
+          {thinking && (
+            <div className="flex justify-start">
+              <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mr-2 mt-0.5">AI</div>
+              <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-sm px-4 py-3">
+                <span className="flex gap-1">
+                  {[0, 1, 2].map(i => (
+                    <span key={i} className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
+                  ))}
+                </span>
+              </div>
+            </div>
+          )}
+          <div ref={bottomRef} />
         </div>
+      )}
 
-        {!qualityWarning && (
+      {/* 入力エリア */}
+      {!canSubmit && (
+        <div className="flex gap-2">
+          <textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
+            placeholder={messages.length === 0 ? "例: 来月末までにExcelの売上データを分析して、注力すべき顧客をまとめてほしい" : "返答を入力...（Enterで送信）"}
+            className="flex-1 border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none min-h-14 max-h-32"
+            rows={2}
+          />
           <button
-            type="submit"
-            disabled={loading || checking || !isEnough}
-            className="w-full bg-gradient-to-r from-blue-600 to-blue-500 text-white py-4 rounded-xl font-bold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+            onClick={sendMessage}
+            disabled={!input.trim() || thinking}
+            className="bg-blue-600 text-white px-4 rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-40 flex-shrink-0"
           >
-            {checking ? (
-              <>
-                <span className="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                内容を確認中...
-              </>
-            ) : loading ? (
-              <>
-                <span className="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                AIが候補を探しています...
-              </>
-            ) : (
-              "AIで候補を探す"
-            )}
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
           </button>
-        )}
-      </form>
+        </div>
+      )}
+
+      {/* 壁打ち完了 → 依頼確定ボタン */}
+      {canSubmit && results === null && (
+        <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-5 space-y-4">
+          <div className="flex items-center gap-2">
+            <span className="text-emerald-600 font-bold text-sm">✓ 壁打ち完了</span>
+          </div>
+          {summary && (
+            <div>
+              <p className="text-xs text-emerald-700 font-semibold mb-1.5">整理された依頼内容</p>
+              <p className="text-sm text-gray-700 bg-white border border-emerald-100 rounded-xl px-4 py-3 leading-relaxed">{summary}</p>
+            </div>
+          )}
+          <button
+            onClick={runMatch}
+            disabled={matching}
+            className="w-full bg-gradient-to-r from-blue-600 to-blue-500 text-white py-3.5 rounded-xl font-bold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+          >
+            {matching ? (
+              <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />候補を探しています...</>
+            ) : "この内容で経験者を探す →"}
+          </button>
+        </div>
+      )}
 
       {error && (
-        <div className="mt-6 bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl px-4 py-3">
+        <div className="mt-4 bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl px-4 py-3">
           {error}
         </div>
       )}
 
+      {/* マッチング結果 */}
       {results !== null && (
         <div className="mt-10">
           <h2 className="text-lg font-bold text-gray-900 mb-1">
             {results.length > 0 ? `${results.length}件の候補が見つかりました` : "条件に合う成果物が見つかりませんでした"}
           </h2>
           {results.length > 0 && (
-            <p className="text-sm text-gray-400 mb-6">
-              各経験者に直接ご連絡ください
-            </p>
+            <p className="text-sm text-gray-400 mb-6">各経験者に直接ご連絡ください</p>
           )}
-
           <div className="space-y-4">
             {results.map((r) => (
-              <div
-                key={r.rank}
-                className="bg-white border border-gray-100 rounded-2xl p-6 hover:border-blue-200 hover:shadow-sm transition-all"
-              >
+              <div key={r.rank} className="bg-white border border-gray-100 rounded-2xl p-6 hover:border-blue-200 hover:shadow-sm transition-all">
                 <div className="flex items-start justify-between gap-4 mb-3">
                   <div className="flex items-center gap-2">
                     <span className="num w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-black flex-shrink-0">
@@ -224,19 +236,14 @@ export default function RequestPage() {
                     マッチ度: {r.match_score}
                   </span>
                 </div>
-
                 <p className="text-sm text-gray-500 mb-3 leading-relaxed">{r.service.description}</p>
-
                 <div className="bg-blue-50 rounded-xl px-4 py-3 mb-4">
                   <p className="text-xs text-blue-600 font-semibold mb-0.5">AIの推薦理由</p>
                   <p className="text-sm text-blue-800 leading-relaxed">{r.reason}</p>
                 </div>
-
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex flex-wrap gap-2">
-                    <span className="num text-base font-black text-blue-600">
-                      ¥{r.service.price.toLocaleString()}
-                    </span>
+                    <span className="num text-base font-black text-blue-600">¥{r.service.price.toLocaleString()}</span>
                     <span className="text-sm text-gray-400">{r.service.days}日以内</span>
                     {r.service.company && (
                       <span className="text-xs bg-gray-50 border border-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
@@ -244,17 +251,13 @@ export default function RequestPage() {
                       </span>
                     )}
                   </div>
-                  <Link
-                    href={`/profile/${r.service.profileId}`}
-                    className="flex-shrink-0 bg-blue-700 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors"
-                  >
+                  <Link href={`/profile/${r.service.profileId}`} className="flex-shrink-0 bg-blue-700 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors">
                     詳細を見る →
                   </Link>
                 </div>
               </div>
             ))}
           </div>
-
           {results.length === 0 && (
             <div className="text-center py-10">
               <p className="text-gray-400 text-sm mb-4">条件を変えて再度お試しください</p>
