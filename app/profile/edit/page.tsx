@@ -60,6 +60,10 @@ export default function EditProfilePage() {
   const [chatDrafts, setChatDrafts] = useState<{ deliverable: ChatDraftType; consulting: ChatDraftType } | null>(null);
   const [chatDraft, setChatDraft] = useState<ChatDraftType | null>(null);
   const [showResumeUpload, setShowResumeUpload] = useState(false);
+  const [qualityChecking, setQualityChecking] = useState(false);
+  const [qualityResult, setQualityResult] = useState<{score: string; feedback: string} | null>(null);
+  const [addQualityChecking, setAddQualityChecking] = useState(false);
+  const [addQualityResult, setAddQualityResult] = useState<{score: string; feedback: string} | null>(null);
 
   // AIドラフト
   const [resumeFile, setResumeFile] = useState<File | null>(null);
@@ -255,6 +259,7 @@ export default function EditProfilePage() {
     const next = [...services, s];
     setServices(next);
     save({ services: next });
+    setQualityResult(null);
     setShowAIChat(false);
     setChatMessages([]);
     setChatRounds(0);
@@ -286,7 +291,39 @@ export default function EditProfilePage() {
     setServices(next);
     setNewForm(emptyForm);
     setShowAddForm(false);
+    setAddQualityResult(null);
     save({ services: next });
+  };
+
+  const handleAddWithQualityCheck = async () => {
+    if (!newForm.title || !newForm.price || !newForm.days) return;
+    if (addQualityResult) {
+      addService();
+      return;
+    }
+    setAddQualityChecking(true);
+    try {
+      const res = await fetch("/api/check-service-quality", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: newForm.title,
+          description: newForm.description,
+          price: Number(newForm.price),
+          days: Number(newForm.days),
+        }),
+      });
+      const result = await res.json() as { score: string; feedback: string };
+      if (result.score === "pass") {
+        addService();
+      } else {
+        setAddQualityResult(result);
+      }
+    } catch {
+      addService();
+    } finally {
+      setAddQualityChecking(false);
+    }
   };
 
   const deleteService = (id: string) => {
@@ -773,12 +810,69 @@ export default function EditProfilePage() {
                 <span>{chatDraft.days_suggestion}日以内</span>
               </div>
             </div>
+            {qualityResult && (
+              <div className={`rounded-xl px-3 py-2.5 text-xs leading-relaxed ${
+                qualityResult.score === "fail"
+                  ? "bg-red-50 border border-red-200 text-red-700"
+                  : "bg-yellow-50 border border-yellow-200 text-yellow-800"
+              }`}>
+                {qualityResult.score === "fail" ? "❌" : "⚠️"} {qualityResult.feedback}
+              </div>
+            )}
             <div className="flex gap-2">
-              <button onClick={() => confirmChatDraft(chatDraft)} className="flex-1 bg-emerald-600 text-white text-sm py-2 rounded-lg hover:bg-emerald-700 transition-colors font-medium">
-                この内容で出品する
-              </button>
-              <button onClick={() => setChatDraft(null)} className="flex-1 border border-gray-300 text-gray-600 text-sm py-2 rounded-lg hover:bg-gray-50">
-                選び直す
+              {qualityResult?.score !== "fail" && (
+                <button
+                  onClick={async () => {
+                    if (qualityResult?.score === "warn") {
+                      confirmChatDraft(chatDraft);
+                      return;
+                    }
+                    setQualityChecking(true);
+                    setQualityResult(null);
+                    try {
+                      const res = await fetch("/api/check-service-quality", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          title: chatDraft.title,
+                          description: chatDraft.description,
+                          experience_story: chatDraft.experience_story,
+                          price: chatDraft.price_suggestion,
+                          days: chatDraft.days_suggestion,
+                        }),
+                      });
+                      const result = await res.json() as { score: string; feedback: string };
+                      if (result.score === "pass") {
+                        confirmChatDraft(chatDraft);
+                      } else {
+                        setQualityResult(result);
+                      }
+                    } catch {
+                      confirmChatDraft(chatDraft);
+                    } finally {
+                      setQualityChecking(false);
+                    }
+                  }}
+                  disabled={qualityChecking}
+                  className="flex-1 bg-emerald-600 text-white text-sm py-2 rounded-lg hover:bg-emerald-700 transition-colors font-medium disabled:opacity-50 flex items-center justify-center gap-1.5"
+                >
+                  {qualityChecking ? (
+                    <><span className="w-3 h-3 border border-white/40 border-t-white rounded-full animate-spin" />確認中...</>
+                  ) : qualityResult?.score === "warn" ? "このまま出品する" : "この内容で出品する"}
+                </button>
+              )}
+              <button
+                onClick={() => {
+                  if (qualityResult?.score === "fail") {
+                    setQualityResult(null);
+                  } else {
+                    setChatDraft(null);
+                    setQualityResult(null);
+                  }
+                }}
+                className="flex-1 border border-gray-300 text-gray-600 text-sm py-2 rounded-lg hover:bg-gray-50"
+              >
+                {qualityResult?.score === "fail" ? "編集する" : "選び直す"}
               </button>
             </div>
           </div>
@@ -902,9 +996,41 @@ export default function EditProfilePage() {
                 <input type="number" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white" value={newForm.days} onChange={(e) => setNewForm((p) => ({ ...p, days: e.target.value }))} placeholder={newForm.service_type === "ongoing" ? "1" : "3"} />
               </div>
             </div>
+            {addQualityResult && (
+              <div className={`rounded-xl px-3 py-2.5 text-xs leading-relaxed ${
+                addQualityResult.score === "fail"
+                  ? "bg-red-50 border border-red-200 text-red-700"
+                  : "bg-yellow-50 border border-yellow-200 text-yellow-800"
+              }`}>
+                {addQualityResult.score === "fail" ? "❌" : "⚠️"} {addQualityResult.feedback}
+              </div>
+            )}
             <div className="flex gap-2">
-              <button onClick={addService} className={`flex-1 text-white py-2.5 rounded-lg text-sm font-medium ${newForm.service_type === "ongoing" ? "bg-purple-700 hover:bg-purple-800" : "bg-blue-700 hover:bg-blue-800"}`}>イチバの棚に追加する</button>
-              <button onClick={() => { setShowAddForm(false); setNewForm(emptyForm); }} className="flex-1 border border-gray-300 text-gray-600 py-2.5 rounded-lg text-sm bg-white">キャンセル</button>
+              {addQualityResult?.score !== "fail" && (
+                <button
+                  onClick={handleAddWithQualityCheck}
+                  disabled={addQualityChecking}
+                  className={`flex-1 text-white py-2.5 rounded-lg text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-1.5 ${newForm.service_type === "ongoing" ? "bg-purple-700 hover:bg-purple-800" : "bg-blue-700 hover:bg-blue-800"}`}
+                >
+                  {addQualityChecking ? (
+                    <><span className="w-3 h-3 border border-white/40 border-t-white rounded-full animate-spin" />確認中...</>
+                  ) : addQualityResult?.score === "warn" ? "このまま追加する" : "イチバの棚に追加する"}
+                </button>
+              )}
+              <button
+                onClick={() => {
+                  if (addQualityResult?.score === "fail") {
+                    setAddQualityResult(null);
+                  } else {
+                    setShowAddForm(false);
+                    setNewForm(emptyForm);
+                    setAddQualityResult(null);
+                  }
+                }}
+                className="flex-1 border border-gray-300 text-gray-600 py-2.5 rounded-lg text-sm bg-white"
+              >
+                {addQualityResult?.score === "fail" ? "編集する" : "キャンセル"}
+              </button>
             </div>
           </div>
         )}

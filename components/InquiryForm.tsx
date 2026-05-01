@@ -21,11 +21,42 @@ export function InquiryForm({ proLinkedInId, services }: Props) {
   const [sending, setSending] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState("");
+  const [matchChecking, setMatchChecking] = useState(false);
+  const [matchResult, setMatchResult] = useState<{score: string; feedback: string} | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSending(true);
     setError("");
+
+    if (!matchResult) {
+      const selectedService = services.find(s => s.title === form.service_title);
+      setMatchChecking(true);
+      try {
+        const res = await fetch("/api/check-match", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            service_title: selectedService?.title ?? form.service_title,
+            service_description: selectedService?.description,
+            service_price: selectedService?.price,
+            service_days: selectedService?.days,
+            inquiry_message: form.message,
+            inquiry_budget: form.budget,
+            inquiry_deadline: form.deadline,
+          }),
+        });
+        const result = await res.json() as { score: string; feedback: string };
+        setMatchResult(result);
+        if (result.score !== "match") {
+          return;
+        }
+      } catch {}
+      finally {
+        setMatchChecking(false);
+      }
+    }
+
+    setSending(true);
     try {
       const res = await fetch("/api/inquiries", {
         method: "POST",
@@ -111,7 +142,7 @@ export function InquiryForm({ proLinkedInId, services }: Props) {
             <label className="block text-sm font-medium text-gray-700 mb-1.5">興味のある成果物</label>
             <select
               value={form.service_title}
-              onChange={(e) => setForm((p) => ({ ...p, service_title: e.target.value }))}
+              onChange={(e) => { setForm((p) => ({ ...p, service_title: e.target.value })); setMatchResult(null); }}
               className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               {services.map((s) => (
@@ -128,7 +159,7 @@ export function InquiryForm({ proLinkedInId, services }: Props) {
           </label>
           <textarea
             value={form.message}
-            onChange={(e) => setForm((p) => ({ ...p, message: e.target.value }))}
+            onChange={(e) => { setForm((p) => ({ ...p, message: e.target.value })); setMatchResult(null); }}
             placeholder="どんなデータがあるか、何を知りたいか、現在の状況などを自由にご記入ください"
             required
             className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-24 resize-y"
@@ -162,17 +193,32 @@ export function InquiryForm({ proLinkedInId, services }: Props) {
           <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-2">{error}</p>
         )}
 
+        {matchResult && matchResult.score !== "match" && (
+          <div className={`rounded-xl px-4 py-3 text-sm leading-relaxed ${
+            matchResult.score === "mismatch"
+              ? "bg-red-50 border border-red-200 text-red-700"
+              : "bg-yellow-50 border border-yellow-200 text-yellow-800"
+          }`}>
+            {matchResult.score === "mismatch" ? "⚠️" : "💡"} {matchResult.feedback}
+          </div>
+        )}
+
         <button
           type="submit"
-          disabled={sending}
+          disabled={sending || matchChecking}
           className="w-full bg-gradient-to-r from-blue-600 to-blue-500 text-white py-3.5 rounded-xl font-bold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
         >
-          {sending ? (
+          {matchChecking ? (
+            <>
+              <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin inline-block" />
+              マッチ度を確認中...
+            </>
+          ) : sending ? (
             <>
               <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin inline-block" />
               送信中...
             </>
-          ) : "送信する"}
+          ) : matchResult && matchResult.score !== "match" ? "それでも送信する" : "送信する"}
         </button>
       </form>
     </div>
