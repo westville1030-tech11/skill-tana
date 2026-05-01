@@ -328,26 +328,88 @@ function HeroGraphic() {
 /* ---- Before/After 図 ---- */
 function ConceptDiagram() {
   return (
-    <svg viewBox="0 0 720 310" width="100%" xmlns="http://www.w3.org/2000/svg" style={{ fontFamily: "sans-serif" }}>
+    <svg viewBox="0 0 720 460" width="100%" xmlns="http://www.w3.org/2000/svg" style={{ fontFamily: "sans-serif" }}>
+
+      {/* ── BEFORE ── */}
       <text x="16" y="26" fontSize="10" fill="#9ca3af" fontWeight="700" letterSpacing="3">BEFORE</text>
-      <ActorCard x={14} y={42} icon="🏢" topLabel="クライアント" bottomLabel="依頼する側" color="#f8fafc" border="#e2e8f0" />
-      <ThinArrow x1={122} y1={78} x2={178} y2={78} />
-      <FeeBox x={178} y={52} label="仲介会社" sub="手数料 20〜30%" color="#fef2f2" border="#fca5a5" textColor="#dc2626" />
-      <ThinArrow x1={318} y1={78} x2={374} y2={78} />
-      <FeeBox x={374} y={52} label="エージェント" sub="登録料・成約料" color="#fffbeb" border="#fcd34d" textColor="#b45309" />
-      <ThinArrow x1={514} y1={78} x2={570} y2={78} />
-      <ActorCard x={582} y={42} icon="💼" topLabel="経験者" bottomLabel="スキルを持つ側" color="#f8fafc" border="#e2e8f0" />
+      <ActorCard x={14} y={36} icon="🏢" topLabel="クライアント" bottomLabel="依頼する側" color="#f8fafc" border="#e2e8f0" />
+      <ThinArrow x1={122} y1={72} x2={178} y2={72} />
+      <FeeBox x={178} y={46} label="仲介会社" sub="手数料 20〜30%" color="#fef2f2" border="#fca5a5" textColor="#dc2626" />
+      <ThinArrow x1={318} y1={72} x2={374} y2={72} />
+      <FeeBox x={374} y={46} label="エージェント" sub="登録料・成約料" color="#fffbeb" border="#fcd34d" textColor="#b45309" />
+      <ThinArrow x1={514} y1={72} x2={570} y2={72} />
+      <ActorCard x={582} y={36} icon="💼" topLabel="経験者" bottomLabel="スキルを持つ側" color="#f8fafc" border="#e2e8f0" />
 
-      <line x1="24" y1="148" x2="696" y2="148" stroke="#e5e7eb" strokeWidth="1" strokeDasharray="6 4" />
+      <line x1="24" y1="130" x2="696" y2="130" stroke="#e5e7eb" strokeWidth="1" strokeDasharray="6 4" />
 
-      <text x="16" y="174" fontSize="10" fill="#16a34a" fontWeight="700" letterSpacing="3">AFTER</text>
-      <ActorCard x={14} y={188} icon="🏢" topLabel="クライアント" bottomLabel="依頼する側" color="#eff6ff" border="#bfdbfe" />
-      <text x="360" y="208" fontSize="13" fill="#1d4ed8" fontWeight="800" textAnchor="middle">直接発注</text>
-      <text x="360" y="222" fontSize="10" fill="#3b82f6" textAnchor="middle">手数料・仲介料 すべて ¥0</text>
-      <line x1="122" y1="232" x2="568" y2="232" stroke="#3b82f6" strokeWidth="2" />
-      <polygon points="566,225 582,232 566,239" fill="#3b82f6" />
-      <ActorCard x={582} y={188} icon="💼" topLabel="経験者" bottomLabel="スキルを持つ側" color="#eff6ff" border="#bfdbfe" />
+      {/* ── AFTER ── */}
+      <text x="16" y="152" fontSize="10" fill="#16a34a" fontWeight="700" letterSpacing="3">AFTER</text>
+
+      {/* 列ヘッダー */}
+      <text x="175" y="172" fontSize="12" fill="#1e40af" fontWeight="700" textAnchor="middle">発注したい人</text>
+      <text x="545" y="172" fontSize="12" fill="#1e40af" fontWeight="700" textAnchor="middle">経験者</text>
+
+      {/* Step 1 */}
+      <StepBox x={100} y={180} label="① 課題を入力" color="#eff6ff" border="#bfdbfe" textColor="#1d4ed8" />
+      <StepBox x={470} y={180} label="① 実体験を語る" color="#eff6ff" border="#bfdbfe" textColor="#1d4ed8" />
+      <DownArrow cx={175} y1={220} y2={242} />
+      <DownArrow cx={545} y1={220} y2={242} />
+
+      {/* Step 2 — AI */}
+      <AIStepBox x={100} y={242} label="② AIと壁打ち" sub="課題を深掘り・整理" />
+      <AIStepBox x={470} y={242} label="② AIが商品化提案" sub="実体験を商品に変換" />
+
+      {/* 中央プラットフォーム */}
+      <rect x={285} y={252} width={150} height={50} rx={12} fill="#1e3a8a" />
+      <text x="360" y="273" fontSize="12" fill="white" textAnchor="middle" fontWeight="800">経験イチバ</text>
+      <text x="360" y="290" fontSize="9" fill="#93c5fd" textAnchor="middle">AI × 実体験</text>
+
+      <DownArrow cx={175} y1={302} y2={324} />
+      <DownArrow cx={545} y1={302} y2={324} />
+
+      {/* Step 3 */}
+      <StepBox x={100} y={324} label="③ 依頼を送る" color="#f0fdf4" border="#86efac" textColor="#15803d" />
+      <StepBox x={470} y={324} label="③ イチバに出品" color="#f0fdf4" border="#86efac" textColor="#15803d" />
+
+      {/* 底部接続 */}
+      <path d="M175 364 L175 394 L545 394 L545 364" stroke="#3b82f6" strokeWidth="2" fill="none" />
+      <polygon points="171,366 175,358 179,366" fill="#3b82f6" />
+      <polygon points="541,366 545,358 549,366" fill="#3b82f6" />
+      <rect x={264} y={402} width={192} height={28} rx={8} fill="#dbeafe" />
+      <text x="360" y="421" fontSize="11" fill="#1d4ed8" textAnchor="middle" fontWeight="700">直接マッチング・手数料ゼロ</text>
     </svg>
+  );
+}
+
+function StepBox({ x, y, label, color, border, textColor }: {
+  x: number; y: number; label: string; color: string; border: string; textColor: string;
+}) {
+  return (
+    <g>
+      <rect x={x} y={y} width={150} height={40} rx={10} fill={color} stroke={border} strokeWidth="1.5" />
+      <text x={x + 75} y={y + 25} fontSize="12" fill={textColor} textAnchor="middle" fontWeight="600">{label}</text>
+    </g>
+  );
+}
+
+function AIStepBox({ x, y, label, sub }: { x: number; y: number; label: string; sub: string }) {
+  return (
+    <g>
+      <rect x={x} y={y} width={150} height={58} rx={10} fill="#faf5ff" stroke="#c4b5fd" strokeWidth="1.5" />
+      <rect x={x + 108} y={y - 9} width={34} height={16} rx={8} fill="#7c3aed" />
+      <text x={x + 125} y={y + 3} fontSize="8" fill="white" textAnchor="middle" fontWeight="700">AI</text>
+      <text x={x + 75} y={y + 28} fontSize="11.5" fill="#5b21b6" textAnchor="middle" fontWeight="700">{label}</text>
+      <text x={x + 75} y={y + 46} fontSize="9" fill="#7c3aed" textAnchor="middle">{sub}</text>
+    </g>
+  );
+}
+
+function DownArrow({ cx, y1, y2 }: { cx: number; y1: number; y2: number }) {
+  return (
+    <g>
+      <line x1={cx} y1={y1} x2={cx} y2={y2 - 5} stroke="#93c5fd" strokeWidth="1.5" />
+      <polygon points={`${cx - 4},${y2 - 5} ${cx},${y2 + 1} ${cx + 4},${y2 - 5}`} fill="#93c5fd" />
+    </g>
   );
 }
 
