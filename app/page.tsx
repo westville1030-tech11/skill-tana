@@ -220,6 +220,47 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 経験→商品化 事例 */}
+      <section className="py-28 px-4 bg-white border-t border-gray-100">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">こんな経験が、商品になります</h2>
+          <p className="text-center text-gray-400 mb-14">AIが実体験を整理して、誰かに届く形に変えます</p>
+
+          <div className="space-y-8">
+            {commercializationCases.map((c) => (
+              <div key={c.role} className="grid md:grid-cols-2 gap-0 rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+                {/* 左：実体験 */}
+                <div className="bg-amber-50 p-6 flex flex-col gap-3">
+                  <span className="text-xs font-bold text-amber-700 bg-amber-100 px-3 py-1 rounded-full self-start">{c.role}</span>
+                  <p className="text-xs font-semibold text-amber-800 mb-1">経験者が語った事実</p>
+                  <blockquote className="text-sm text-gray-700 leading-relaxed border-l-2 border-amber-300 pl-3 italic">
+                    「{c.experience}」
+                  </blockquote>
+                </div>
+                {/* 右：商品化案 */}
+                <div className="bg-white p-6 flex flex-col gap-3 border-l border-gray-100">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">AIの商品化案</span>
+                  </div>
+                  <p className="font-bold text-gray-900 text-sm leading-snug">{c.productTitle}</p>
+                  <ul className="space-y-1.5">
+                    {c.deliverables.map((d, i) => (
+                      <li key={i} className="flex items-start gap-2 text-xs text-gray-600 leading-relaxed">
+                        <span className="text-blue-400 font-bold flex-shrink-0 mt-0.5">✓</span>
+                        {d}
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-auto pt-3 border-t border-gray-100">
+                    <span className="num text-blue-700 font-black text-base">{c.price}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* 登録方法 */}
       <section className="py-28 px-4 bg-white border-t border-gray-100">
         <div className="max-w-4xl mx-auto">
@@ -454,6 +495,42 @@ const deliveryFlow = [
   { title: "要件すり合わせ", desc: "チャットまたは30分MTGで詳細確認", time: "〜1日" },
   { title: "AI作成・経験者が仕上げ", desc: "AIでドラフト生成、経験者が検証・示唆付与", time: "1〜5日" },
   { title: "納品・完了", desc: "成果物を受け取り、お支払い", time: "完了" },
+];
+
+const commercializationCases = [
+  {
+    role: "製造エンジニア",
+    experience: "海外工場のラインで歩留まりが80%まで落ちた。現地スタッフは『機械のせいだ』と言ったが、粘り強く5つのなぜで深掘りしたら、洗浄工程の乾燥時間が気温によって数秒足りないことが原因だと分かった。センサーの閾値を調整して98%まで戻した。",
+    productTitle: "海外拠点の歩留まり急落を救う「5つのなぜ」実践チェックリスト",
+    deliverables: [
+      "機械の故障を疑う前に確認すべき「環境要因」の相関図",
+      "言語の壁を越えて現場スタッフから「事実」を引き出すヒアリングシート",
+      "乾燥・温度工程における閾値設定の最適化テンプレート",
+    ],
+    price: "¥40,000",
+  },
+  {
+    role: "飲食店エリアマネージャー（会社員）",
+    experience: "万年人手不足の店舗があった。店長が怖くて新人がすぐ辞めていた。店長に怒るのをやめさせ、代わりに「サンクスカード」を導入した。最初は反発されたが、半年後には離職率がゼロになり、売上も120%になった。",
+    productTitle: "離職率をゼロに変える「店長マインド変革」とサンクスカード運用セット",
+    deliverables: [
+      "高圧的なリーダーを「育てるリーダー」に変えるための1on1面談台本",
+      "現場が形骸化せずに続けられる「サンクスカード」導入ステップ図",
+      "スタッフの定着率を月次で可視化する管理フォーマット",
+    ],
+    price: "¥20,000",
+  },
+  {
+    role: "大手企業 営業（会社員）",
+    experience: "競合他社に価格で負け続けていた。顧客担当者の愚痴をよく聞くと、実は『稟議を通すのが面倒』だと言っていた。顧客の社内稟議にそのまま使える比較表と上司向けの説得スライドを代わりに作って渡した結果、価格を下げずに1億円の受注が取れた。",
+    productTitle: "価格競争を回避する「顧客の社内稟議」代行作成パッケージ",
+    deliverables: [
+      "顧客の担当者がそのまま社内で使える「競合比較・選定理由」スライド構成案",
+      "決裁者が気にする「リスクと投資対効果」を網羅したQA集",
+      "「お願い営業」から「課題解決パートナー」へ昇格するためのヒアリング項目",
+    ],
+    price: "¥50,000",
+  },
 ];
 
 const serviceExamples = [
