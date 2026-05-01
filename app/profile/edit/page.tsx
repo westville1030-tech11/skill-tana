@@ -58,6 +58,8 @@ export default function EditProfilePage() {
   };
   const [chatDrafts, setChatDrafts] = useState<{ deliverable: ChatDraftType; consulting: ChatDraftType } | null>(null);
   const [chatDraft, setChatDraft] = useState<ChatDraftType | null>(null);
+  const [showResumeUpload, setShowResumeUpload] = useState(false);
+  const [resumeUploading, setResumeUploading] = useState(false);
 
   // AIドラフト
   const [resumeFile, setResumeFile] = useState<File | null>(null);
@@ -188,6 +190,33 @@ export default function EditProfilePage() {
     const next = skills.filter((x) => x !== s);
     setSkills(next);
     save({ skills: next });
+  };
+
+  const handleResumeUpload = async (file: File) => {
+    setResumeUploading(true);
+    try {
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve((reader.result as string).split(",")[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      const res = await fetch("/api/resume-service-draft", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fileBase64: base64, mediaType: file.type }),
+      });
+      const data = await res.json();
+      if (data.deliverableDraft || data.consultingDraft) {
+        setChatDrafts({
+          deliverable: data.deliverableDraft ?? data.consultingDraft,
+          consulting: data.consultingDraft ?? data.deliverableDraft,
+        });
+        setShowResumeUpload(false);
+      }
+    } finally {
+      setResumeUploading(false);
+    }
   };
 
   const sendChatMessage = async () => {
@@ -570,13 +599,19 @@ export default function EditProfilePage() {
             <h2 className="text-sm font-semibold text-gray-700">成果物メニュー</h2>
             <p className="text-xs text-gray-400 mt-0.5">実体験をもとにAIが商品案を作ります</p>
           </div>
-          {!showAddForm && !showAIChat && (
-            <div className="flex gap-2">
+          {!showAddForm && !showAIChat && !showResumeUpload && (
+            <div className="flex flex-wrap gap-2">
               <button
-                onClick={() => { setShowAIChat(true); setChatMessages([]); setChatRounds(0); setChatDraft(null); }}
+                onClick={() => { setShowAIChat(true); setChatMessages([]); setChatRounds(0); setChatDraft(null); setChatDrafts(null); }}
                 className="text-sm bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors"
               >
                 ✨ AI壁打ちで追加
+              </button>
+              <button
+                onClick={() => setShowResumeUpload(true)}
+                className="text-sm bg-emerald-700 text-white px-4 py-2 rounded-lg hover:bg-emerald-800 transition-colors"
+              >
+                📄 履歴書から提案
               </button>
               <button onClick={() => setShowAddForm(true)} className="text-sm border border-gray-300 text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
                 手動で追加
@@ -584,6 +619,36 @@ export default function EditProfilePage() {
             </div>
           )}
         </div>
+
+        {/* 履歴書アップロード */}
+        {showResumeUpload && !chatDrafts && (
+          <div className="mb-4 border border-emerald-200 bg-emerald-50 rounded-xl p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-semibold text-emerald-700">📄 履歴書・職務経歴書から商品案を作る</p>
+              <button onClick={() => setShowResumeUpload(false)} className="text-xs text-gray-400 hover:text-gray-600">キャンセル</button>
+            </div>
+            <p className="text-xs text-emerald-700">PDF・画像（JPG/PNG）をアップロードすると、AIが経歴を読み取って成果物型・コンサル型の2案を提案します。</p>
+            {resumeUploading ? (
+              <div className="flex items-center gap-2 py-4 justify-center">
+                <span className="flex gap-1">{[0,1,2].map(i => <span key={i} className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce" style={{animationDelay:`${i*0.15}s`}} />)}</span>
+                <span className="text-xs text-emerald-700">経歴を分析中…</span>
+              </div>
+            ) : (
+              <label className="block cursor-pointer">
+                <div className="border-2 border-dashed border-emerald-300 rounded-xl p-6 text-center hover:border-emerald-500 hover:bg-emerald-100/50 transition-colors">
+                  <p className="text-sm text-emerald-700 font-medium">クリックしてファイルを選択</p>
+                  <p className="text-xs text-gray-400 mt-1">PDF・JPG・PNG（10MB以内）</p>
+                </div>
+                <input
+                  type="file"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  className="hidden"
+                  onChange={(e) => { const f = e.target.files?.[0]; if (f) handleResumeUpload(f); }}
+                />
+              </label>
+            )}
+          </div>
+        )}
 
         {/* AI壁打ちチャット */}
         {showAIChat && !chatDrafts && !chatDraft && (
