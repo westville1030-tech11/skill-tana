@@ -38,7 +38,9 @@ ${request}
     });
 
     const text = message.content[0].type === "text" ? message.content[0].text.trim() : "";
-    const result = JSON.parse(text);
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) return NextResponse.json({ quality: "poor", feedback: "依頼内容をより具体的に記載してください。" });
+    const result = JSON.parse(jsonMatch[0]);
     return NextResponse.json(result);
   } catch {
     // AI失敗時はチェックをスキップして通過させる
