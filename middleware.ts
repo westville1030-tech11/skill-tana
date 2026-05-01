@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
-  if (process.env.COMING_SOON !== "true") return NextResponse.next();
-
   const { pathname } = request.nextUrl;
   if (
     pathname === "/coming-soon" ||
