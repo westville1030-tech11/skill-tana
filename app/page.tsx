@@ -395,11 +395,13 @@ function ConceptDiagram() {
         <p className="text-[10px] font-bold text-gray-400 tracking-widest mb-3">従来型</p>
         <div className="flex items-center gap-1.5">
           <DiagBox icon="🏢" label="クライアント" />
-          <DiagArrow />
-          <DiagFee label="仲介会社" sub="20〜30%" red />
-          <DiagArrow />
-          <DiagFee label="エージェント" sub="登録料・成約料" amber />
-          <DiagArrow />
+          <div className="flex-1 flex items-center justify-center gap-1.5">
+            <DiagArrow />
+            <DiagFee label="仲介会社" sub="20〜30%" red />
+            <DiagArrow />
+            <DiagFee label="エージェント" sub="登録料・成約料" amber />
+            <DiagArrow />
+          </div>
           <DiagBox icon="💼" label="経験者" />
         </div>
       </div>
@@ -409,9 +411,11 @@ function ConceptDiagram() {
         <p className="text-[10px] font-bold text-yellow-600 tracking-widest mb-3">直接発注系 他社</p>
         <div className="flex items-center gap-1.5">
           <DiagBox icon="🏢" label="クライアント" />
-          <DiagArrow />
-          <DiagFee label="プラットフォーム" sub="サービス料 〜20%" amber />
-          <DiagArrow />
+          <div className="flex-1 flex items-center justify-center gap-1.5">
+            <DiagArrow />
+            <DiagFee label="プラットフォーム" sub="サービス料 〜20%" amber />
+            <DiagArrow />
+          </div>
           <DiagBox icon="💼" label="経験者" />
         </div>
       </div>
