@@ -80,8 +80,7 @@ export default function Home() {
       {/* 仕組み図 */}
       <section className="py-28 px-4 bg-white">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">仕組み</h2>
-          <p className="text-center text-gray-400 mb-12">直接発注は他にもある。でも、ここだけ手数料がない。</p>
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">費用ゼロの仕組</h2>
           <div className="overflow-x-auto -mx-4 px-4">
             <div className="min-w-[600px]">
               <ConceptDiagram />
@@ -538,8 +537,7 @@ function IconFileText() {
 
 /* ---- データ ---- */
 const stats = [
-  { value: "¥0", label: "手数料・仲介料" },
-  { value: "経歴証明", label: "法人メール認証済み" },
+  { value: "利用料ゼロ", label: "手数料・仲介料" },
   { value: "固定価格", label: "成果物単位" },
   { value: "週末OK", label: "スポット対応" },
 ];
