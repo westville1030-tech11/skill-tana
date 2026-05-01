@@ -515,7 +515,6 @@ const deliveryFlow = [
 
 const serviceExamples = [
   { category: "データ分析", title: "CSV・Excelデータ分析レポート", desc: "AIで集計・可視化ドラフトを作成。経験者が示唆を付与して納品", price: "¥30,000", days: "3日以内" },
-  { category: "戦略", title: "戦略論点整理スライド（1枚）", desc: "AIで論点を構造化、経験者が実態に合わせて仕上げる1枚スライド", price: "¥50,000", days: "5日以内" },
   { category: "エンジニアリング", title: "業務自動化スクリプト作成", desc: "AIでコードをドラフト生成、経験者が検証・実業務に合わせて調整", price: "¥40,000", days: "4日以内" },
   { category: "相談", title: "壁打ち相談セッション（60分）", desc: "AIでリサーチ・資料を事前準備。経験者との対話で課題を深堀り", price: "¥15,000", days: "当日〜翌日" },
 ];
