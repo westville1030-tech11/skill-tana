@@ -26,8 +26,8 @@ export default function Home() {
               </div>
 
               <h1 className="text-4xl md:text-5xl font-black text-white leading-tight mb-5 tracking-tight">
-                あなたが培ってきた知見を<br />
-                <span className="text-blue-300">パッケージ化し、より多くの人へ</span>
+                あなたの経験を、<br />
+                <span className="text-blue-300">誰かの答えに。</span>
               </h1>
               <p className="text-slate-300 mb-4 leading-relaxed text-lg">
                 現役もOBも、定年後も。積み上げてきた経験は<br className="hidden md:block" />
