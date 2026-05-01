@@ -26,7 +26,6 @@ export default function Home() {
                 次の世代にとって、何よりの教科書になる。
               </p>
               <p className="text-slate-400 text-sm mb-10 leading-relaxed">
-                あなたの今の会社での経験、そのまま副業で活かしませんか。<br className="hidden md:block" />
                 AIが商品化を手伝うから、ゼロから考えなくていい。
               </p>
 
