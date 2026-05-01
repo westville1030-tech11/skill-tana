@@ -13,7 +13,7 @@ export default function Home() {
               <div className="flex flex-col items-center lg:items-start gap-2 mb-8">
                 <div className="inline-flex items-center gap-2 bg-white/10 border border-white/15 text-white text-sm font-medium px-5 py-2 rounded-full">
                   <span className="w-2 h-2 bg-emerald-400 rounded-full inline-block flex-shrink-0" />
-                  AIが運営・設計を担うため、利用料はすべて無料です
+                  当サイトは、AIが運営・設計の大半を担っているため、発注・受注者側の当サイト利用に伴う費用負担は一切ありません
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <div className="inline-flex items-center gap-1.5 bg-white/10 border border-white/15 text-white text-xs font-medium px-4 py-1.5 rounded-full">
