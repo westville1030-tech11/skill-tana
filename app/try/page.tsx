@@ -82,6 +82,7 @@ export default function TryPage() {
   // 履歴書
   const [resumeUploading, setResumeUploading] = useState(false);
   const [resumeError, setResumeError] = useState("");
+  const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 共通
@@ -197,7 +198,13 @@ export default function TryPage() {
     setResumeUploading(true);
     try {
       const arrayBuffer = await file.arrayBuffer();
-      const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+      const uint8Array = new Uint8Array(arrayBuffer);
+      let binary = "";
+      const chunkSize = 8192;
+      for (let i = 0; i < uint8Array.length; i += chunkSize) {
+        binary += String.fromCharCode(...uint8Array.subarray(i, i + chunkSize));
+      }
+      const base64 = btoa(binary);
       const res = await fetch("/api/resume-service-draft", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -522,16 +529,30 @@ export default function TryPage() {
                 <p className="text-sm">AIが読み込んでいます...</p>
               </div>
             ) : (
-              <button
+              <div
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full border-2 border-dashed border-gray-300 hover:border-blue-400 rounded-2xl py-14 flex flex-col items-center gap-3 text-gray-400 hover:text-blue-500 transition-colors"
+                onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                onDragLeave={() => setIsDragging(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setIsDragging(false);
+                  const f = e.dataTransfer.files?.[0];
+                  if (f) handleFileUpload(f);
+                }}
+                className={`w-full border-2 border-dashed rounded-2xl py-14 flex flex-col items-center gap-3 cursor-pointer transition-colors ${
+                  isDragging
+                    ? "border-blue-400 bg-blue-50 text-blue-500"
+                    : "border-gray-300 hover:border-blue-400 text-gray-400 hover:text-blue-500"
+                }`}
               >
                 <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                 </svg>
-                <span className="text-sm font-medium">クリックしてファイルを選択</span>
+                <span className="text-sm font-medium">
+                  {isDragging ? "ここにドロップ" : "クリックまたはドラッグ＆ドロップ"}
+                </span>
                 <span className="text-xs">PDF / JPG / PNG / WebP</span>
-              </button>
+              </div>
             )}
 
             <input
