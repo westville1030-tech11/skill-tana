@@ -34,10 +34,6 @@ export default function Home() {
                   className="bg-gradient-to-r from-blue-500 to-blue-400 text-white px-8 py-4 rounded-xl font-bold hover:opacity-90 transition-opacity text-center shadow-lg shadow-blue-900/50">
                   イチバに登録
                 </Link>
-                <Link href="/request"
-                  className="bg-white/15 border border-white/25 text-white px-8 py-4 rounded-xl font-bold hover:bg-white/20 transition-colors text-center">
-                  AIで発注相談
-                </Link>
                 <Link href="/browse"
                   className="border border-white/20 text-white px-8 py-4 rounded-xl font-bold hover:bg-white/10 transition-colors text-center">
                   イチバの棚を見る
@@ -91,17 +87,41 @@ export default function Home() {
       {/* AIが伴走する両側設計 */}
       <section className="py-28 px-4 bg-slate-50">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">AIが、あなたの一歩目を手伝います</h2>
-          <p className="text-center text-gray-400 mb-14">発注も、出品も、AIが伴走。はじめての人でも迷わず使えます。</p>
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">まず、AIに話しかけてみてください</h2>
+          <p className="text-center text-gray-400 mb-14">発注も、出品も、最初の一歩はAIと一緒に。</p>
 
           <div className="grid md:grid-cols-2 gap-6">
+
+            {/* 経験者として登録したい人 */}
+            <div className="bg-white rounded-2xl border border-amber-100 p-7 flex flex-col gap-5">
+              <div>
+                <span className="text-xs font-bold text-amber-700 bg-amber-50 px-3 py-1 rounded-full">経験者として登録したい人へ</span>
+                <h3 className="text-lg font-bold text-gray-900 mt-3 mb-2 leading-snug">「自分の経験が商品化できるなんて、考えたこともなかった…」</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">まずはAIに経験を話してみてください。あなたの経験をもとに、商品提案を受けられます。</p>
+              </div>
+              <div className="space-y-2">
+                {[
+                  { step: "1", label: "経験を話す or 仕事に関係するファイルをアップ" },
+                  { step: "2", label: "AIが商品タイトル・価格・実体験を生成" },
+                  { step: "3", label: "確認してイチバに出品" },
+                ].map((s) => (
+                  <div key={s.step} className="flex items-center gap-3">
+                    <span className="w-6 h-6 rounded-full bg-amber-500 text-white text-xs font-black flex items-center justify-center flex-shrink-0">{s.step}</span>
+                    <span className="text-sm text-gray-700">{s.label}</span>
+                  </div>
+                ))}
+              </div>
+              <Link href="/try" className="mt-auto block text-center bg-amber-500 text-white py-3 rounded-xl text-sm font-bold hover:bg-amber-600 transition-colors">
+                AIに経験を話してみる →
+              </Link>
+            </div>
 
             {/* 発注したい人 */}
             <div className="bg-white rounded-2xl border border-blue-100 p-7 flex flex-col gap-5">
               <div>
                 <span className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">発注したい人へ</span>
-                <h3 className="text-lg font-bold text-gray-900 mt-3 mb-2 leading-snug">「課題はある。でも、うまく<br className="hidden sm:block" />伝えられるか不安…」</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">何を頼めばいいかあいまいでも大丈夫。AIが質問を返しながら、依頼内容を一緒に整理します。</p>
+                <h3 className="text-lg font-bold text-gray-900 mt-3 mb-2 leading-snug">「課題をどう伝えて発注するか、不安…」</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">まずはAIに発注相談をしてみてください。何を頼めばいいか整理できていなくても大丈夫です。</p>
               </div>
               <div className="space-y-2">
                 {[
@@ -117,30 +137,6 @@ export default function Home() {
               </div>
               <Link href="/request" className="mt-auto block text-center bg-blue-600 text-white py-3 rounded-xl text-sm font-bold hover:bg-blue-700 transition-colors">
                 AIに発注相談してみる →
-              </Link>
-            </div>
-
-            {/* 経験者として登録したい人 */}
-            <div className="bg-white rounded-2xl border border-amber-100 p-7 flex flex-col gap-5">
-              <div>
-                <span className="text-xs font-bold text-amber-700 bg-amber-50 px-3 py-1 rounded-full">経験者として登録したい人へ</span>
-                <h3 className="text-lg font-bold text-gray-900 mt-3 mb-2 leading-snug">「経験を商品化するなんて、<br className="hidden sm:block" />考えたこともなかった…」</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">自分の経験をAIに話すだけ、または職務経歴書を貼るだけ。AIがあなたの経験を整理して、商品案を提案します。</p>
-              </div>
-              <div className="space-y-2">
-                {[
-                  { step: "1", label: "経験を話す or 職務経歴書をアップ" },
-                  { step: "2", label: "AIが商品タイトル・価格・実体験を生成" },
-                  { step: "3", label: "確認してイチバに出品" },
-                ].map((s) => (
-                  <div key={s.step} className="flex items-center gap-3">
-                    <span className="w-6 h-6 rounded-full bg-amber-500 text-white text-xs font-black flex items-center justify-center flex-shrink-0">{s.step}</span>
-                    <span className="text-sm text-gray-700">{s.label}</span>
-                  </div>
-                ))}
-              </div>
-              <Link href="/try" className="mt-auto block text-center bg-amber-500 text-white py-3 rounded-xl text-sm font-bold hover:bg-amber-600 transition-colors">
-                AIに経験を話してみる →
               </Link>
             </div>
 
