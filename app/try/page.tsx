@@ -19,6 +19,7 @@ type ServiceDraft = {
 type Drafts = { deliverable: ServiceDraft; consulting: ServiceDraft } | null;
 type Mode = null | "decided" | "explore";
 type ExploreMode = null | "chat" | "resume";
+type DecidedMode = null | "form" | "file";
 
 function DraftCard({ draft, label, badge, badgeColor, onSelect }: {
   draft: ServiceDraft; label: string; badge: string; badgeColor: string; onSelect: () => void;
@@ -69,6 +70,7 @@ export default function TryPage() {
   const [exploreMode, setExploreMode] = useState<ExploreMode>(null);
 
   // A型
+  const [decidedMode, setDecidedMode] = useState<DecidedMode>(null);
   const [decidedForm, setDecidedForm] = useState({ title: "", description: "", price: "", days: "" });
   const [decidedChatActive, setDecidedChatActive] = useState(false);
   const [decidedChecking, setDecidedChecking] = useState(false);
@@ -95,6 +97,7 @@ export default function TryPage() {
 
   const reset = () => {
     setMode(null); setExploreMode(null);
+    setDecidedMode(null);
     setDecidedForm({ title: "", description: "", price: "", days: "" });
     setDecidedChatActive(false);
     setDecidedError(""); setDecidedChecking(false);
@@ -106,6 +109,53 @@ export default function TryPage() {
   const goRegister = (draft: ServiceDraft) => {
     sessionStorage.setItem("pendingDraft", JSON.stringify(draft));
     window.location.href = "/profile/edit";
+  };
+
+  // A型ファイル: アップロード → draft抽出 → チャット自動開始
+  const handleDecidedFile = async (file: File) => {
+    setResumeError("");
+    setResumeUploading(true);
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const uint8Array = new Uint8Array(arrayBuffer);
+      let binary = "";
+      const chunkSize = 8192;
+      for (let i = 0; i < uint8Array.length; i += chunkSize) {
+        binary += String.fromCharCode(...uint8Array.subarray(i, i + chunkSize));
+      }
+      const base64 = btoa(binary);
+      const res = await fetch("/api/resume-service-draft", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fileBase64: base64, mediaType: file.type }),
+      });
+      const data = await res.json();
+      if (data.error) { setResumeError(data.error); return; }
+      const draft = data.deliverableDraft ?? data.consultingDraft;
+      setDecidedForm({
+        title: draft.title ?? "",
+        description: draft.description ?? "",
+        price: String(draft.price_suggestion ?? ""),
+        days: String(draft.days_suggestion ?? ""),
+      });
+      setDecidedChatActive(true);
+      const firstMsg = `ファイルを読み込みました。「${draft.title}」という内容で出品したいと思っています。${draft.description}。価格は${draft.price_suggestion ? `${draft.price_suggestion.toLocaleString()}円` : "未定"}、納期は${draft.days_suggestion ? `${draft.days_suggestion}日` : "未定"}を想定しています。`;
+      const next: Message[] = [{ role: "user", content: firstMsg }];
+      setMessages(next);
+      setThinking(true);
+      const chatRes = await fetch("/api/chat-service-create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: next }),
+      });
+      const chatData = await chatRes.json();
+      setMessages([...next, { role: "assistant", content: chatData.text }]);
+    } catch {
+      setResumeError("読み込みに失敗しました。PDF・画像ファイルをお試しください。");
+    } finally {
+      setResumeUploading(false);
+      setThinking(false);
+    }
   };
 
   // A型: フォーム送信 → チャット開始（初回メッセージを自動投稿）
@@ -375,8 +425,78 @@ export default function TryPage() {
           );
         })()}
 
+        {/* ━━━ A型: 入力方法選択 ━━━ */}
+        {!drafts && mode === "decided" && !decidedChatActive && decidedMode === null && (
+          <>
+            <div className="bg-white border border-gray-100 rounded-2xl p-5 space-y-1">
+              <h2 className="font-bold text-gray-900">どちらで出品内容を入力しますか？</h2>
+              <p className="text-sm text-gray-500">AIが内容を確認してから登録に進みます。</p>
+            </div>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <button
+                onClick={() => setDecidedMode("form")}
+                className="bg-white border-2 border-gray-200 hover:border-blue-400 rounded-2xl p-6 text-left space-y-2 transition-all group"
+              >
+                <span className="text-2xl">✍️</span>
+                <p className="font-bold text-gray-900 group-hover:text-blue-700">内容を直接入力する</p>
+                <p className="text-xs text-gray-500 leading-relaxed">タイトル・説明・価格を入力してAIに確認してもらいます。</p>
+              </button>
+              <button
+                onClick={() => setDecidedMode("file")}
+                className="bg-white border-2 border-gray-200 hover:border-blue-400 rounded-2xl p-6 text-left space-y-2 transition-all group"
+              >
+                <span className="text-2xl">📂</span>
+                <p className="font-bold text-gray-900 group-hover:text-blue-700">既存ファイルから読み込む</p>
+                <p className="text-xs text-gray-500 leading-relaxed">ランサーズ等の納品物・提案書・名刺など、仕事に関係するファイルをそのまま使えます。</p>
+              </button>
+            </div>
+          </>
+        )}
+
+        {/* ━━━ A型: ファイルアップロード ━━━ */}
+        {!drafts && mode === "decided" && !decidedChatActive && decidedMode === "file" && (
+          <div className="bg-white border border-gray-100 rounded-2xl p-6 space-y-4">
+            <div>
+              <h2 className="font-bold text-gray-900 mb-1">仕事に関係するファイルをアップロード</h2>
+              <p className="text-xs text-gray-500">例：ランサーズ等の納品物、提案書、名刺、スライドなど　PDF / JPG / PNG / WebP に対応</p>
+            </div>
+            {resumeUploading ? (
+              <div className="flex flex-col items-center justify-center py-16 gap-4 text-gray-400">
+                <span className="w-8 h-8 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin" />
+                <p className="text-sm">AIが読み込んでいます...</p>
+              </div>
+            ) : (
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                onDragLeave={() => setIsDragging(false)}
+                onDrop={(e) => { e.preventDefault(); setIsDragging(false); const f = e.dataTransfer.files?.[0]; if (f) handleDecidedFile(f); }}
+                className={`w-full border-2 border-dashed rounded-2xl py-14 flex flex-col items-center gap-3 cursor-pointer transition-colors ${
+                  isDragging ? "border-blue-400 bg-blue-50 text-blue-500" : "border-gray-300 hover:border-blue-400 text-gray-400 hover:text-blue-500"
+                }`}
+              >
+                <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                </svg>
+                <span className="text-sm font-medium">{isDragging ? "ここにドロップ" : "クリックまたはドラッグ＆ドロップ"}</span>
+                <span className="text-xs">PDF / JPG / PNG / WebP</span>
+              </div>
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="application/pdf,image/jpeg,image/png,image/webp"
+              className="hidden"
+              onChange={(e) => { const f = e.target.files?.[0]; if (f) handleDecidedFile(f); }}
+            />
+            {resumeError && (
+              <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-2">{resumeError}</p>
+            )}
+          </div>
+        )}
+
         {/* ━━━ A型: フォーム入力 ━━━ */}
-        {!drafts && mode === "decided" && !decidedChatActive && (
+        {!drafts && mode === "decided" && !decidedChatActive && decidedMode === "form" && (
           <div className="bg-white border border-gray-100 rounded-2xl p-6 space-y-4">
             <h2 className="font-bold text-gray-900">出品内容を入力してください</h2>
             <div>
