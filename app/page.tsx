@@ -73,6 +73,47 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 経験→商品化 事例 */}
+      <section className="py-28 px-4 bg-white border-t border-gray-100">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">こんな経験が、商品になります</h2>
+          <p className="text-center text-gray-400 mb-14">AIが実体験を整理して、誰かに届く形に変えます</p>
+
+          <div className="space-y-8">
+            {commercializationCases.map((c) => (
+              <div key={c.role} className="grid md:grid-cols-2 gap-0 rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+                {/* 左：実体験 */}
+                <div className="bg-amber-50 p-6 flex flex-col gap-3">
+                  <span className="text-xs font-bold text-amber-700 bg-amber-100 px-3 py-1 rounded-full self-start">{c.role}</span>
+                  <p className="text-xs font-semibold text-amber-800 mb-1">経験者が語った事実</p>
+                  <blockquote className="text-sm text-gray-700 leading-relaxed border-l-2 border-amber-300 pl-3 italic">
+                    「{c.experience}」
+                  </blockquote>
+                </div>
+                {/* 右：商品化案 */}
+                <div className="bg-white p-6 flex flex-col gap-3 border-l border-gray-100">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">AIの商品化案</span>
+                  </div>
+                  <p className="font-bold text-gray-900 text-sm leading-snug">{c.productTitle}</p>
+                  <ul className="space-y-1.5">
+                    {c.deliverables.map((d, i) => (
+                      <li key={i} className="flex items-start gap-2 text-xs text-gray-600 leading-relaxed">
+                        <span className="text-blue-400 font-bold flex-shrink-0 mt-0.5">✓</span>
+                        {d}
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-auto pt-3 border-t border-gray-100">
+                    <span className="num text-blue-700 font-black text-base">{c.price}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* 全部ゼロ */}
       <section className="py-5 px-4 bg-emerald-50 border-b border-emerald-100">
         <div className="max-w-3xl mx-auto">
@@ -126,102 +167,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* AIが伴走する両側設計 */}
-      <section className="py-28 px-4 bg-slate-50">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">まず、AIに話しかけてみてください</h2>
-          <p className="text-center text-gray-400 mb-14">発注も、出品も、最初の一歩はAIと一緒に。</p>
-
-          <div className="grid md:grid-cols-2 gap-6">
-
-            {/* 経験者として登録したい人 */}
-            <div className="bg-white rounded-2xl border border-amber-100 p-7 flex flex-col gap-5">
-              <div>
-                <span className="text-xs font-bold text-amber-700 bg-amber-50 px-3 py-1 rounded-full">経験者として登録したい人へ</span>
-                <h3 className="text-lg font-bold text-gray-900 mt-3 mb-2 leading-snug">「自分の経験が商品化できるなんて、考えたこともなかった…」</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">まずはAIに経験を話してみてください。あなたの経験をもとに、商品提案を受けられます。</p>
-              </div>
-              <div className="space-y-2">
-                {[
-                  { step: "1", label: "経験を話す or 仕事に関係するファイルをアップ" },
-                  { step: "2", label: "AIが商品タイトル・価格・実体験を生成" },
-                  { step: "3", label: "確認してイチバに出品" },
-                ].map((s) => (
-                  <div key={s.step} className="flex items-center gap-3">
-                    <span className="w-6 h-6 rounded-full bg-amber-500 text-white text-xs font-black flex items-center justify-center flex-shrink-0">{s.step}</span>
-                    <span className="text-sm text-gray-700">{s.label}</span>
-                  </div>
-                ))}
-              </div>
-              <Link href="/try" className="mt-auto block text-center bg-amber-500 text-white py-3 rounded-xl text-sm font-bold hover:bg-amber-600 transition-colors">
-                AIに経験を話してみる →
-              </Link>
-            </div>
-
-            {/* 発注したい人 */}
-            <div className="bg-white rounded-2xl border border-blue-100 p-7 flex flex-col gap-5">
-              <div>
-                <span className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">発注したい人へ</span>
-                <h3 className="text-lg font-bold text-gray-900 mt-3 mb-2 leading-snug">「課題をどう伝えて発注するか、不安…」</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">まずはAIに発注相談をしてみてください。何を頼めばいいか整理できていなくても大丈夫です。</p>
-              </div>
-              <div className="space-y-2">
-                {[
-                  { step: "1", label: "課題を自由に入力" },
-                  { step: "2", label: "AIが3回、深掘り質問" },
-                  { step: "3", label: "整理された依頼で経験者を探す" },
-                ].map((s) => (
-                  <div key={s.step} className="flex items-center gap-3">
-                    <span className="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-black flex items-center justify-center flex-shrink-0">{s.step}</span>
-                    <span className="text-sm text-gray-700">{s.label}</span>
-                  </div>
-                ))}
-              </div>
-              <Link href="/request" className="mt-auto block text-center bg-blue-600 text-white py-3 rounded-xl text-sm font-bold hover:bg-blue-700 transition-colors">
-                AIに発注相談してみる →
-              </Link>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* 発注から納品までのフロー */}
-      <section className="py-28 px-4 bg-slate-50">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">発注から納品まで</h2>
-          <p className="text-center text-gray-400 mb-14">AIが両側の精度を上げ、経験者の知見が価値を生む</p>
-
-          <div className="flex flex-col md:flex-row items-start">
-            {deliveryFlow.map((step, i) => (
-              <div key={step.title} className="flex md:flex-col flex-row items-start md:items-center flex-1">
-                <div className="flex md:flex-col flex-row items-start md:items-center gap-4 md:gap-3 md:text-center w-full">
-                  <div className="num flex-shrink-0 w-11 h-11 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-base shadow-sm">
-                    {i + 1}
-                  </div>
-                  <div className="flex-1 pb-8 md:pb-0 md:px-3">
-                    {step.badge && (
-                      <span className="inline-block text-[10px] font-bold px-2 py-0.5 rounded-full mb-1.5 bg-blue-100 text-blue-700">
-                        {step.badge}
-                      </span>
-                    )}
-                    <h3 className="font-bold text-gray-900 text-sm leading-snug">{step.title}</h3>
-                    <p className="text-xs text-gray-400 mt-1 leading-relaxed">{step.desc}</p>
-                    <span className="num text-xs text-blue-500 font-bold">{step.time}</span>
-                  </div>
-                </div>
-                {i < deliveryFlow.length - 1 && (
-                  <div className="md:hidden flex-shrink-0 w-0.5 h-6 bg-gray-200 ml-5" />
-                )}
-                {i < deliveryFlow.length - 1 && (
-                  <div className="hidden md:flex flex-shrink-0 items-center justify-center pt-5 px-1 text-gray-200 text-sm">›</div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* 品質保証 */}
       <section className="py-14 px-4 bg-blue-50 border-y border-blue-100">
         <div className="max-w-3xl mx-auto">
@@ -246,41 +191,35 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 経験→商品化 事例 */}
+      {/* 発注から納品までのフロー */}
       <section className="py-28 px-4 bg-white border-t border-gray-100">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">こんな経験が、商品になります</h2>
-          <p className="text-center text-gray-400 mb-14">AIが実体験を整理して、誰かに届く形に変えます</p>
-
-          <div className="space-y-8">
-            {commercializationCases.map((c) => (
-              <div key={c.role} className="grid md:grid-cols-2 gap-0 rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
-                {/* 左：実体験 */}
-                <div className="bg-amber-50 p-6 flex flex-col gap-3">
-                  <span className="text-xs font-bold text-amber-700 bg-amber-100 px-3 py-1 rounded-full self-start">{c.role}</span>
-                  <p className="text-xs font-semibold text-amber-800 mb-1">経験者が語った事実</p>
-                  <blockquote className="text-sm text-gray-700 leading-relaxed border-l-2 border-amber-300 pl-3 italic">
-                    「{c.experience}」
-                  </blockquote>
-                </div>
-                {/* 右：商品化案 */}
-                <div className="bg-white p-6 flex flex-col gap-3 border-l border-gray-100">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">AIの商品化案</span>
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">発注から納品まで</h2>
+          <p className="text-center text-gray-400 mb-14">AIが両側の精度を上げ、経験者の知見が価値を生む</p>
+          <div className="flex flex-col md:flex-row items-start">
+            {deliveryFlow.map((step, i) => (
+              <div key={step.title} className="flex md:flex-col flex-row items-start md:items-center flex-1">
+                <div className="flex md:flex-col flex-row items-start md:items-center gap-4 md:gap-3 md:text-center w-full">
+                  <div className="num flex-shrink-0 w-11 h-11 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-base shadow-sm">
+                    {i + 1}
                   </div>
-                  <p className="font-bold text-gray-900 text-sm leading-snug">{c.productTitle}</p>
-                  <ul className="space-y-1.5">
-                    {c.deliverables.map((d, i) => (
-                      <li key={i} className="flex items-start gap-2 text-xs text-gray-600 leading-relaxed">
-                        <span className="text-blue-400 font-bold flex-shrink-0 mt-0.5">✓</span>
-                        {d}
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="mt-auto pt-3 border-t border-gray-100">
-                    <span className="num text-blue-700 font-black text-base">{c.price}</span>
+                  <div className="flex-1 pb-8 md:pb-0 md:px-3">
+                    {step.badge && (
+                      <span className="inline-block text-[10px] font-bold px-2 py-0.5 rounded-full mb-1.5 bg-blue-100 text-blue-700">
+                        {step.badge}
+                      </span>
+                    )}
+                    <h3 className="font-bold text-gray-900 text-sm leading-snug">{step.title}</h3>
+                    <p className="text-xs text-gray-400 mt-1 leading-relaxed">{step.desc}</p>
+                    <span className="num text-xs text-blue-500 font-bold">{step.time}</span>
                   </div>
                 </div>
+                {i < deliveryFlow.length - 1 && (
+                  <div className="md:hidden flex-shrink-0 w-0.5 h-6 bg-gray-200 ml-5" />
+                )}
+                {i < deliveryFlow.length - 1 && (
+                  <div className="hidden md:flex flex-shrink-0 items-center justify-center pt-5 px-1 text-gray-200 text-sm">›</div>
+                )}
               </div>
             ))}
           </div>
