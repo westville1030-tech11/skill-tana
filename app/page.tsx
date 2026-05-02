@@ -51,10 +51,24 @@ export default function Home() {
                   </Link>
                 </div>
               </div>
-              <div className="text-center lg:text-left mb-12">
+              <div className="text-center lg:text-left mb-8">
                 <Link href="/browse" className="text-slate-400 text-sm hover:text-white transition-colors">
                   まずイチバの棚を見てみる →
                 </Link>
+              </div>
+
+              {/* キラーワード3つ */}
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { value: "¥0 手数料なし", desc: "成約しても引かれない" },
+                  { value: "経験を商品化して届ける", desc: "AIが一緒に作る" },
+                  { value: "AIの目でひと確認", desc: "実体験を確かめる" },
+                ].map((item) => (
+                  <div key={item.value} className="bg-white/8 border border-white/10 rounded-xl px-3 py-3 text-center">
+                    <p className="text-xs font-bold text-white leading-snug">{item.value}</p>
+                    <p className="text-[10px] text-slate-400 mt-1 leading-tight">{item.desc}</p>
+                  </div>
+                ))}
               </div>
 
             </div>
