@@ -457,8 +457,8 @@ export default function TryPage() {
                 className="bg-white border-2 border-gray-200 hover:border-blue-400 rounded-2xl p-6 text-left space-y-2 transition-all group"
               >
                 <span className="text-2xl">📄</span>
-                <p className="font-bold text-gray-900 group-hover:text-blue-700">履歴書・経歴書から<br />提案してもらう</p>
-                <p className="text-xs text-gray-500 leading-relaxed">PDF・画像をアップロードするだけ。AIが内容を読んで2案を提案します。</p>
+                <p className="font-bold text-gray-900 group-hover:text-blue-700">仕事に関係するファイルから<br />提案してもらう</p>
+                <p className="text-xs text-gray-500 leading-relaxed">提案書・名刺・履歴書など何でもOK。AIが内容を読んで2案を提案します。</p>
               </button>
             </div>
           </>
@@ -519,8 +519,8 @@ export default function TryPage() {
         {!drafts && mode === "explore" && exploreMode === "resume" && (
           <div className="bg-white border border-gray-100 rounded-2xl p-6 space-y-4">
             <div>
-              <h2 className="font-bold text-gray-900 mb-1">履歴書・職務経歴書をアップロード</h2>
-              <p className="text-xs text-gray-500">PDF、JPG、PNG、WebP に対応しています</p>
+              <h2 className="font-bold text-gray-900 mb-1">仕事に関係するファイルをアップロード</h2>
+              <p className="text-xs text-gray-500">例：過去の作成物、提案書、名刺、履歴書、顧客とのやり取りなど　PDF / JPG / PNG / WebP に対応</p>
             </div>
 
             {resumeUploading ? (
