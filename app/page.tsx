@@ -31,8 +31,12 @@ export default function Home() {
 
               <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-12">
                 <Link href="/try"
-                  className="bg-gradient-to-r from-blue-500 to-blue-400 text-white px-8 py-4 rounded-xl font-bold hover:opacity-90 transition-opacity text-center shadow-lg shadow-blue-900/50">
-                  イチバに登録
+                  className="bg-gradient-to-r from-amber-500 to-amber-400 text-white px-8 py-4 rounded-xl font-bold hover:opacity-90 transition-opacity text-center shadow-lg shadow-amber-900/30">
+                  AIに経験を話してみる →
+                </Link>
+                <Link href="/request"
+                  className="bg-white/15 border border-white/25 text-white px-8 py-4 rounded-xl font-bold hover:bg-white/20 transition-colors text-center">
+                  AIに発注相談してみる →
                 </Link>
                 <Link href="/browse"
                   className="border border-white/20 text-white px-8 py-4 rounded-xl font-bold hover:bg-white/10 transition-colors text-center">
