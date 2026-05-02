@@ -106,7 +106,7 @@ export default function Home() {
       <section className="py-28 px-4 bg-white border-t border-gray-100">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">AIの価格提案ロジック</h2>
-          <p className="text-center text-gray-400 mb-12">手数料ゼロだから、相場より安くても手取りは同じ</p>
+          <p className="text-center text-gray-400 mb-12">登録時に職種・経験を入力すると、AIが相場から適正価格を提案します</p>
           <PricingLogic />
         </div>
       </section>
@@ -541,9 +541,30 @@ function PricingLogic() {
           <p className="text-sm text-white font-bold">同じ価格で出して、¥9,000 多く手元に残る</p>
         </div>
       </div>
-      <p className="text-xs text-gray-400 text-center leading-relaxed">
-        AIは市場相場をベースに適正価格を提案します。品質保証がある分、相場と同等以上の価格設定が可能です。
-      </p>
+      {/* カテゴリ別相場 */}
+      <div className="rounded-2xl border border-gray-100 bg-gray-50 p-5">
+        <p className="text-[10px] font-bold text-gray-400 tracking-widest mb-4">AIが参照するカテゴリ別相場（成果物1件あたり）</p>
+        <div className="space-y-2">
+          {[
+            { category: "士業（税理士・弁護士・社労士）", range: "¥30,000〜¥50,000", source: "専門資格×実務経験" },
+            { category: "戦略・経営コンサル",             range: "¥30,000〜¥50,000", source: "大手ファーム・事業会社出身" },
+            { category: "ITエンジニア・データ分析",       range: "¥20,000〜¥40,000", source: "開発・分析実績" },
+            { category: "事業会社（人事・経理・営業）",   range: "¥15,000〜¥30,000", source: "業務経験・社内知見" },
+            { category: "教育・研究・専門職",             range: "¥15,000〜¥25,000", source: "指導実績・研究歴" },
+          ].map((r) => (
+            <div key={r.category} className="flex items-center gap-3">
+              <div className="flex-1 min-w-0">
+                <span className="text-xs text-gray-700 font-medium">{r.category}</span>
+                <span className="text-[10px] text-gray-400 ml-2">{r.source}</span>
+              </div>
+              <span className="num text-xs font-black text-blue-600 flex-shrink-0">{r.range}</span>
+            </div>
+          ))}
+        </div>
+        <p className="text-[10px] text-gray-400 mt-4 leading-relaxed">
+          各種求人・フリーランス案件のWeb上の公開データをもとに算出。経験の具体性・成果物の数により上下します。
+        </p>
+      </div>
     </div>
   );
 }
