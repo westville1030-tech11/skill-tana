@@ -200,6 +200,28 @@ export default function InboxPage() {
                     </div>
                   )}
 
+                  {/* 文書作成（返信済みの場合のみ） */}
+                  {q.pro_reply && (
+                    <div className="flex gap-2">
+                      <a
+                        href={`/doc/contract/${q.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 text-center border border-gray-300 text-gray-700 py-2 rounded-xl text-xs font-medium hover:bg-gray-50 transition-colors"
+                      >
+                        📄 契約書を作成
+                      </a>
+                      <a
+                        href={`/doc/invoice/${q.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 text-center border border-gray-300 text-gray-700 py-2 rounded-xl text-xs font-medium hover:bg-gray-50 transition-colors"
+                      >
+                        🧾 請求書を作成
+                      </a>
+                    </div>
+                  )}
+
                   {/* 返信フォーム */}
                   <div className="space-y-2">
                     <p className="text-xs text-gray-500 font-medium">{q.pro_reply ? "返信を更新する" : "返信する"}</p>

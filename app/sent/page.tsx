@@ -111,12 +111,32 @@ export default function SentPage() {
                     <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">{q.message}</p>
                   </div>
                   {q.pro_reply ? (
+                    <>
                     <div className="bg-white border border-blue-200 rounded-xl p-4">
                       <p className="text-xs font-semibold text-blue-700 mb-2">
                         経験者からの返信 · {q.pro_replied_at ? new Date(q.pro_replied_at).toLocaleDateString("ja-JP", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : ""}
                       </p>
                       <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">{q.pro_reply}</p>
                     </div>
+                    <div className="flex gap-2">
+                      <a
+                        href={`/doc/contract/${q.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 text-center border border-gray-300 text-gray-700 py-2 rounded-xl text-xs font-medium hover:bg-gray-50 transition-colors"
+                      >
+                        📄 契約書を作成
+                      </a>
+                      <a
+                        href={`/doc/purchase-order/${q.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 text-center border border-gray-300 text-gray-700 py-2 rounded-xl text-xs font-medium hover:bg-gray-50 transition-colors"
+                      >
+                        📋 発注書を作成
+                      </a>
+                    </div>
+                    </>
                   ) : (
                     <div className="bg-gray-50 rounded-xl p-4 text-center">
                       <p className="text-sm text-gray-400">経験者からの返信を待っています</p>
