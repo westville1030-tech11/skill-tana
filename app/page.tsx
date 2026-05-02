@@ -496,7 +496,6 @@ function ComparisonTable() {
 function PricingLogic() {
   return (
     <div className="space-y-4">
-      {/* 手取り換算テーブル */}
       <div className="rounded-2xl border border-gray-200 overflow-hidden">
         <div className="grid grid-cols-2">
           {/* 他社 */}
@@ -514,7 +513,7 @@ function PricingLogic() {
               <div className="h-px bg-gray-200" />
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-gray-600">手取り</span>
-                <span className="num text-xl font-black text-gray-700">¥21,000</span>
+                <span className="num text-xl font-black text-gray-500">¥21,000</span>
               </div>
             </div>
           </div>
@@ -524,7 +523,7 @@ function PricingLogic() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-blue-600">受注額</span>
-                <span className="num text-lg font-black text-blue-700">¥21,000</span>
+                <span className="num text-lg font-black text-blue-700">¥30,000</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-xs text-blue-600">手数料</span>
@@ -533,18 +532,17 @@ function PricingLogic() {
               <div className="h-px bg-blue-200" />
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-blue-700">手取り</span>
-                <span className="num text-xl font-black text-blue-700">¥21,000</span>
+                <span className="num text-xl font-black text-blue-700">¥30,000</span>
               </div>
             </div>
           </div>
         </div>
         <div className="bg-blue-600 px-6 py-3 text-center">
-          <p className="text-sm text-white font-bold">経験イチバで ¥21,000 = 他社で ¥30,000 と同じ手取り</p>
+          <p className="text-sm text-white font-bold">同じ価格で出して、¥9,000 多く手元に残る</p>
         </div>
       </div>
       <p className="text-xs text-gray-400 text-center leading-relaxed">
-        AIはこの換算をベースに、カテゴリ別の市場相場から適正価格を提案します。<br/>
-        安く出しすぎる必要はありません。
+        AIは市場相場をベースに適正価格を提案します。品質保証がある分、相場と同等以上の価格設定が可能です。
       </p>
     </div>
   );
