@@ -215,14 +215,27 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 修正1回保証 */}
-      <section className="py-5 px-4 bg-blue-50 border-y border-blue-100">
-        <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-6 text-center sm:text-left">
-          <span className="text-xs font-bold text-blue-700 bg-blue-100 px-3 py-1 rounded-full flex-shrink-0">プラットフォーム保証</span>
-          <p className="text-xs text-gray-500 leading-relaxed">
-            経験イチバのすべての取引には、<span className="text-blue-600 font-medium">修正1回が標準で含まれます。</span>
-            着手前に要件を確認した上で進めるため、納品後の認識ズレを最小化します。
-          </p>
+      {/* 品質保証 */}
+      <section className="py-14 px-4 bg-blue-50 border-y border-blue-100">
+        <div className="max-w-3xl mx-auto">
+          <p className="text-center text-xs font-bold text-blue-600 uppercase tracking-widest mb-8">3つの品質保証</p>
+          <div className="grid sm:grid-cols-3 gap-6">
+            <div className="flex flex-col gap-2">
+              <span className="text-xl">🔍</span>
+              <p className="text-sm font-bold text-gray-800">実体験の具体性をAIが確認</p>
+              <p className="text-xs text-gray-500 leading-relaxed">出品時・納品時に「この人の経験でしか出てこない具体性があるか」をチェック。一般論だけの成果物は警告対象になります。</p>
+            </div>
+            <div className="flex flex-col gap-2">
+              <span className="text-xl">🔄</span>
+              <p className="text-sm font-bold text-gray-800">修正1回が標準で含まれます</p>
+              <p className="text-xs text-gray-500 leading-relaxed">着手前に要件を確認した上で進めるため、納品後の認識ズレを最小化します。</p>
+            </div>
+            <div className="flex flex-col gap-2">
+              <span className="text-xl">💬</span>
+              <p className="text-sm font-bold text-gray-800">期待と違ったら、AIが照合します</p>
+              <p className="text-xs text-gray-500 leading-relaxed">成果物の説明と実際の内容をAIが照合し、乖離がある場合は再対応をリクエストできます。</p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -410,6 +423,12 @@ function ComparisonTable() {
       spot:   "△ 自分で準備",
       skill:  "△ 仕様書が必要",
       ours:   "◎ AIと壁打ち",
+    },
+    {
+      label: "期待外れの時",
+      spot:   "対応なし",
+      skill:  "評価を書くのみ",
+      ours:   "AIが照合→再対応",
     },
   ];
 
