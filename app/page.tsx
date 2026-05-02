@@ -102,8 +102,17 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 競合比較 */}
+      {/* 価格提案ロジック */}
       <section className="py-28 px-4 bg-white border-t border-gray-100">
+        <div className="max-w-2xl mx-auto">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">AIの価格提案ロジック</h2>
+          <p className="text-center text-gray-400 mb-12">手数料ゼロだから、相場より安くても手取りは同じ</p>
+          <PricingLogic />
+        </div>
+      </section>
+
+      {/* 競合比較 */}
+      <section className="py-28 px-4 bg-slate-50 border-t border-gray-100">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">他のサービスとの違い</h2>
           <p className="text-center text-gray-400 mb-14">経験イチバが「成果物×固定価格×AI」にこだわる理由</p>
@@ -479,6 +488,64 @@ function ComparisonTable() {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+/* ---- 価格提案ロジック ---- */
+function PricingLogic() {
+  return (
+    <div className="space-y-4">
+      {/* 手取り換算テーブル */}
+      <div className="rounded-2xl border border-gray-200 overflow-hidden">
+        <div className="grid grid-cols-2">
+          {/* 他社 */}
+          <div className="bg-gray-50 p-6 border-r border-gray-200">
+            <p className="text-[10px] font-bold text-gray-400 tracking-widest mb-4">他社（手数料20〜30%）</p>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-gray-500">受注額</span>
+                <span className="num text-lg font-black text-gray-700">¥30,000</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-gray-500">手数料</span>
+                <span className="num text-sm font-bold text-red-400">−¥9,000</span>
+              </div>
+              <div className="h-px bg-gray-200" />
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-gray-600">手取り</span>
+                <span className="num text-xl font-black text-gray-700">¥21,000</span>
+              </div>
+            </div>
+          </div>
+          {/* 経験イチバ */}
+          <div className="bg-blue-50 p-6">
+            <p className="text-[10px] font-bold text-blue-400 tracking-widest mb-4">経験イチバ（手数料ゼロ）</p>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-blue-600">受注額</span>
+                <span className="num text-lg font-black text-blue-700">¥21,000</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-blue-600">手数料</span>
+                <span className="num text-sm font-bold text-emerald-500">¥0</span>
+              </div>
+              <div className="h-px bg-blue-200" />
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-blue-700">手取り</span>
+                <span className="num text-xl font-black text-blue-700">¥21,000</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="bg-blue-600 px-6 py-3 text-center">
+          <p className="text-sm text-white font-bold">経験イチバで ¥21,000 = 他社で ¥30,000 と同じ手取り</p>
+        </div>
+      </div>
+      <p className="text-xs text-gray-400 text-center leading-relaxed">
+        AIはこの換算をベースに、カテゴリ別の市場相場から適正価格を提案します。<br/>
+        安く出しすぎる必要はありません。
+      </p>
     </div>
   );
 }
