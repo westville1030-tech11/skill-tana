@@ -57,14 +57,6 @@ export default function Home() {
                 </Link>
               </div>
 
-              {/* 統計 */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {stats.map((s) => (
-                  <div key={s.label} className="bg-white/8 border border-white/10 rounded-xl px-4 py-4 text-center">
-                    <div className="num text-2xl font-black text-white">{s.value}</div>
-                  </div>
-                ))}
-              </div>
             </div>
 
             {/* Right: abstract graphic */}
@@ -731,11 +723,6 @@ function IconFileText() {
 }
 
 /* ---- データ ---- */
-const stats = [
-  { value: "利用料ゼロ", label: "手数料・仲介料" },
-  { value: "固定価格", label: "成果物単位" },
-  { value: "週末OK", label: "スポット対応" },
-];
 
 const zeroItems = ["登録料", "月額利用料", "成約手数料", "中間マージン"];
 
