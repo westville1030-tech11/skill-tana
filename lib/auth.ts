@@ -1,5 +1,6 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import LineProvider from "next-auth/providers/line";
 import { createClient } from "@supabase/supabase-js";
 import bcrypt from "bcryptjs";
 
@@ -12,6 +13,11 @@ function getSupabaseAdmin() {
 
 export const authOptions: NextAuthOptions = {
   providers: [
+    LineProvider({
+      clientId: process.env.LINE_CHANNEL_ID!,
+      clientSecret: process.env.LINE_CHANNEL_SECRET!,
+      authorization: { params: { scope: "profile openid" } },
+    }),
     CredentialsProvider({
       name: "credentials",
       credentials: {
@@ -44,8 +50,26 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
-    async jwt({ token, user }) {
-      if (user?.id) token.sub = user.id;
+    async jwt({ token, user, account }) {
+      if (user?.id) {
+        if (account?.provider === "line") {
+          const lineInternalId = `line_${user.id}`;
+          const supabase = getSupabaseAdmin();
+          await supabase.from("profiles").upsert(
+            {
+              linkedin_id: lineInternalId,
+              name: user.name ?? null,
+              image: user.image ?? null,
+              line_verified: true,
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: "linkedin_id" }
+          );
+          token.sub = lineInternalId;
+        } else {
+          token.sub = user.id;
+        }
+      }
       return token;
     },
   },

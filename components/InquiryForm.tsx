@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import type { Service } from "@/lib/database.types";
 
 type Props = {
@@ -23,16 +23,16 @@ export function InquiryForm({ proLinkedInId, services }: Props) {
   const [error, setError] = useState("");
   const [matchChecking, setMatchChecking] = useState(false);
   const [matchResult, setMatchResult] = useState<{score: string; feedback: string} | null>(null);
-  const [phoneVerified, setPhoneVerified] = useState<boolean | null>(null);
+  const [lineVerified, setLineVerified] = useState<boolean | null>(null);
 
   useEffect(() => {
-    if (open && session?.user && phoneVerified === null) {
+    if (open && session?.user && lineVerified === null) {
       fetch("/api/my-profile")
         .then(r => r.json())
-        .then(data => setPhoneVerified(!!data?.phone_verified))
-        .catch(() => setPhoneVerified(true));
+        .then(data => setLineVerified(!!data?.line_verified))
+        .catch(() => setLineVerified(true));
     }
-  }, [open, session, phoneVerified]);
+  }, [open, session, lineVerified]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -129,7 +129,7 @@ export function InquiryForm({ proLinkedInId, services }: Props) {
     );
   }
 
-  if (phoneVerified === null) {
+  if (lineVerified === null) {
     return (
       <div className="border border-blue-200 rounded-2xl p-6 bg-blue-50 flex items-center justify-center py-12">
         <span className="w-5 h-5 border-2 border-blue-400/40 border-t-blue-500 rounded-full animate-spin" />
@@ -137,14 +137,14 @@ export function InquiryForm({ proLinkedInId, services }: Props) {
     );
   }
 
-  if (phoneVerified === false) {
+  if (lineVerified === false) {
     return (
       <div className="border border-blue-200 rounded-2xl p-6 bg-blue-50">
         <div className="flex items-center justify-between mb-5">
           <h3 className="font-bold text-gray-900">問い合わせフォーム</h3>
           <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-gray-600 text-xl leading-none">×</button>
         </div>
-        <PhoneVerificationStep onVerified={() => setPhoneVerified(true)} />
+        <LineVerificationStep />
       </div>
     );
   }
@@ -260,121 +260,24 @@ export function InquiryForm({ proLinkedInId, services }: Props) {
   );
 }
 
-function PhoneVerificationStep({ onVerified }: { onVerified: () => void }) {
-  const [phone, setPhone] = useState("");
-  const [e164, setE164] = useState("");
-  const [code, setCode] = useState("");
-  const [step, setStep] = useState<"phone" | "otp">("phone");
-  const [sending, setSending] = useState(false);
-  const [confirming, setConfirming] = useState(false);
-  const [error, setError] = useState("");
-
-  const sendCode = async () => {
-    if (!phone.trim()) return;
-    setSending(true);
-    setError("");
-    try {
-      const res = await fetch("/api/verify-phone/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: phone.trim() }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      setE164(data.e164);
-      setStep("otp");
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "送信に失敗しました");
-    } finally {
-      setSending(false);
-    }
-  };
-
-  const confirmCode = async () => {
-    if (code.length !== 6) return;
-    setConfirming(true);
-    setError("");
-    try {
-      const res = await fetch("/api/verify-phone/confirm", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: e164, code: code.trim() }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      onVerified();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "確認に失敗しました");
-    } finally {
-      setConfirming(false);
-    }
-  };
-
+function LineVerificationStep() {
   return (
     <div className="space-y-4">
-      <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3">
-        <p className="text-sm font-semibold text-blue-800 mb-1">電話番号の認証が必要です</p>
-        <p className="text-xs text-blue-600">不正利用防止のため、問い合わせには電話番号の認証が必要です。一度認証すると次回以降は不要です。</p>
+      <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3">
+        <p className="text-sm font-semibold text-green-800 mb-1">LINE認証が必要です</p>
+        <p className="text-xs text-green-700 leading-relaxed">
+          不正利用防止のため、問い合わせにはLINE認証が必要です。LINEアカウントは電話番号と紐付いているため、なりすまし防止になります。一度認証すると次回以降は不要です。
+        </p>
       </div>
-
-      {step === "phone" ? (
-        <div className="space-y-3">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">電話番号</label>
-            <input
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); sendCode(); } }}
-              placeholder="例: 090-1234-5678"
-              className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          {error && <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-2">{error}</p>}
-          <button
-            onClick={sendCode}
-            disabled={sending || !phone.trim()}
-            className="w-full bg-blue-700 text-white py-3 rounded-xl font-medium text-sm hover:bg-blue-800 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-          >
-            {sending ? (
-              <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />送信中...</>
-            ) : "認証コードをSMSで送信"}
-          </button>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          <p className="text-xs text-gray-500">{phone} にSMSで6桁のコードを送りました。</p>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">認証コード（6桁）</label>
-            <input
-              type="text"
-              inputMode="numeric"
-              maxLength={6}
-              value={code}
-              onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
-              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); confirmCode(); } }}
-              placeholder="123456"
-              className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 tracking-widest text-center text-lg"
-            />
-          </div>
-          {error && <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-2">{error}</p>}
-          <button
-            onClick={confirmCode}
-            disabled={confirming || code.length !== 6}
-            className="w-full bg-blue-700 text-white py-3 rounded-xl font-medium text-sm hover:bg-blue-800 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-          >
-            {confirming ? (
-              <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />確認中...</>
-            ) : "認証する"}
-          </button>
-          <button
-            onClick={() => { setStep("phone"); setCode(""); setError(""); }}
-            className="w-full text-sm text-gray-400 hover:text-gray-600 py-1"
-          >
-            番号を変更する
-          </button>
-        </div>
-      )}
+      <button
+        onClick={() => signIn("line", { callbackUrl: typeof window !== "undefined" ? window.location.href : "/" })}
+        className="w-full bg-[#06C755] text-white py-3.5 rounded-xl font-bold text-sm hover:bg-[#05a847] transition-colors flex items-center justify-center gap-3"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+          <path d="M12 2C6.48 2 2 6.07 2 11.07c0 4.5 3.44 8.26 8.14 8.93.32.07.75.21.86.48.1.24.06.62.03.86l-.14.83c-.04.24-.19.95.83.52 1.02-.44 5.52-3.25 7.53-5.56C20.85 15.42 22 13.35 22 11.07 22 6.07 17.52 2 12 2z"/>
+        </svg>
+        LINEで認証して問い合わせる
+      </button>
     </div>
   );
 }
