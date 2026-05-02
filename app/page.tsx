@@ -13,7 +13,7 @@ export default function Home() {
               <div className="flex flex-col items-center lg:items-start gap-2 mb-8">
                 <div className="inline-flex items-center gap-2 bg-white/10 border border-white/15 text-white text-sm font-medium px-5 py-2 rounded-full">
                   <span className="w-2 h-2 bg-emerald-400 rounded-full inline-block flex-shrink-0" />
-                  当サイトは、AIが運営・設計の大半を担っているため、発注・受注者側の当サイト利用に伴う費用負担は一切ありません
+                  個人の取引手数料・登録料は永久無料。AIが運営するから、成約しても一切引かれません。
                 </div>
               </div>
 
