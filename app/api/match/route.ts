@@ -78,15 +78,17 @@ ${servicesText}
       messages: [{ role: "user", content: prompt }],
     });
 
-    const text = message.content[0].type === "text" ? message.content[0].text : "[]";
-    const recommendations = JSON.parse(text);
+    const raw = message.content[0].type === "text" ? message.content[0].text : "[]";
+    const cleaned = raw.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "").trim();
+    const recommendations = JSON.parse(cleaned);
 
-    const results = recommendations.map((r: { rank: number; index: number; reason: string; match_score: string }) => ({
-      rank: r.rank,
-      service: services[r.index - 1],
-      reason: r.reason,
-      match_score: r.match_score,
-    }));
+    const results = recommendations
+      .map((r: { rank: number; index: number; reason: string; match_score: string }) => {
+        const service = services[r.index - 1];
+        if (!service) return null;
+        return { rank: r.rank, service, reason: r.reason, match_score: r.match_score };
+      })
+      .filter(Boolean);
 
     return NextResponse.json({ results });
   } catch (e) {
