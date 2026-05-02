@@ -21,15 +21,7 @@ export default function Home() {
                 あなたの経験を、<br />
                 <span className="text-blue-300">誰かの答えに。</span>
               </h1>
-              <p className="text-slate-300 mb-4 leading-relaxed text-lg">
-                現役もOBも、定年後も。積み上げてきた経験は<br className="hidden md:block" />
-                次の世代にとって、何よりの教科書になる。
-              </p>
-              <p className="text-slate-400 text-sm mb-10 leading-relaxed">
-                AIが商品化を手伝うから、ゼロから考えなくていい。
-              </p>
-
-              <div className="grid sm:grid-cols-2 gap-4 mb-6">
+              <div className="grid sm:grid-cols-2 gap-4 mb-6 mt-8">
                 {/* 経験者 */}
                 <div className="bg-white/8 border border-white/15 rounded-2xl p-5 flex flex-col gap-4">
                   <p className="text-sm text-slate-300 leading-relaxed">
