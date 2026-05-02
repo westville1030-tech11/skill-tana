@@ -92,9 +92,7 @@ export default function Home() {
                 </div>
                 {/* 右：商品化案 */}
                 <div className="bg-white p-6 flex flex-col gap-3 border-l border-gray-100">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">AIの商品化案</span>
-                  </div>
+                  <span className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full self-start">AI × 実体験の商品化案</span>
                   <p className="font-bold text-gray-900 text-sm leading-snug">{c.productTitle}</p>
                   <ul className="space-y-1.5">
                     {c.deliverables.map((d, i) => (
@@ -104,6 +102,12 @@ export default function Home() {
                       </li>
                     ))}
                   </ul>
+                  {c.experienceValue && (
+                    <div className="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3">
+                      <p className="text-[10px] font-bold text-amber-700 mb-1">📌 経験者だから加えられること</p>
+                      <p className="text-xs text-gray-700 leading-relaxed">{c.experienceValue}</p>
+                    </div>
+                  )}
                   <div className="mt-auto pt-3 border-t border-gray-100">
                     <span className="num text-blue-700 font-black text-base">{c.price}</span>
                   </div>
@@ -823,6 +827,7 @@ const commercializationCases = [
       "志望動機・自己PRで差がつく構成テンプレート",
     ],
     price: "¥15,000",
+    experienceValue: "採用担当者として面接中に実際につけていた評価メモの粒度と「課題設定の解像度」を重視するという基準は、10年やってきた現場でしか得られないリアルな視点。",
   },
   {
     role: "OB・退職者（元銀行融資担当）",
@@ -834,6 +839,7 @@ const commercializationCases = [
       "よくある否決理由TOP10と改善テンプレート",
     ],
     price: "¥35,000",
+    experienceValue: "「なぜ断られたか」の本当の理由は事業内容ではなく書類の見せ方にある、という30年分の審査現場で気づいたインサイト。AIには書けない融資担当者側のリアル。",
   },
   {
     role: "育休中の親（元SNSマーケ担当）",
@@ -845,6 +851,7 @@ const commercializationCases = [
       "フォロワー増加の踊り場を突破するための施策リスト",
     ],
     price: "¥20,000",
+    experienceValue: "自社ブランドで実際にバズった投稿・滑った投稿の両方の実体験から見えた「エンゲージメントが上がる瞬間のパターン」は、一般的なSNS攻略記事には載っていない。",
   },
   {
     role: "専業主婦（元経理担当10年）",
@@ -856,6 +863,7 @@ const commercializationCases = [
       "弥生会計の初期設定から月次入力までの操作手順書",
     ],
     price: "¥15,000",
+    experienceValue: "夫の事業で実際に「ここで詰まった」経験があるからこそ書ける、弥生会計の初期設定でほぼ全員がはまるポイントと回避策。マニュアルには書いていない現場の感覚。",
   },
   {
     role: "海外在住・越境人材（シンガポール10年）",
@@ -867,6 +875,7 @@ const commercializationCases = [
       "退職交渉・給与交渉の文化的背景と対処フレーム",
     ],
     price: "¥40,000",
+    experienceValue: "同じ失敗を3社で見てきた実体験から言える「こうすれば防げた」の具体的な処方箋。現地ローカルスタッフとのやりとりで実際に機能した言い回しや交渉のタイミングは、統計やレポートには出てこない。",
   },
   {
     role: "早期退職・キャリアチェンジ中（元大手メーカー調達）",
@@ -878,6 +887,7 @@ const commercializationCases = [
       "金型管理台帳と工場側への定期確認フォーマット",
     ],
     price: "¥30,000",
+    experienceValue: "交渉の場で「実際に使えた言い回し」と相手の反応パターンは15年分の実録。金型費を無償化した時の相手の出方や、こちらが折れた瞬間の空気感は、テンプレートに魂を入れる部分。",
   },
   {
     role: "元教育者（高校理科教員20年）",
@@ -889,6 +899,7 @@ const commercializationCases = [
       "保護者向け「家庭でできる思考習慣サポート」説明資料",
     ],
     price: "¥25,000",
+    experienceValue: "担当クラスで平均偏差値が8上がった授業実践の記録と、「原因思考を教えた瞬間に生徒の目が変わった」具体的な場面の描写。再現性の根拠になる経験者だけが持つデータ。",
   },
 ];
 
