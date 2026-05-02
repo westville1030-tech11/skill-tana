@@ -114,6 +114,15 @@ export default function Home() {
         </div>
       </section>
 
+      {/* B: AIだけ vs AI×経験者 */}
+      <section className="py-28 px-4 bg-slate-50 border-t border-gray-100">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">AIだけだと、一般論にしかならない</h2>
+          <p className="text-center text-gray-400 mb-12">経験者の実体験が入って初めて、あなたに刺さる答えになる</p>
+          <AIvsExperience />
+        </div>
+      </section>
+
       {/* 全部ゼロ */}
       <section className="py-5 px-4 bg-emerald-50 border-b border-emerald-100">
         <div className="max-w-3xl mx-auto">
@@ -170,6 +179,10 @@ export default function Home() {
       {/* 品質保証 */}
       <section className="py-14 px-4 bg-blue-50 border-y border-blue-100">
         <div className="max-w-3xl mx-auto">
+          <p className="text-sm text-gray-600 text-center leading-relaxed max-w-xl mx-auto mb-10">
+            AIは叩き台を作る。経験者は<span className="font-bold text-blue-700">「それは正しいか」「現場ではどうだったか」</span>を加える。<br/>
+            その組み合わせが、コピペできない成果物を生む。
+          </p>
           <p className="text-center text-xs font-bold text-blue-600 uppercase tracking-widest mb-8">3つの品質保証</p>
           <div className="grid sm:grid-cols-3 gap-6">
             <div className="flex flex-col gap-2">
@@ -426,6 +439,40 @@ function ComparisonTable() {
             <p className="text-[11px] text-white font-bold leading-snug">AIが出品・発注を<br/>両側からサポート。</p>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---- AI単独 vs AI×経験者 ---- */
+function AIvsExperience() {
+  return (
+    <div className="space-y-4">
+      <div className="grid md:grid-cols-2 gap-4">
+        {/* AI単独 */}
+        <div className="rounded-2xl border border-gray-200 bg-gray-50 p-6 flex flex-col gap-3">
+          <span className="text-xs font-bold text-gray-400 bg-gray-200 px-3 py-1 rounded-full self-start">AIだけで作ると</span>
+          <p className="text-sm text-gray-500 leading-relaxed italic">
+            「面接で大切なのは第一印象と事前準備です。自己PRは具体的なエピソードを交えて、志望動機は企業研究をもとに述べましょう。」
+          </p>
+          <p className="text-xs text-gray-400 mt-auto">↑ 検索すれば出てくる。誰の経験でもない。</p>
+        </div>
+        {/* AI×経験者 */}
+        <div className="rounded-2xl border-2 border-amber-200 bg-amber-50 p-6 flex flex-col gap-3 relative">
+          <div className="absolute -top-3.5 left-5">
+            <span className="bg-amber-500 text-white text-[10px] font-bold px-3 py-1 rounded-full whitespace-nowrap">採用担当10年の実体験を加えると</span>
+          </div>
+          <p className="text-sm text-gray-700 leading-relaxed italic mt-2">
+            「内定した人に共通していたのは『入社後に自分が解くべき課題』を持っていたこと。面接官が実際につけているメモは、準備の量ではなく、課題設定の解像度です。」
+          </p>
+          <p className="text-xs text-amber-600 mt-auto">↑ 10年の実体験でしか出てこない。</p>
+        </div>
+      </div>
+      <div className="rounded-2xl bg-blue-50 border border-blue-100 px-6 py-4 text-center">
+        <p className="text-sm text-gray-700 leading-relaxed">
+          AIは速い。でも<span className="font-bold text-blue-700">経験者の実体験なしには、一般論しか生まれない。</span><br className="hidden sm:block"/>
+          経験イチバの成果物は、AIの速さと経験者の知見を両方持っている。
+        </p>
       </div>
     </div>
   );
