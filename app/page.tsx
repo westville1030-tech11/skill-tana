@@ -110,6 +110,15 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 競合比較 */}
+      <section className="py-28 px-4 bg-white border-t border-gray-100">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">他のサービスとの違い</h2>
+          <p className="text-center text-gray-400 mb-14">経験イチバが「成果物×固定価格×AI」にこだわる理由</p>
+          <ComparisonTable />
+        </div>
+      </section>
+
       {/* AIが伴走する両側設計 */}
       <section className="py-28 px-4 bg-slate-50">
         <div className="max-w-4xl mx-auto">
@@ -402,6 +411,106 @@ function HeroGraphic() {
       <rect x="216" y="190" width="48" height="18" rx="5" fill="#1e3a8a" fillOpacity="0.75" />
       <text x="240" y="203" fontSize="8.5" fill="#c4b5fd" textAnchor="middle" fontFamily="monospace" fontWeight="bold">MATCH</text>
     </svg>
+  );
+}
+
+/* ---- 競合比較表 ---- */
+function ComparisonTable() {
+  const rows = [
+    {
+      label: "取引の単位",
+      spot:   "時間（1h単位）",
+      skill:  "スキル・作業単位",
+      ours:   "成果物・経験パッケージ",
+    },
+    {
+      label: "価格モデル",
+      spot:   "時間給",
+      skill:  "時間給 or 見積もり",
+      ours:   "固定価格",
+    },
+    {
+      label: "手数料",
+      spot:   "〜30%",
+      skill:  "〜20%",
+      ours:   "¥0",
+    },
+    {
+      label: "手元に残るもの",
+      spot:   "会話・メモのみ",
+      skill:  "△ サービス次第",
+      ours:   "テンプレ・レポート等",
+    },
+    {
+      label: "出品のしやすさ",
+      spot:   "△ 準備が大変",
+      skill:  "△ 文章力が必要",
+      ours:   "◎ AIが一緒に作る",
+    },
+    {
+      label: "発注の整理",
+      spot:   "△ 自分で準備",
+      skill:  "△ 仕様書が必要",
+      ours:   "◎ AIと壁打ち",
+    },
+  ];
+
+  return (
+    <div className="overflow-x-auto -mx-4 px-4">
+      <div className="min-w-[600px]">
+        {/* ヘッダー */}
+        <div className="grid grid-cols-4 gap-3 mb-3">
+          <div />
+          <div className="bg-gray-100 rounded-2xl px-4 py-3 text-center">
+            <p className="text-xs font-bold text-gray-500">スポットコンサル型</p>
+            <p className="text-[10px] text-gray-400 mt-0.5">話す・1時間単位</p>
+          </div>
+          <div className="bg-amber-50 border border-amber-100 rounded-2xl px-4 py-3 text-center">
+            <p className="text-xs font-bold text-amber-700">スキルマーケット型</p>
+            <p className="text-[10px] text-amber-500 mt-0.5">作業・スキル単位</p>
+          </div>
+          <div className="bg-blue-600 rounded-2xl px-4 py-3 text-center relative">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+              <span className="bg-emerald-500 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full whitespace-nowrap">おすすめ</span>
+            </div>
+            <p className="text-xs font-bold text-white">経験イチバ</p>
+            <p className="text-[10px] text-blue-200 mt-0.5">成果物・固定価格</p>
+          </div>
+        </div>
+
+        {/* 行 */}
+        <div className="space-y-2">
+          {rows.map((row) => (
+            <div key={row.label} className="grid grid-cols-4 gap-3 items-center">
+              <div className="text-xs font-semibold text-gray-600 text-right pr-2">{row.label}</div>
+              <div className="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-center">
+                <p className="text-xs text-gray-500">{row.spot}</p>
+              </div>
+              <div className="bg-amber-50 border border-amber-100 rounded-xl px-3 py-2.5 text-center">
+                <p className="text-xs text-amber-700">{row.skill}</p>
+              </div>
+              <div className="bg-blue-50 border border-blue-200 rounded-xl px-3 py-2.5 text-center">
+                <p className="text-xs font-bold text-blue-700">{row.ours}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* まとめ一言 */}
+        <div className="mt-6 grid grid-cols-4 gap-3">
+          <div />
+          <div className="bg-gray-100 rounded-xl px-3 py-2.5 text-center">
+            <p className="text-[11px] text-gray-500 leading-snug">話して終わり。<br/>成果物が残らない。</p>
+          </div>
+          <div className="bg-amber-50 border border-amber-100 rounded-xl px-3 py-2.5 text-center">
+            <p className="text-[11px] text-amber-700 leading-snug">手数料が高く、<br/>出品に文章力が要る。</p>
+          </div>
+          <div className="bg-blue-600 rounded-xl px-3 py-2.5 text-center">
+            <p className="text-[11px] text-white font-bold leading-snug">AIが出品・発注を<br/>両側からサポート。</p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
