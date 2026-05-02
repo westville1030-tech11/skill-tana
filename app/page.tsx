@@ -483,10 +483,10 @@ function FixedPriceDiagram() {
       </div>
 
       {/* 一言まとめ */}
-      <div className="rounded-2xl bg-slate-800 px-6 py-4 text-center">
-        <p className="text-sm text-slate-200 leading-relaxed">
-          時間給で測られている限り、AIは変化の波になる。
-          <span className="text-blue-300 font-bold"> 固定価格なら、AIは相棒になる。</span>
+      <div className="rounded-2xl bg-blue-50 border border-blue-200 px-6 py-4 text-center">
+        <p className="text-sm text-gray-600 leading-relaxed">
+          時間給で測られている限り、AIは向かい風になる。
+          <span className="text-blue-600 font-bold"> 固定価格なら、AIは相棒になる。</span>
         </p>
       </div>
     </div>
