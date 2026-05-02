@@ -70,6 +70,7 @@ export default function TryPage() {
 
   // A型
   const [decidedForm, setDecidedForm] = useState({ title: "", description: "", price: "", days: "" });
+  const [decidedChatActive, setDecidedChatActive] = useState(false);
   const [decidedChecking, setDecidedChecking] = useState(false);
   const [decidedError, setDecidedError] = useState("");
 
@@ -94,6 +95,7 @@ export default function TryPage() {
   const reset = () => {
     setMode(null); setExploreMode(null);
     setDecidedForm({ title: "", description: "", price: "", days: "" });
+    setDecidedChatActive(false);
     setDecidedError(""); setDecidedChecking(false);
     setMessages([]); setInput(""); setThinking(false);
     setResumeError(""); setResumeUploading(false);
@@ -105,11 +107,31 @@ export default function TryPage() {
     window.location.href = "/profile/edit";
   };
 
-  // A型: 品質チェック → DraftCard化
+  // A型: フォーム送信 → チャット開始（初回メッセージを自動投稿）
   const submitDecided = async () => {
     if (!decidedForm.title || !decidedForm.description) return;
-    setDecidedError("");
+    setDecidedChatActive(true);
+    const firstMsg = `「${decidedForm.title}」というサービスを出品したいと思っています。${decidedForm.description}。価格は${decidedForm.price ? `${parseInt(decidedForm.price).toLocaleString()}円` : "未定"}、納期は${decidedForm.days ? `${decidedForm.days}日` : "未定"}を想定しています。`;
+    const next: Message[] = [{ role: "user", content: firstMsg }];
+    setMessages(next);
+    setThinking(true);
+    try {
+      const res = await fetch("/api/chat-service-create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: next }),
+      });
+      const data = await res.json();
+      setMessages([...next, { role: "assistant", content: data.text }]);
+    } finally {
+      setThinking(false);
+    }
+  };
+
+  // A型: 3回壁打ち後に登録へ進む
+  const finishDecided = async () => {
     setDecidedChecking(true);
+    setDecidedError("");
     try {
       const res = await fetch("/api/check-service-quality", {
         method: "POST",
@@ -273,8 +295,81 @@ export default function TryPage() {
           </>
         )}
 
+        {/* ━━━ A型: チャット（フォーム送信後） ━━━ */}
+        {!drafts && mode === "decided" && decidedChatActive && (() => {
+          const userCount = messages.filter(m => m.role === "user").length;
+          const remaining = Math.max(0, 3 - userCount);
+          return (
+            <div className="space-y-4">
+              <div className="bg-white border border-gray-100 rounded-2xl p-5 flex flex-col gap-4">
+                <div className="space-y-3 min-h-[200px] max-h-[400px] overflow-y-auto">
+                  {messages.map((m, i) => (
+                    <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+                      <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
+                        m.role === "user" ? "bg-blue-600 text-white rounded-br-sm" : "bg-gray-100 text-gray-800 rounded-bl-sm"
+                      }`}>
+                        {m.content}
+                      </div>
+                    </div>
+                  ))}
+                  {thinking && (
+                    <div className="flex justify-start">
+                      <div className="bg-gray-100 rounded-2xl rounded-bl-sm px-4 py-3">
+                        <span className="flex gap-1">
+                          {[0,1,2].map(i => (
+                            <span key={i} className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
+                          ))}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                  <div ref={bottomRef} />
+                </div>
+                <div className="flex gap-2 border-t border-gray-100 pt-4">
+                  <textarea
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendChat(); } }}
+                    placeholder="続きを入力…（Enterで送信）"
+                    className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-300 resize-none"
+                    rows={2}
+                  />
+                  <button
+                    onClick={sendChat}
+                    disabled={!input.trim() || thinking}
+                    className="bg-blue-600 text-white px-4 rounded-xl disabled:opacity-40 flex-shrink-0 hover:bg-blue-700 transition-colors"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              {remaining > 0 ? (
+                <p className="text-center text-xs text-gray-400">あと {remaining} 回やり取りすると登録へ進めます</p>
+              ) : (
+                <div className="space-y-2">
+                  {decidedError && (
+                    <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-2">{decidedError}</p>
+                  )}
+                  <button
+                    onClick={finishDecided}
+                    disabled={decidedChecking}
+                    className="w-full bg-amber-500 hover:bg-amber-600 transition-colors text-white font-bold py-3.5 rounded-xl text-sm disabled:opacity-40 flex items-center justify-center gap-2"
+                  >
+                    {decidedChecking ? (
+                      <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />確認中...</>
+                    ) : "登録へ進む →"}
+                  </button>
+                </div>
+              )}
+            </div>
+          );
+        })()}
+
         {/* ━━━ A型: フォーム入力 ━━━ */}
-        {!drafts && mode === "decided" && (
+        {!drafts && mode === "decided" && !decidedChatActive && (
           <div className="bg-white border border-gray-100 rounded-2xl p-6 space-y-4">
             <h2 className="font-bold text-gray-900">出品内容を入力してください</h2>
             <div>
