@@ -268,75 +268,59 @@ export default function Home() {
 
 /* ---- ヒーロー グラフィック: もやもや → AI → 成果物 ---- */
 function HeroGraphic() {
-  const fuzzyItems = [
-    { cx: 88,  cy: 100, r: 38, label: "採用の経験", sub: "…売れる？" },
-    { cx: 72,  cy: 190, r: 34, label: "融資の知識", sub: "…使える？" },
-    { cx: 100, cy: 272, r: 30, label: "調達ノウハウ", sub: "…商品に？" },
-  ];
-  const cards = [
-    { y: 88,  title: "採用面接突破ガイド", price: "¥15,000" },
-    { y: 158, title: "銀行融資を通す実務書", price: "¥35,000" },
-    { y: 228, title: "海外調達交渉テンプレ", price: "¥40,000" },
-  ];
   return (
-    <svg viewBox="0 0 480 370" className="w-full" xmlns="http://www.w3.org/2000/svg">
+    <svg width="100%" viewBox="0 0 680 340" role="img" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <linearGradient id="aiGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#60a5fa" />
-          <stop offset="100%" stopColor="#818cf8" />
-        </linearGradient>
-        <linearGradient id="cardGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.12" />
-          <stop offset="100%" stopColor="#ffffff" stopOpacity="0.04" />
-        </linearGradient>
-        <filter id="fuzzy">
-          <feGaussianBlur stdDeviation="4" />
-        </filter>
+        <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#B4B2A9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </marker>
       </defs>
 
-      {/* ---- LEFT: もやもやゾーン ---- */}
-      {fuzzyItems.map((f) => (
-        <g key={f.label}>
-          <circle cx={f.cx} cy={f.cy} r={f.r + 6} fill="#818cf8" fillOpacity="0.08" filter="url(#fuzzy)" />
-          <circle cx={f.cx} cy={f.cy} r={f.r} fill="none" stroke="#818cf8" strokeWidth="1.2" strokeDasharray="5 4" strokeOpacity="0.45" />
-          <text x={f.cx} y={f.cy - 4} fontSize="9.5" fill="#93c5fd" fillOpacity="0.75" textAnchor="middle" fontFamily="sans-serif" fontWeight="600">{f.label}</text>
-          <text x={f.cx} y={f.cy + 10} fontSize="8.5" fill="#93c5fd" fillOpacity="0.4" textAnchor="middle" fontFamily="sans-serif">{f.sub}</text>
-        </g>
-      ))}
+      {/* セクションラベル */}
+      <text x="90"  y="28" textAnchor="middle" fontSize="12" fill="#94a3b8">もやもやした経験</text>
+      <text x="340" y="28" textAnchor="middle" fontSize="12" fill="#94a3b8">経験イチバ</text>
+      <text x="590" y="28" textAnchor="middle" fontSize="12" fill="#94a3b8">誰かに届く成果物</text>
 
-      {/* ---- LINES: fuzzy → AI (dashed) ---- */}
-      {fuzzyItems.map((f) => (
-        <line key={`l${f.label}`} x1={f.cx + f.r} y1={f.cy} x2="198" y2="185" stroke="#60a5fa" strokeWidth="1" strokeOpacity="0.3" strokeDasharray="5 4" />
-      ))}
+      {/* 左：経験カード */}
+      <rect x="20" y="50"  width="140" height="52" rx="8" fill="#F1EFE8" stroke="#B4B2A9" strokeWidth="0.5"/>
+      <text x="90" y="71"  textAnchor="middle" dominantBaseline="central" fontSize="14" fontWeight="500" fill="#444441">採用の経験</text>
+      <text x="90" y="89"  textAnchor="middle" dominantBaseline="central" fontSize="12" fill="#5F5E5A">売れる？</text>
 
-      {/* ---- CENTER: AI変換 ---- */}
-      <circle cx="222" cy="185" r="52" fill="#3b82f6" fillOpacity="0.07" />
-      <circle cx="222" cy="185" r="34" fill="url(#aiGrad)" fillOpacity="0.85" />
-      <text x="222" y="180" fontSize="8.5" fill="white" textAnchor="middle" fontFamily="sans-serif" fontWeight="bold" letterSpacing="0.5">経験イチバ</text>
-      <text x="222" y="194" fontSize="10" fill="#bfdbfe" textAnchor="middle" fontFamily="monospace" fontWeight="bold">AI</text>
-      {/* スパーク */}
-      {[[222,143],[252,158],[252,212],[222,227],[192,212],[192,158]].map(([x,y],i) => (
-        <circle key={i} cx={x} cy={y} r="2.5" fill="#60a5fa" fillOpacity="0.55" />
-      ))}
+      <rect x="20" y="144" width="140" height="52" rx="8" fill="#F1EFE8" stroke="#B4B2A9" strokeWidth="0.5"/>
+      <text x="90" y="165" textAnchor="middle" dominantBaseline="central" fontSize="14" fontWeight="500" fill="#444441">融資の知識</text>
+      <text x="90" y="183" textAnchor="middle" dominantBaseline="central" fontSize="12" fill="#5F5E5A">使える？</text>
 
-      {/* ---- LINES: AI → cards (solid) ---- */}
-      {cards.map((c) => (
-        <line key={`r${c.y}`} x1="256" y1="185" x2="308" y2={c.y + 23} stroke="#60a5fa" strokeWidth="1.5" strokeOpacity="0.55" />
-      ))}
+      <rect x="20" y="238" width="140" height="52" rx="8" fill="#F1EFE8" stroke="#B4B2A9" strokeWidth="0.5"/>
+      <text x="90" y="259" textAnchor="middle" dominantBaseline="central" fontSize="14" fontWeight="500" fill="#444441">調達ノウハウ</text>
+      <text x="90" y="277" textAnchor="middle" dominantBaseline="central" fontSize="12" fill="#5F5E5A">商品に？</text>
 
-      {/* ---- RIGHT: 成果物カード ---- */}
-      {cards.map((c) => (
-        <g key={c.y}>
-          <rect x="310" y={c.y} width="152" height="46" rx="9" fill="url(#cardGrad)" stroke="#60a5fa" strokeWidth="0.9" strokeOpacity="0.55" />
-          <text x="323" y={c.y + 17} fontSize="9.5" fill="white" fontFamily="sans-serif" fontWeight="600">{c.title}</text>
-          <text x="323" y={c.y + 34} fontSize="11.5" fill="#60a5fa" fontFamily="monospace" fontWeight="bold">{c.price}</text>
-        </g>
-      ))}
+      {/* 左→中央 矢印 */}
+      <line x1="160" y1="76"  x2="280" y2="163" stroke="#B4B2A9" strokeWidth="0.5" markerEnd="url(#arrow)"/>
+      <line x1="160" y1="170" x2="280" y2="170" stroke="#B4B2A9" strokeWidth="0.5" markerEnd="url(#arrow)"/>
+      <line x1="160" y1="264" x2="280" y2="177" stroke="#B4B2A9" strokeWidth="0.5" markerEnd="url(#arrow)"/>
 
-      {/* ---- LABELS ---- */}
-      <text x="75" y="328" fontSize="8.5" fill="#818cf8" fillOpacity="0.5" textAnchor="middle" fontFamily="sans-serif">もやもやした経験</text>
-      <text x="222" y="338" fontSize="8.5" fill="#60a5fa" fillOpacity="0.6" textAnchor="middle" fontFamily="sans-serif">AIが商品化</text>
-      <text x="386" y="328" fontSize="8.5" fill="#93c5fd" fillOpacity="0.5" textAnchor="middle" fontFamily="sans-serif">誰かに届く成果物</text>
+      {/* 中央：経験イチバ AI */}
+      <circle cx="340" cy="170" r="56" fill="#EEEDFE" stroke="#534AB7" strokeWidth="0.5"/>
+      <text x="340" y="161" textAnchor="middle" dominantBaseline="central" fontSize="14" fontWeight="500" fill="#3C3489">経験イチバ</text>
+      <text x="340" y="181" textAnchor="middle" dominantBaseline="central" fontSize="12" fill="#534AB7">AI が商品化</text>
+
+      {/* 中央→右 矢印 */}
+      <line x1="396" y1="145" x2="520" y2="90"  stroke="#B4B2A9" strokeWidth="0.5" markerEnd="url(#arrow)"/>
+      <line x1="396" y1="170" x2="520" y2="170" stroke="#B4B2A9" strokeWidth="0.5" markerEnd="url(#arrow)"/>
+      <line x1="396" y1="195" x2="520" y2="250" stroke="#B4B2A9" strokeWidth="0.5" markerEnd="url(#arrow)"/>
+
+      {/* 右：成果物カード */}
+      <rect x="520" y="56"  width="144" height="52" rx="8" fill="#E1F5EE" stroke="#0F6E56" strokeWidth="0.5"/>
+      <text x="592" y="74"  textAnchor="middle" dominantBaseline="central" fontSize="13" fontWeight="500" fill="#085041">採用面接突破ガイド</text>
+      <text x="592" y="92"  textAnchor="middle" dominantBaseline="central" fontSize="12" fill="#0F6E56">¥15,000</text>
+
+      <rect x="520" y="144" width="144" height="52" rx="8" fill="#E1F5EE" stroke="#0F6E56" strokeWidth="0.5"/>
+      <text x="592" y="162" textAnchor="middle" dominantBaseline="central" fontSize="13" fontWeight="500" fill="#085041">銀行融資を通す実務書</text>
+      <text x="592" y="180" textAnchor="middle" dominantBaseline="central" fontSize="12" fill="#0F6E56">¥35,000</text>
+
+      <rect x="520" y="232" width="144" height="52" rx="8" fill="#E1F5EE" stroke="#0F6E56" strokeWidth="0.5"/>
+      <text x="592" y="250" textAnchor="middle" dominantBaseline="central" fontSize="13" fontWeight="500" fill="#085041">海外調達交渉テンプレ</text>
+      <text x="592" y="268" textAnchor="middle" dominantBaseline="central" fontSize="12" fill="#0F6E56">¥40,000</text>
     </svg>
   );
 }
