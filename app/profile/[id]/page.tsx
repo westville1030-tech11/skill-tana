@@ -77,11 +77,11 @@ export default async function ProfilePage(props: PageProps<"/profile/[id]">) {
         </div>
 
         {/* 所属・つながり数 */}
-        {(profile.company || profile.role || profile.linkedin_connections) && (
+        {((profile.company_display ?? profile.company) || profile.role || profile.linkedin_connections) && (
           <div className="flex flex-wrap gap-2">
-            {profile.company && (
+            {(profile.company_display ?? profile.company) && (
               <span className="text-sm bg-gray-50 border border-gray-100 text-gray-700 px-3 py-1.5 rounded-full">
-                🏢 {profile.company}
+                🏢 {profile.company_display ?? profile.company}
               </span>
             )}
             {profile.role && (

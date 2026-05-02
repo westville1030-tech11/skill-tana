@@ -30,6 +30,7 @@ export default function EditProfilePage() {
   // LinkedIn / 所属情報
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const [company, setCompany] = useState("");
+  const [companyDisplay, setCompanyDisplay] = useState("");
   const [role, setRole] = useState("");
   const [linkedinConnections, setLinkedinConnections] = useState("");
   const [pastCompanies, setPastCompanies] = useState<string[]>([]);
@@ -86,6 +87,7 @@ export default function EditProfilePage() {
             setAvailability(data.availability ?? "available");
             setLinkedinUrl(data.linkedin_url ?? "");
             setCompany(data.company ?? "");
+            setCompanyDisplay(data.company_display ?? "");
             setRole(data.role ?? "");
             setLinkedinConnections(data.linkedin_connections ?? "");
             setServices(data.services ?? []);
@@ -142,6 +144,7 @@ export default function EditProfilePage() {
           availability,
           linkedin_url: linkedinUrl,
           company,
+          company_display: companyDisplay || null,
           role,
           linkedin_connections: linkedinConnections || null,
           services,
@@ -522,13 +525,13 @@ export default function EditProfilePage() {
 
         <div className="grid sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm text-gray-600 mb-1.5">現在の所属</label>
+            <label className="block text-sm text-gray-600 mb-1.5">現在の所属（非公開）</label>
             <input
               type="text"
               value={company}
               onChange={(e) => setCompany(e.target.value)}
               onBlur={(e) => save({ company: e.target.value })}
-              placeholder="例: 大手メーカー・財務部門"
+              placeholder="例: アクセンチュア株式会社"
               className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -543,6 +546,21 @@ export default function EditProfilePage() {
               className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
+        </div>
+
+        <div>
+          <label className="block text-sm text-gray-600 mb-1.5">
+            公開表示名（任意）
+            <span className="ml-2 text-xs text-gray-400 font-normal">— 空欄の場合は所属名がそのまま表示されます</span>
+          </label>
+          <input
+            type="text"
+            value={companyDisplay}
+            onChange={(e) => setCompanyDisplay(e.target.value)}
+            onBlur={(e) => save({ company_display: e.target.value || null })}
+            placeholder="例: Big4コンサルティングファーム、連結売上5兆円規模の製造業"
+            className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
         </div>
 
         <div>

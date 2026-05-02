@@ -50,11 +50,11 @@ export function ProfileCard({ profile }: { profile: Profile }) {
             )}
           </div>
           {/* 所属・つながり数 */}
-          {(profile.company || profile.linkedin_connections) && (
+          {((profile.company_display ?? profile.company) || profile.linkedin_connections) && (
             <div className="flex flex-wrap gap-1.5 mt-1.5">
-              {profile.company && (
+              {(profile.company_display ?? profile.company) && (
                 <span className="text-xs text-gray-500 bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-full">
-                  {profile.company}
+                  {profile.company_display ?? profile.company}
                 </span>
               )}
               {profile.linkedin_connections && (

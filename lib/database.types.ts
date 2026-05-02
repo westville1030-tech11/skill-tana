@@ -25,6 +25,7 @@ export type Profile = {
   availability: "available" | "busy" | "part-time" | null;
   services: Service[] | null;
   company: string | null;
+  company_display: string | null;
   role: string | null;
   linkedin_connections: "under_100" | "100_500" | "500_1000" | "over_1000" | null;
   past_companies: string[] | null;
