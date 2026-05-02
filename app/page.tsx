@@ -101,6 +101,15 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 固定価格の考え方 */}
+      <section className="py-28 px-4 bg-slate-50 border-t border-gray-100">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">固定価格とAIの話</h2>
+          <p className="text-center text-gray-400 mb-12">時間を売るか、経験を届けるか。それがAI時代の分岐点。</p>
+          <FixedPriceDiagram />
+        </div>
+      </section>
+
       {/* AIが伴走する両側設計 */}
       <section className="py-28 px-4 bg-slate-50">
         <div className="max-w-4xl mx-auto">
@@ -393,6 +402,94 @@ function HeroGraphic() {
       <rect x="216" y="190" width="48" height="18" rx="5" fill="#1e3a8a" fillOpacity="0.75" />
       <text x="240" y="203" fontSize="8.5" fill="#c4b5fd" textAnchor="middle" fontFamily="monospace" fontWeight="bold">MATCH</text>
     </svg>
+  );
+}
+
+/* ---- 固定価格 vs 時間給 比較 ---- */
+function FixedPriceDiagram() {
+  return (
+    <div className="space-y-4">
+      <div className="grid md:grid-cols-2 gap-4">
+
+        {/* 時間給モデル */}
+        <div className="rounded-2xl border border-gray-200 bg-gray-50 p-6 flex flex-col gap-4">
+          <p className="text-[10px] font-bold text-gray-400 tracking-widest">時間給モデル（従来型）</p>
+          <div className="space-y-2">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">⏱</span>
+              <div>
+                <p className="text-sm font-bold text-gray-700">8時間の仕事</p>
+                <p className="text-xs text-gray-400">時給¥1,500 → ¥12,000</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 pl-1">
+              <div className="w-5 flex flex-col items-center gap-0.5">
+                <div className="w-px h-3 bg-gray-300" />
+                <svg className="w-2.5 h-2.5 text-gray-300" fill="currentColor" viewBox="0 0 10 10"><path d="M2 0 L5 6 L8 0 Z" /></svg>
+              </div>
+              <span className="text-xs text-blue-500 font-medium">AIで1時間に短縮</span>
+            </div>
+            <div className="flex items-center gap-3 bg-amber-50 border border-amber-100 rounded-xl px-4 py-3">
+              <span className="text-2xl">📉</span>
+              <div>
+                <p className="text-sm font-bold text-amber-800">収入：1時間分のみ</p>
+                <p className="text-xs text-amber-600">¥1,500 に変わる</p>
+              </div>
+            </div>
+          </div>
+          <p className="text-xs text-gray-400 leading-relaxed border-t border-gray-200 pt-3">
+            AIが速くするほど、収入が変わる時代が来る。<br />
+            効率化が自分の首を絞める構造。
+          </p>
+        </div>
+
+        {/* 固定価格モデル */}
+        <div className="rounded-2xl border-2 border-blue-300 bg-blue-50 p-6 flex flex-col gap-4 relative">
+          <div className="absolute -top-3.5 left-6">
+            <span className="bg-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-full">経験イチバ</span>
+          </div>
+          <p className="text-[10px] font-bold text-blue-400 tracking-widest mt-1">固定価格モデル</p>
+          <div className="space-y-2">
+            <div className="flex items-center gap-3 bg-white border border-blue-100 rounded-xl px-4 py-3">
+              <span className="text-2xl">📦</span>
+              <div>
+                <p className="text-sm font-bold text-blue-800">¥30,000 で届けるもの（固定）</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div className="bg-white border border-blue-100 rounded-xl px-3 py-2.5 text-center">
+                <p className="text-xs text-gray-500">8時間かかっても</p>
+                <p className="text-sm font-black text-blue-700">¥30,000</p>
+              </div>
+              <div className="bg-white border border-blue-100 rounded-xl px-3 py-2.5 text-center">
+                <p className="text-xs text-gray-500">1時間で仕上げても</p>
+                <p className="text-sm font-black text-blue-700">¥30,000</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-3">
+              <span className="text-2xl">🚀</span>
+              <div>
+                <p className="text-sm font-bold text-emerald-800">実質時給：青天井</p>
+                <p className="text-xs text-emerald-600">AIを使うほど稼げる</p>
+              </div>
+            </div>
+          </div>
+          <p className="text-xs text-gray-500 leading-relaxed border-t border-blue-200 pt-3">
+            AIは「相棒」になる。経験×AIで、<br />
+            新しい稼ぎ方にシフトできる。
+          </p>
+        </div>
+
+      </div>
+
+      {/* 一言まとめ */}
+      <div className="rounded-2xl bg-slate-800 px-6 py-4 text-center">
+        <p className="text-sm text-slate-200 leading-relaxed">
+          時間給で測られている限り、AIは変化の波になる。
+          <span className="text-blue-300 font-bold"> 固定価格なら、AIは相棒になる。</span>
+        </p>
+      </div>
+    </div>
   );
 }
 
