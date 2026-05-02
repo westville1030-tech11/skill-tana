@@ -215,48 +215,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 成果物例 */}
-      <section className="py-28 px-4 bg-slate-50">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-gray-900 mb-3 text-center">イチバの棚に並ぶ成果物の例</h2>
-          <p className="text-center text-gray-400 mb-10">週末数時間〜のスポット対応</p>
-
-          <div className="flex gap-2 flex-wrap justify-center mb-8 overflow-x-auto">
-            {["すべて", "事業会社", "士業", "コンサル", "エンジニア"].map((cat, i) => (
-              <span key={cat}
-                className={`px-4 py-1.5 rounded-full text-sm font-medium cursor-default whitespace-nowrap ${i === 0 ? "bg-blue-600 text-white" : "bg-white border border-gray-200 text-gray-600"}`}>
-                {cat}
-              </span>
-            ))}
-          </div>
-
-          <div className="grid sm:grid-cols-2 gap-4">
-            {serviceExamples.map((s) => (
-              <div key={s.title} className="bg-white border border-gray-100 rounded-2xl p-5 hover:border-blue-200 hover:shadow-sm transition-all">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex-1 min-w-0">
-                    <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full border border-blue-100 font-medium">
-                      {s.category}
-                    </span>
-                    <h3 className="font-semibold text-gray-900 mt-2">{s.title}</h3>
-                    <p className="text-sm text-gray-500 mt-1 leading-relaxed">{s.desc}</p>
-                  </div>
-                  <div className="text-right flex-shrink-0">
-                    <div className="num text-blue-600 font-black text-lg">{s.price}</div>
-                    <div className="text-xs text-gray-400 mt-0.5">{s.days}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="text-center mt-8">
-            <Link href="/browse" className="text-blue-600 text-sm font-medium hover:underline">
-              すべての成果物を見る →
-            </Link>
-          </div>
-        </div>
-      </section>
-
       {/* 修正1回保証 */}
       <section className="py-5 px-4 bg-blue-50 border-y border-blue-100">
         <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-6 text-center sm:text-left">
@@ -856,15 +814,3 @@ const commercializationCases = [
   },
 ];
 
-const serviceExamples = [
-  { category: "事業会社", title: "中途採用の面接評価シート設計", desc: "採用したい人物像・職種要件をヒアリングし、選考基準を言語化した評価シートを設計（人事）", price: "¥20,000", days: "3日以内" },
-  { category: "事業会社", title: "商談提案書テンプレート作成", desc: "扱う商材・想定顧客・よく出る質問をヒアリングし、次の商談から使える提案構成を設計（営業）", price: "¥20,000", days: "4日以内" },
-  { category: "事業会社", title: "月次レポート自動集計フォーマット設計", desc: "現状の集計フローと欲しいアウトプットを確認した上で、Excelテンプレを設計・納品（経理）", price: "¥25,000", days: "5日以内" },
-  { category: "事業会社", title: "事業計画書フレーム整理＆フィードバック", desc: "目的・対象読者・現状の課題を確認した上で、構成と数字の整合性をレビュー（経営企画）", price: "¥30,000", days: "5日以内" },
-  { category: "士業", title: "社内規程・契約書の法的チェックリスト作成", desc: "対象書類の目的と取引関係をヒアリングし、リスク箇所と修正ポイントを整理して納品", price: "¥35,000", days: "3日以内" },
-  { category: "士業", title: "内部統制の整備状況チェック＆改善提案", desc: "現状の統制フローと懸念点をヒアリングし、リスク項目と優先度を整理してレポート化", price: "¥40,000", days: "5日以内" },
-  { category: "コンサル", title: "市場分析＆参入戦略の論点整理", desc: "ターゲット市場・競合・自社強みをヒアリングし、検討すべき論点と仮説を整理（戦略）", price: "¥40,000", days: "5日以内" },
-  { category: "コンサル", title: "業務課題の仮説整理＆他社事例共有", desc: "現状課題と改善目標をヒアリングし、類似事例と打ち手の方向性をレポートで整理（業務）", price: "¥30,000", days: "4日以内" },
-  { category: "コンサル", title: "システム要件整理＆ベンダー選定基準作成", desc: "業務フローと課題をヒアリングし、要件定義の骨子とRFP用チェックリストを設計（IT）", price: "¥35,000", days: "5日以内" },
-  { category: "エンジニア", title: "業務自動化の方法相談（60分）", desc: "現状フローと困りごとをヒアリングし、最適な自動化手段を一緒に選定", price: "¥15,000", days: "当日〜翌日" },
-];
