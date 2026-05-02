@@ -1,7 +1,6 @@
 import { getProfileByLinkedInId } from "@/lib/profiles";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import type { PageProps } from "@/types/next";
 import { InquiryForm } from "@/components/InquiryForm";
 
 const categoryLabel: Record<string, string> = {
@@ -17,7 +16,7 @@ const availabilityLabel: Record<string, { label: string; color: string }> = {
   busy: { label: "稼働不可", color: "bg-gray-100 text-gray-500" },
 };
 
-export default async function ProfilePage(props: PageProps<"/profile/[id]">) {
+export default async function ProfilePage(props: { params: Promise<{ id: string }> }) {
   const { id } = await props.params;
 
   let profile = null;
