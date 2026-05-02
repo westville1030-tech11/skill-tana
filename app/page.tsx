@@ -89,57 +89,83 @@ export default function Home() {
       </section>
 
       {/* AIが伴走する両側設計 */}
-      <section className="py-28 px-4 bg-slate-50">
+      <section className="py-20 px-4 bg-slate-50">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">まず、AIに話しかけてみてください</h2>
-          <p className="text-center text-gray-400 mb-14">発注も、出品も、最初の一歩はAIと一緒に。</p>
+          <p className="text-center text-gray-400 mb-12">発注も、出品も、最初の一歩はAIと一緒に。</p>
 
           <div className="grid md:grid-cols-2 gap-6">
 
             {/* 経験者として登録したい人 */}
-            <div className="bg-white rounded-2xl border border-amber-100 p-7 flex flex-col gap-5">
-              <div>
-                <span className="text-xs font-bold text-amber-700 bg-amber-50 px-3 py-1 rounded-full">経験者として登録したい人へ</span>
-                <h3 className="text-lg font-bold text-gray-900 mt-3 mb-2 leading-snug">「自分の経験が商品化できるなんて、考えたこともなかった…」</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">まずはAIに経験を話してみてください。あなたの経験をもとに、商品提案を受けられます。</p>
+            <div className="bg-white rounded-2xl border border-amber-100 p-7 flex flex-col gap-4">
+              <span className="text-xs font-bold text-amber-700 bg-amber-50 px-3 py-1 rounded-full self-start">経験者として登録したい人へ</span>
+
+              {/* 悩み */}
+              <div className="bg-amber-50 rounded-xl px-4 py-3">
+                <p className="text-sm font-bold text-gray-800 leading-snug">「自分の経験が商品化できるなんて、考えたこともなかった…」</p>
               </div>
-              <div className="space-y-2">
+
+              {/* どうやるの？ */}
+              <div className="flex items-start gap-2">
+                <span className="text-amber-400 font-black text-lg leading-none mt-0.5">↓</span>
+                <p className="text-sm font-semibold text-gray-700">AIに話すだけで、売れる商品に変わります</p>
+              </div>
+              <p className="text-xs text-gray-500 leading-relaxed -mt-2">
+                経験を言葉にしなくていい。過去の仕事内容・提案書・職務経歴書などを渡すだけで、AIが商品タイトル・価格・実体験エピソードをセットで提案します。
+              </p>
+
+              {/* ステップ */}
+              <div className="space-y-2 border-t border-gray-100 pt-3">
                 {[
-                  { step: "1", label: "経験を話す or 仕事に関係するファイルをアップ" },
-                  { step: "2", label: "AIが商品タイトル・価格・実体験を生成" },
-                  { step: "3", label: "確認してイチバに出品" },
-                ].map((s) => (
-                  <div key={s.step} className="flex items-center gap-3">
-                    <span className="w-6 h-6 rounded-full bg-amber-500 text-white text-xs font-black flex items-center justify-center flex-shrink-0">{s.step}</span>
-                    <span className="text-sm text-gray-700">{s.label}</span>
+                  "経験を話す、またはファイルをアップロード",
+                  "AIが商品タイトル・価格・実体験を生成",
+                  "内容を確認してイチバに出品",
+                ].map((label, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <span className="w-5 h-5 rounded-full bg-amber-500 text-white text-[10px] font-black flex items-center justify-center flex-shrink-0">{i + 1}</span>
+                    <span className="text-xs text-gray-600">{label}</span>
                   </div>
                 ))}
               </div>
-              <Link href="/try" className="mt-auto block text-center bg-amber-500 text-white py-3 rounded-xl text-sm font-bold hover:bg-amber-600 transition-colors">
+
+              <Link href="/try" className="mt-auto block text-center bg-amber-500 text-white py-3.5 rounded-xl text-sm font-bold hover:bg-amber-600 transition-colors">
                 AIに経験を話してみる →
               </Link>
             </div>
 
             {/* 発注したい人 */}
-            <div className="bg-white rounded-2xl border border-blue-100 p-7 flex flex-col gap-5">
-              <div>
-                <span className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">発注したい人へ</span>
-                <h3 className="text-lg font-bold text-gray-900 mt-3 mb-2 leading-snug">「課題をどう伝えて発注するか、不安…」</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">まずはAIに発注相談をしてみてください。何を頼めばいいか整理できていなくても大丈夫です。</p>
+            <div className="bg-white rounded-2xl border border-blue-100 p-7 flex flex-col gap-4">
+              <span className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full self-start">発注したい人へ</span>
+
+              {/* 悩み */}
+              <div className="bg-blue-50 rounded-xl px-4 py-3">
+                <p className="text-sm font-bold text-gray-800 leading-snug">「課題をどう伝えて発注するか、不安…」</p>
               </div>
-              <div className="space-y-2">
+
+              {/* どうやるの？ */}
+              <div className="flex items-start gap-2">
+                <span className="text-blue-400 font-black text-lg leading-none mt-0.5">↓</span>
+                <p className="text-sm font-semibold text-gray-700">AIが一緒に整理するから、言語化できなくてもOK</p>
+              </div>
+              <p className="text-xs text-gray-500 leading-relaxed -mt-2">
+                「何を頼めばいいか分からない」でも大丈夫。AIが3回質問を返しながら、依頼内容・期待値・予算感を一緒に整理します。整理した内容をそのまま経験者への問い合わせに使えます。
+              </p>
+
+              {/* ステップ */}
+              <div className="space-y-2 border-t border-gray-100 pt-3">
                 {[
-                  { step: "1", label: "課題を自由に入力" },
-                  { step: "2", label: "AIが3回、深掘り質問" },
-                  { step: "3", label: "整理された依頼で経験者を探す" },
-                ].map((s) => (
-                  <div key={s.step} className="flex items-center gap-3">
-                    <span className="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-black flex items-center justify-center flex-shrink-0">{s.step}</span>
-                    <span className="text-sm text-gray-700">{s.label}</span>
+                  "課題や困っていることを自由に入力",
+                  "AIが3回、深掘り質問",
+                  "整理された依頼内容で経験者を探す",
+                ].map((label, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <span className="w-5 h-5 rounded-full bg-blue-600 text-white text-[10px] font-black flex items-center justify-center flex-shrink-0">{i + 1}</span>
+                    <span className="text-xs text-gray-600">{label}</span>
                   </div>
                 ))}
               </div>
-              <Link href="/request" className="mt-auto block text-center bg-blue-600 text-white py-3 rounded-xl text-sm font-bold hover:bg-blue-700 transition-colors">
+
+              <Link href="/request" className="mt-auto block text-center bg-blue-600 text-white py-3.5 rounded-xl text-sm font-bold hover:bg-blue-700 transition-colors">
                 AIに発注相談してみる →
               </Link>
             </div>
