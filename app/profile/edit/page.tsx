@@ -34,6 +34,7 @@ export default function EditProfilePage() {
   const [role, setRole] = useState("");
   const [linkedinConnections, setLinkedinConnections] = useState("");
   const [pastCompanies, setPastCompanies] = useState<string[]>([]);
+  const [pastCompaniesDisplay, setPastCompaniesDisplay] = useState<string[]>([]);
   const [companyInput, setCompanyInput] = useState("");
 
   // 設定
@@ -92,6 +93,7 @@ export default function EditProfilePage() {
             setLinkedinConnections(data.linkedin_connections ?? "");
             setServices(data.services ?? []);
             setPastCompanies(data.past_companies ?? []);
+            setPastCompaniesDisplay(data.past_companies_display ?? []);
           }
         })
         .catch(() => {});
@@ -149,6 +151,7 @@ export default function EditProfilePage() {
           linkedin_connections: linkedinConnections || null,
           services,
           past_companies: pastCompanies,
+          past_companies_display: pastCompaniesDisplay,
           ...extra,
         }),
       });
@@ -275,8 +278,28 @@ export default function EditProfilePage() {
     const c = val.trim();
     if (!c || pastCompanies.includes(c)) return;
     const next = [...pastCompanies, c];
+    const nextDisplay = [...pastCompaniesDisplay, ""];
     setPastCompanies(next);
-    save({ past_companies: next });
+    setPastCompaniesDisplay(nextDisplay);
+    save({ past_companies: next, past_companies_display: nextDisplay });
+  };
+
+  const removeCompany = (i: number) => {
+    const next = pastCompanies.filter((_, idx) => idx !== i);
+    const nextDisplay = pastCompaniesDisplay.filter((_, idx) => idx !== i);
+    setPastCompanies(next);
+    setPastCompaniesDisplay(nextDisplay);
+    save({ past_companies: next, past_companies_display: nextDisplay });
+  };
+
+  const updateCompanyDisplay = (i: number, val: string) => {
+    const next = [...pastCompaniesDisplay];
+    next[i] = val;
+    setPastCompaniesDisplay(next);
+  };
+
+  const saveCompanyDisplay = () => {
+    save({ past_companies_display: pastCompaniesDisplay });
   };
 
   const addService = () => {
@@ -590,18 +613,34 @@ export default function EditProfilePage() {
       <section className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
         <div>
           <h2 className="text-sm font-semibold text-gray-700 mb-0.5">過去の所属会社（経歴）</h2>
-          <p className="text-xs text-gray-400">コンサルや専門職は「どこ出身か」が信頼の根拠になります。</p>
+          <p className="text-xs text-gray-400">実名は非公開にしたい場合は「公開表示名」に一般化した名称を入力してください。</p>
         </div>
-        <div className="flex flex-wrap gap-2 min-h-8">
-          {pastCompanies.map((c) => (
-            <span key={c} className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 text-gray-700 text-sm px-3 py-1.5 rounded-full">
-              <CompanyLogo name={c} size={16} />
-              {c}
-              <button
-                onClick={() => { const next = pastCompanies.filter((x) => x !== c); setPastCompanies(next); save({ past_companies: next }); }}
-                className="text-gray-400 hover:text-red-500 leading-none ml-0.5"
-              >×</button>
-            </span>
+        <div className="space-y-3">
+          {pastCompanies.map((c, i) => (
+            <div key={i} className="border border-gray-200 rounded-xl p-3 space-y-2">
+              <div className="flex items-center gap-2">
+                <CompanyLogo name={c} size={16} />
+                <span className="text-sm text-gray-700 flex-1">{c}</span>
+                <button
+                  onClick={() => removeCompany(i)}
+                  className="text-gray-400 hover:text-red-500 text-xs leading-none"
+                >削除</button>
+              </div>
+              <div>
+                <label className="block text-xs text-gray-400 mb-1">
+                  公開表示名（任意）
+                  <span className="ml-1 font-normal">— 空欄の場合は実名がそのまま表示されます</span>
+                </label>
+                <input
+                  type="text"
+                  value={pastCompaniesDisplay[i] ?? ""}
+                  onChange={(e) => updateCompanyDisplay(i, e.target.value)}
+                  onBlur={saveCompanyDisplay}
+                  placeholder="例: Big4コンサルティングファーム、外資系メーカー（欧州本社）"
+                  className="w-full border border-gray-200 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-600"
+                />
+              </div>
+            </div>
           ))}
         </div>
         <div className="flex gap-2">

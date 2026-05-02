@@ -29,6 +29,7 @@ export type Profile = {
   role: string | null;
   linkedin_connections: "under_100" | "100_500" | "500_1000" | "over_1000" | null;
   past_companies: string[] | null;
+  past_companies_display: string[] | null;
   linkedin_verified: boolean | null;
   corporate_email_verified: boolean | null;
   corporate_email_domain: string | null;

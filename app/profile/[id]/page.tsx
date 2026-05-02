@@ -102,9 +102,10 @@ export default async function ProfilePage(props: { params: Promise<{ id: string 
           <div>
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">経歴（自己申告）</p>
             <div className="flex flex-wrap gap-3">
-              {profile.past_companies.map((c) => (
-                <CompanyBadge key={c} name={c} />
-              ))}
+              {profile.past_companies.map((c, i) => {
+                const displayName = profile.past_companies_display?.[i];
+                return <CompanyBadge key={i} name={c} displayName={displayName || undefined} />;
+              })}
             </div>
             {profile.linkedin_url && (
               <p className="text-xs text-gray-400 mt-2">
