@@ -29,18 +29,31 @@ export default function Home() {
                 AIが商品化を手伝うから、ゼロから考えなくていい。
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-12">
-                <Link href="/try"
-                  className="bg-gradient-to-r from-amber-500 to-amber-400 text-white px-8 py-4 rounded-xl font-bold hover:opacity-90 transition-opacity text-center shadow-lg shadow-amber-900/30">
-                  AIに経験を話してみる →
-                </Link>
-                <Link href="/request"
-                  className="bg-white/15 border border-white/25 text-white px-8 py-4 rounded-xl font-bold hover:bg-white/20 transition-colors text-center">
-                  AIに発注相談してみる →
-                </Link>
-                <Link href="/browse"
-                  className="border border-white/20 text-white px-8 py-4 rounded-xl font-bold hover:bg-white/10 transition-colors text-center">
-                  イチバの棚を見る
+              <div className="grid sm:grid-cols-2 gap-4 mb-6">
+                {/* 経験者 */}
+                <div className="bg-white/8 border border-white/15 rounded-2xl p-5 flex flex-col gap-4">
+                  <p className="text-sm text-slate-300 leading-relaxed">
+                    「自分の経験が商品化できるなんて、考えたこともなかった…」
+                  </p>
+                  <Link href="/try"
+                    className="mt-auto block text-center bg-gradient-to-r from-amber-500 to-amber-400 text-white py-3 px-4 rounded-xl text-sm font-bold hover:opacity-90 transition-opacity shadow-lg shadow-amber-900/30">
+                    AIに相談して商品化提案を受けてみる →
+                  </Link>
+                </div>
+                {/* 発注者 */}
+                <div className="bg-white/8 border border-white/15 rounded-2xl p-5 flex flex-col gap-4">
+                  <p className="text-sm text-slate-300 leading-relaxed">
+                    「課題をどう伝えて発注するか、不安…」
+                  </p>
+                  <Link href="/request"
+                    className="mt-auto block text-center bg-white/15 border border-white/25 text-white py-3 px-4 rounded-xl text-sm font-bold hover:bg-white/20 transition-colors">
+                    曖昧なままAIに伝え、壁打ちの上で発注提案を受けてみる →
+                  </Link>
+                </div>
+              </div>
+              <div className="text-center lg:text-left mb-12">
+                <Link href="/browse" className="text-slate-400 text-sm hover:text-white transition-colors">
+                  まずイチバの棚を見てみる →
                 </Link>
               </div>
 
