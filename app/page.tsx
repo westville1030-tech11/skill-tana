@@ -266,67 +266,77 @@ export default function Home() {
   );
 }
 
-/* ---- ヒーロー抽象グラフィック ---- */
+/* ---- ヒーロー グラフィック: もやもや → AI → 成果物 ---- */
 function HeroGraphic() {
+  const fuzzyItems = [
+    { cx: 88,  cy: 100, r: 38, label: "採用の経験", sub: "…売れる？" },
+    { cx: 72,  cy: 190, r: 34, label: "融資の知識", sub: "…使える？" },
+    { cx: 100, cy: 272, r: 30, label: "調達ノウハウ", sub: "…商品に？" },
+  ];
+  const cards = [
+    { y: 88,  title: "採用面接突破ガイド", price: "¥15,000" },
+    { y: 158, title: "銀行融資を通す実務書", price: "¥35,000" },
+    { y: 228, title: "海外調達交渉テンプレ", price: "¥40,000" },
+  ];
   return (
-    <svg viewBox="0 0 480 360" className="w-full" xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 480 370" className="w-full" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <linearGradient id="ng" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#60a5fa" stopOpacity="0.95" />
-          <stop offset="100%" stopColor="#818cf8" stopOpacity="0.55" />
+        <linearGradient id="aiGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#60a5fa" />
+          <stop offset="100%" stopColor="#818cf8" />
         </linearGradient>
-        <radialGradient id="bg" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.2" />
-          <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
-        </radialGradient>
+        <linearGradient id="cardGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#ffffff" stopOpacity="0.04" />
+        </linearGradient>
+        <filter id="fuzzy">
+          <feGaussianBlur stdDeviation="4" />
+        </filter>
       </defs>
 
-      <circle cx="240" cy="180" r="200" fill="url(#bg)" />
-
-      {/* グリッド */}
-      {[60, 120, 180, 240, 300].map(y => (
-        <line key={`h${y}`} x1="0" y1={y} x2="480" y2={y} stroke="#60a5fa" strokeWidth="0.5" strokeOpacity="0.12" />
+      {/* ---- LEFT: もやもやゾーン ---- */}
+      {fuzzyItems.map((f) => (
+        <g key={f.label}>
+          <circle cx={f.cx} cy={f.cy} r={f.r + 6} fill="#818cf8" fillOpacity="0.08" filter="url(#fuzzy)" />
+          <circle cx={f.cx} cy={f.cy} r={f.r} fill="none" stroke="#818cf8" strokeWidth="1.2" strokeDasharray="5 4" strokeOpacity="0.45" />
+          <text x={f.cx} y={f.cy - 4} fontSize="9.5" fill="#93c5fd" fillOpacity="0.75" textAnchor="middle" fontFamily="sans-serif" fontWeight="600">{f.label}</text>
+          <text x={f.cx} y={f.cy + 10} fontSize="8.5" fill="#93c5fd" fillOpacity="0.4" textAnchor="middle" fontFamily="sans-serif">{f.sub}</text>
+        </g>
       ))}
-      {[80, 160, 240, 320, 400].map(x => (
-        <line key={`v${x}`} x1={x} y1="0" x2={x} y2="360" stroke="#60a5fa" strokeWidth="0.5" strokeOpacity="0.12" />
+
+      {/* ---- LINES: fuzzy → AI (dashed) ---- */}
+      {fuzzyItems.map((f) => (
+        <line key={`l${f.label}`} x1={f.cx + f.r} y1={f.cy} x2="198" y2="185" stroke="#60a5fa" strokeWidth="1" strokeOpacity="0.3" strokeDasharray="5 4" />
       ))}
 
-      {/* エッジ */}
-      <line x1="110" y1="80" x2="240" y2="180" stroke="#60a5fa" strokeWidth="1.5" strokeOpacity="0.45" />
-      <line x1="370" y1="80" x2="240" y2="180" stroke="#60a5fa" strokeWidth="1.5" strokeOpacity="0.45" />
-      <line x1="240" y1="180" x2="150" y2="285" stroke="#818cf8" strokeWidth="1.5" strokeOpacity="0.45" />
-      <line x1="240" y1="180" x2="370" y2="285" stroke="#818cf8" strokeWidth="1.5" strokeOpacity="0.45" />
-      <line x1="60" y1="195" x2="240" y2="180" stroke="#60a5fa" strokeWidth="1" strokeOpacity="0.3" />
-      <line x1="430" y1="195" x2="240" y2="180" stroke="#60a5fa" strokeWidth="1" strokeOpacity="0.3" />
-      <line x1="110" y1="80" x2="60" y2="195" stroke="#60a5fa" strokeWidth="0.8" strokeOpacity="0.2" />
-      <line x1="370" y1="80" x2="430" y2="195" stroke="#60a5fa" strokeWidth="0.8" strokeOpacity="0.2" />
+      {/* ---- CENTER: AI変換 ---- */}
+      <circle cx="222" cy="185" r="52" fill="#3b82f6" fillOpacity="0.07" />
+      <circle cx="222" cy="185" r="34" fill="url(#aiGrad)" fillOpacity="0.85" />
+      <text x="222" y="180" fontSize="8.5" fill="white" textAnchor="middle" fontFamily="sans-serif" fontWeight="bold" letterSpacing="0.5">経験イチバ</text>
+      <text x="222" y="194" fontSize="10" fill="#bfdbfe" textAnchor="middle" fontFamily="monospace" fontWeight="bold">AI</text>
+      {/* スパーク */}
+      {[[222,143],[252,158],[252,212],[222,227],[192,212],[192,158]].map(([x,y],i) => (
+        <circle key={i} cx={x} cy={y} r="2.5" fill="#60a5fa" fillOpacity="0.55" />
+      ))}
 
-      {/* 外側ノード */}
-      <circle cx="110" cy="80" r="7" fill="url(#ng)" />
-      <circle cx="110" cy="80" r="16" fill="#60a5fa" fillOpacity="0.1" />
-      <circle cx="370" cy="80" r="7" fill="url(#ng)" />
-      <circle cx="370" cy="80" r="16" fill="#60a5fa" fillOpacity="0.1" />
-      <circle cx="60" cy="195" r="5" fill="url(#ng)" />
-      <circle cx="60" cy="195" r="12" fill="#60a5fa" fillOpacity="0.08" />
-      <circle cx="430" cy="195" r="5" fill="url(#ng)" />
-      <circle cx="430" cy="195" r="12" fill="#60a5fa" fillOpacity="0.08" />
-      <circle cx="150" cy="285" r="6" fill="url(#ng)" />
-      <circle cx="150" cy="285" r="14" fill="#818cf8" fillOpacity="0.1" />
-      <circle cx="370" cy="285" r="6" fill="url(#ng)" />
-      <circle cx="370" cy="285" r="14" fill="#818cf8" fillOpacity="0.1" />
+      {/* ---- LINES: AI → cards (solid) ---- */}
+      {cards.map((c) => (
+        <line key={`r${c.y}`} x1="256" y1="185" x2="308" y2={c.y + 23} stroke="#60a5fa" strokeWidth="1.5" strokeOpacity="0.55" />
+      ))}
 
-      {/* 中心ノード */}
-      <circle cx="240" cy="180" r="18" fill="url(#ng)" />
-      <circle cx="240" cy="180" r="36" fill="#3b82f6" fillOpacity="0.12" />
-      <circle cx="240" cy="180" r="54" fill="#3b82f6" fillOpacity="0.06" />
+      {/* ---- RIGHT: 成果物カード ---- */}
+      {cards.map((c) => (
+        <g key={c.y}>
+          <rect x="310" y={c.y} width="152" height="46" rx="9" fill="url(#cardGrad)" stroke="#60a5fa" strokeWidth="0.9" strokeOpacity="0.55" />
+          <text x="323" y={c.y + 17} fontSize="9.5" fill="white" fontFamily="sans-serif" fontWeight="600">{c.title}</text>
+          <text x="323" y={c.y + 34} fontSize="11.5" fill="#60a5fa" fontFamily="monospace" fontWeight="bold">{c.price}</text>
+        </g>
+      ))}
 
-      {/* ラベル */}
-      <rect x="88" y="50" width="44" height="18" rx="5" fill="#1e3a8a" fillOpacity="0.65" />
-      <text x="110" y="63" fontSize="8.5" fill="#93c5fd" textAnchor="middle" fontFamily="monospace" fontWeight="bold">DATA</text>
-      <rect x="348" y="50" width="44" height="18" rx="5" fill="#1e3a8a" fillOpacity="0.65" />
-      <text x="370" y="63" fontSize="8.5" fill="#93c5fd" textAnchor="middle" fontFamily="monospace" fontWeight="bold">SKILL</text>
-      <rect x="216" y="190" width="48" height="18" rx="5" fill="#1e3a8a" fillOpacity="0.75" />
-      <text x="240" y="203" fontSize="8.5" fill="#c4b5fd" textAnchor="middle" fontFamily="monospace" fontWeight="bold">MATCH</text>
+      {/* ---- LABELS ---- */}
+      <text x="75" y="328" fontSize="8.5" fill="#818cf8" fillOpacity="0.5" textAnchor="middle" fontFamily="sans-serif">もやもやした経験</text>
+      <text x="222" y="338" fontSize="8.5" fill="#60a5fa" fillOpacity="0.6" textAnchor="middle" fontFamily="sans-serif">AIが商品化</text>
+      <text x="386" y="328" fontSize="8.5" fill="#93c5fd" fillOpacity="0.5" textAnchor="middle" fontFamily="sans-serif">誰かに届く成果物</text>
     </svg>
   );
 }
