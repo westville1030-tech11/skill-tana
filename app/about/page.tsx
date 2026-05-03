@@ -42,7 +42,7 @@ export default function AboutPage() {
           <ul className="space-y-4 text-sm leading-relaxed">
             <li className="flex items-start gap-3">
               <span className="text-teal-300 font-bold flex-shrink-0">—</span>
-              日本企業に閉じ込められた知見を、社会に循環させる
+              日本中に眠る知見を、社会に循環させる
             </li>
             <li className="flex items-start gap-3">
               <span className="text-teal-300 font-bold flex-shrink-0">—</span>
