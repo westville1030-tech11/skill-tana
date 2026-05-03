@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "このサービスについて | 経験イチバ",
-  description: "知見の流通市場をつくる。経験イチバが生まれた理由。",
+  description: "経験の流通市場をつくる。経験イチバが生まれた理由。",
 };
 
 export default function AboutPage() {
@@ -14,7 +14,7 @@ export default function AboutPage() {
 
         <p className="text-sm font-bold text-teal-600 tracking-widest mt-10 mb-4">このサービスについて</p>
         <h1 className="text-4xl font-black text-gray-900 leading-tight mb-12">
-          知見の流通市場を<br />つくる。
+          経験の流通市場を<br />つくる。
         </h1>
 
         <div className="space-y-6 text-gray-600 leading-relaxed text-[15px]">
@@ -28,8 +28,12 @@ export default function AboutPage() {
             そして引退とともに、使われなくなる。
           </p>
           <p>
-            知見をシェアしたくても、その場がなかった。<br />
+            経験をシェアしたくても、その場がなかった。<br />
             AIの到来で、それが可能な時代になった。
+          </p>
+          <p>
+            専門知識や情報は、AIで誰でも手に入る時代になった。<br />
+            だからこそ、個人の歴史と経験、そして人と人のつながりが生む変革に、価値が宿る。
           </p>
           <p>
             経験イチバは、「先人から学べる」場所でありたい。
@@ -42,7 +46,7 @@ export default function AboutPage() {
           <ul className="space-y-4 text-sm leading-relaxed">
             <li className="flex items-start gap-3">
               <span className="text-teal-300 font-bold flex-shrink-0">—</span>
-              日本中に眠る知見を、社会に循環させる
+              日本中に眠る経験を、社会に循環させる
             </li>
             <li className="flex items-start gap-3">
               <span className="text-teal-300 font-bold flex-shrink-0">—</span>
