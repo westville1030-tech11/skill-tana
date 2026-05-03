@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
+import { OfficeParser } from "officeparser";
 
 const PROMPT = `以下は履歴書または職務経歴書です。この人物の経験をもとに、副業・スポット発注向けの商品案を2つ作ってください。
 
@@ -30,6 +31,15 @@ function extractJson(text: string, startTag: string, endTag: string) {
   return null;
 }
 
+const OFFICE_TYPES = [
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "application/msword",
+  "application/vnd.ms-powerpoint",
+  "application/vnd.ms-excel",
+];
+
 export async function POST(req: NextRequest) {
   const { fileBase64, mediaType } = await req.json();
   if (!fileBase64 || !mediaType) {
@@ -38,14 +48,35 @@ export async function POST(req: NextRequest) {
 
   const client = new Anthropic();
 
-  const contentBlock = mediaType === "application/pdf"
-    ? { type: "document" as const, source: { type: "base64" as const, media_type: "application/pdf" as const, data: fileBase64 } }
-    : { type: "image" as const, source: { type: "base64" as const, media_type: mediaType as "image/jpeg" | "image/png" | "image/webp", data: fileBase64 } };
+  let messageContent: Anthropic.MessageParam["content"];
+
+  if (OFFICE_TYPES.includes(mediaType)) {
+    const buffer = Buffer.from(fileBase64, "base64");
+    const ast = await OfficeParser.parseOffice(buffer);
+    const text = ast.toText();
+    if (!text?.trim()) {
+      return NextResponse.json({ error: "ファイルからテキストを抽出できませんでした" }, { status: 400 });
+    }
+    messageContent = [
+      { type: "text", text: `以下はアップロードされたファイルから抽出したテキストです:\n\n${text}` },
+      { type: "text", text: PROMPT },
+    ];
+  } else if (mediaType === "application/pdf") {
+    messageContent = [
+      { type: "document" as const, source: { type: "base64" as const, media_type: "application/pdf" as const, data: fileBase64 } },
+      { type: "text", text: PROMPT },
+    ];
+  } else {
+    messageContent = [
+      { type: "image" as const, source: { type: "base64" as const, media_type: mediaType as "image/jpeg" | "image/png" | "image/webp", data: fileBase64 } },
+      { type: "text", text: PROMPT },
+    ];
+  }
 
   const message = await client.messages.create({
     model: "claude-haiku-4-5-20251001",
     max_tokens: 1500,
-    messages: [{ role: "user", content: [contentBlock, { type: "text", text: PROMPT }] }],
+    messages: [{ role: "user", content: messageContent }],
   });
 
   const content = message.content[0];

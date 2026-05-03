@@ -458,7 +458,7 @@ export default function TryPage() {
           <div className="bg-white border border-gray-100 rounded-2xl p-6 space-y-4">
             <div>
               <h2 className="font-bold text-gray-900 mb-1">仕事に関係するファイルをアップロード</h2>
-              <p className="text-xs text-gray-500">例：ランサーズ等の納品物、提案書、名刺、スライドなど　PDF / JPG / PNG / WebP に対応</p>
+              <p className="text-xs text-gray-500">例：ランサーズ等の納品物、提案書、名刺、スライドなど　PDF / Word / PowerPoint / Excel / JPG / PNG に対応</p>
             </div>
             {resumeUploading ? (
               <div className="flex flex-col items-center justify-center py-16 gap-4 text-gray-400">
@@ -479,13 +479,13 @@ export default function TryPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                 </svg>
                 <span className="text-sm font-medium">{isDragging ? "ここにドロップ" : "クリックまたはドラッグ＆ドロップ"}</span>
-                <span className="text-xs">PDF / JPG / PNG / WebP</span>
+                <span className="text-xs">PDF / Word / PowerPoint / Excel / JPG / PNG</span>
               </div>
             )}
             <input
               ref={fileInputRef}
               type="file"
-              accept="application/pdf,image/jpeg,image/png,image/webp"
+              accept=".pdf,.jpg,.jpeg,.png,.webp,.docx,.pptx,.xlsx"
               className="hidden"
               onChange={(e) => { const f = e.target.files?.[0]; if (f) handleDecidedFile(f); }}
             />
@@ -640,7 +640,7 @@ export default function TryPage() {
           <div className="bg-white border border-gray-100 rounded-2xl p-6 space-y-4">
             <div>
               <h2 className="font-bold text-gray-900 mb-1">仕事に関係するファイルをアップロード</h2>
-              <p className="text-xs text-gray-500">例：過去の作成物、提案書、名刺、履歴書、顧客とのやり取りなど　PDF / JPG / PNG / WebP に対応</p>
+              <p className="text-xs text-gray-500">例：過去の作成物、提案書、名刺、履歴書、顧客とのやり取りなど　PDF / Word / PowerPoint / Excel / JPG / PNG に対応</p>
             </div>
 
             {resumeUploading ? (
@@ -671,14 +671,14 @@ export default function TryPage() {
                 <span className="text-sm font-medium">
                   {isDragging ? "ここにドロップ" : "クリックまたはドラッグ＆ドロップ"}
                 </span>
-                <span className="text-xs">PDF / JPG / PNG / WebP</span>
+                <span className="text-xs">PDF / Word / PowerPoint / Excel / JPG / PNG</span>
               </div>
             )}
 
             <input
               ref={fileInputRef}
               type="file"
-              accept="application/pdf,image/jpeg,image/png,image/webp"
+              accept=".pdf,.jpg,.jpeg,.png,.webp,.docx,.pptx,.xlsx"
               className="hidden"
               onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileUpload(f); }}
             />

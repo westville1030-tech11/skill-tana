@@ -417,13 +417,13 @@ export default function EditProfilePage() {
                 ) : (
                   <>
                     <p className="text-sm text-blue-600 mb-1">クリックしてファイルを選択</p>
-                    <p className="text-xs text-blue-400">PDF・JPEG・PNG対応</p>
+                    <p className="text-xs text-blue-400">PDF・Word・PowerPoint・Excel・画像対応</p>
                   </>
                 )}
               </div>
               <input
                 type="file"
-                accept="application/pdf,image/jpeg,image/png,image/webp"
+                accept=".pdf,.jpg,.jpeg,.png,.webp,.docx,.pptx,.xlsx"
                 className="hidden"
                 onChange={(e) => { const f = e.target.files?.[0]; if (f) handleResumeFile(f); }}
               />
@@ -1238,7 +1238,7 @@ function ResumeUploadPanel({
         <button onClick={onCancel} className="text-xs text-gray-400 hover:text-gray-600">キャンセル</button>
       </div>
       <p className="text-xs text-emerald-700 leading-relaxed">
-        PDF・画像（JPG/PNG）をアップロードすると、AIが経歴を読み取って成果物型・コンサル型の2案を提案します。
+        PDF・Word・PowerPoint・Excel・画像をアップロードすると、AIが経歴を読み取って成果物型・コンサル型の2案を提案します。
       </p>
       {uploading ? (
         <div className="flex items-center justify-center gap-2 py-6">
@@ -1253,11 +1253,11 @@ function ResumeUploadPanel({
         <label className="block cursor-pointer">
           <div className="border-2 border-dashed border-emerald-300 rounded-xl p-6 text-center hover:border-emerald-500 hover:bg-emerald-100/50 transition-colors">
             <p className="text-sm text-emerald-700 font-medium">クリックしてファイルを選択</p>
-            <p className="text-xs text-gray-400 mt-1">PDF・JPG・PNG（10MB以内）</p>
+            <p className="text-xs text-gray-400 mt-1">PDF・Word・PPT・Excel・JPG・PNG（10MB以内）</p>
           </div>
           <input
             type="file"
-            accept=".pdf,.jpg,.jpeg,.png"
+            accept=".pdf,.jpg,.jpeg,.png,.webp,.docx,.pptx,.xlsx"
             className="hidden"
             onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
           />
