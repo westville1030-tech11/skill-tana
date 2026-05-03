@@ -51,17 +51,13 @@ ${text}
     "days_suggestion":3,
     "service_type":"spot",
     "product_type":"deliverable",
-    "estimated_hours":8,
-    "hourly_rate_min":3000,
-    "hourly_rate_max":8000,
-    "price_rationale":"価格の根拠を1文で（60字以内）"
+    "price_rationale":"この価格が妥当な理由を経験の希少性・再現困難性で説明する1文（60字以内）"
   }
 ]}
 
 product_typeは"deliverable"（納品物あり）か"consulting"（対話・セッション）のどちらか。
-estimated_hoursはAI活用込みの純粋な作業時間のみ（経験プレミアムは含めない）。
-price_suggestionはestimated_hours × hourly_rate_minとhourly_rate_maxの中間値で設定。
-price_rationaleは経験の希少性・再現困難性で価値を説明する1文（時間・工数への言及不要）。`,
+price_suggestionは成果物・経験の価値ベースで設定（時間単価換算ではなく、買い手が得る価値から逆算）。
+price_rationaleは時間・工数への言及なし。経験の希少性や、同等のアウトカムを得るために買い手が払うコストとの比較で書く。`,
     }],
   });
   return message;

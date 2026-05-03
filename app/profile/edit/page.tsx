@@ -4,7 +4,6 @@ import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import type { Service } from "@/lib/database.types";
-import { calcServicePrice, EXPERIENCE_BRACKETS, INCOME_BRACKETS } from "@/lib/pricing";
 
 const CATEGORIES = [
   { value: "consultant", label: "コンサルタント" },
@@ -27,10 +26,6 @@ export default function EditProfilePage() {
   const [bio, setBio] = useState("");
   const [skillInput, setSkillInput] = useState("");
   const [skills, setSkills] = useState<string[]>([]);
-
-  // 価格パラメータ
-  const [experienceYears, setExperienceYears] = useState("5_10");
-  const [annualIncomeBracket, setAnnualIncomeBracket] = useState("600_800");
 
   // LinkedIn / 所属情報
   const [linkedinUrl, setLinkedinUrl] = useState("");
@@ -63,7 +58,7 @@ export default function EditProfilePage() {
     title: string; description: string; experience_story: string;
     ai_usage?: string; recommended_tools?: string[];
     price_suggestion: number; days_suggestion: number; service_type: "spot" | "ongoing";
-    estimated_hours?: number; hourly_rate_min?: number; hourly_rate_max?: number; price_rationale?: string;
+    price_rationale?: string;
   };
   const [chatDrafts, setChatDrafts] = useState<{ deliverable: ChatDraftType; consulting: ChatDraftType } | null>(null);
   const [chatDraft, setChatDraft] = useState<ChatDraftType | null>(null);
@@ -104,8 +99,6 @@ export default function EditProfilePage() {
             setServices(data.services ?? []);
             setPastCompanies(data.past_companies ?? []);
             setPastCompaniesDisplay(data.past_companies_display ?? []);
-            if (data.experience_years) setExperienceYears(data.experience_years);
-            if (data.annual_income_bracket) setAnnualIncomeBracket(data.annual_income_bracket);
           }
         })
         .catch(() => {});
@@ -169,8 +162,6 @@ export default function EditProfilePage() {
           services,
           past_companies: pastCompanies,
           past_companies_display: pastCompaniesDisplay,
-          experience_years: experienceYears || null,
-          annual_income_bracket: annualIncomeBracket || null,
           ...extra,
         }),
       });
@@ -546,48 +537,6 @@ export default function EditProfilePage() {
         </div>
       </section>
 
-      {/* ── 価格パラメータ ── */}
-      <section className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
-        <div>
-          <h2 className="text-sm font-semibold text-gray-700 mb-0.5">価格の基準設定</h2>
-          <p className="text-xs text-gray-400">AI商品案の価格算出に使います。公開されません。</p>
-        </div>
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm text-gray-600 mb-1.5">経験年数</label>
-            <select
-              value={experienceYears}
-              onChange={(e) => { setExperienceYears(e.target.value); save({ experience_years: e.target.value }); }}
-              className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-            >
-              <option value="under_3">3年未満</option>
-              <option value="3_5">3〜5年</option>
-              <option value="5_10">5〜10年</option>
-              <option value="10_20">10〜20年</option>
-              <option value="over_20">20年以上</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm text-gray-600 mb-1.5">現在の年収（目安）</label>
-            <select
-              value={annualIncomeBracket}
-              onChange={(e) => { setAnnualIncomeBracket(e.target.value); save({ annual_income_bracket: e.target.value }); }}
-              className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-            >
-              <option value="under_400">〜400万円</option>
-              <option value="400_600">400〜600万円</option>
-              <option value="600_800">600〜800万円</option>
-              <option value="800_1000">800〜1,000万円</option>
-              <option value="1000_1500">1,000〜1,500万円</option>
-              <option value="over_1500">1,500万円〜</option>
-            </select>
-          </div>
-        </div>
-        <p className="text-[11px] text-gray-400 leading-relaxed">
-          価格 ＝（実作業時間 ＋ 経験プレミアム）×（年収 ÷ 年間稼働h × 1.5）で算出します。実際の価格は自由に変更できます。
-        </p>
-      </section>
-
       {/* ── LinkedIn / 所属情報 ── */}
       <section className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
         <div>
@@ -868,36 +817,15 @@ export default function EditProfilePage() {
                       )}
                     </div>
                   )}
-                  {(() => {
-                    const calc = d.estimated_hours ? calcServicePrice(d.estimated_hours, experienceYears, annualIncomeBracket) : null;
-                    const displayPrice = calc?.price ?? d.price_suggestion;
-                    const expLabel = EXPERIENCE_BRACKETS.find(b => b.value === experienceYears)?.label ?? "";
-                    const incLabel = INCOME_BRACKETS.find(b => b.value === annualIncomeBracket)?.label ?? "";
-                    return (
-                      <div className="space-y-1.5">
-                        <div className="flex gap-2 text-[11px] text-gray-500">
-                          <span className="font-bold text-blue-700">¥{displayPrice.toLocaleString()}</span>
-                          <span>{d.days_suggestion}日以内</span>
-                        </div>
-                        {calc && (
-                          <div className="bg-white/60 border border-slate-200 rounded-lg px-2.5 py-2 space-y-1">
-                            <div className="flex items-center justify-between text-[10px]">
-                              <span className="text-gray-500">実作業時間</span>
-                              <span className="font-semibold text-gray-700">{d.estimated_hours}h</span>
-                            </div>
-                            <div className="flex items-center justify-between text-[10px]">
-                              <span className="text-gray-500">経験プレミアム（{expLabel}）</span>
-                              <span className="font-semibold text-gray-700">+{calc.premiumHours}h</span>
-                            </div>
-                            <div className="flex items-center justify-between text-[10px]">
-                              <span className="text-gray-500">時間単価（年収{incLabel}）</span>
-                              <span className="font-semibold text-gray-700">¥{calc.hourlyRate.toLocaleString()}/h</span>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })()}
+                  <div className="space-y-1.5">
+                    <div className="flex gap-2 text-[11px] text-gray-500">
+                      <span className="font-bold text-blue-700">¥{d.price_suggestion.toLocaleString()}</span>
+                      <span>{d.days_suggestion}日以内</span>
+                    </div>
+                    {d.price_rationale && (
+                      <p className="text-[10px] text-gray-500 bg-white/60 border border-slate-200 rounded-lg px-2.5 py-2 leading-relaxed">{d.price_rationale}</p>
+                    )}
+                  </div>
                   {isDeliverable && (
                     <div>
                       <button
@@ -1069,36 +997,15 @@ export default function EditProfilePage() {
                   />
                 </div>
               )}
-              {(() => {
-                const calc = chatDraft.estimated_hours ? calcServicePrice(chatDraft.estimated_hours, experienceYears, annualIncomeBracket) : null;
-                const displayPrice = calc?.price ?? chatDraft.price_suggestion;
-                const expLabel = EXPERIENCE_BRACKETS.find(b => b.value === experienceYears)?.label ?? "";
-                const incLabel = INCOME_BRACKETS.find(b => b.value === annualIncomeBracket)?.label ?? "";
-                return (
-                  <div className="space-y-1.5">
-                    <div className="flex gap-3 text-xs text-gray-500">
-                      <span className="font-bold text-blue-700">¥{displayPrice.toLocaleString()}</span>
-                      <span>{chatDraft.days_suggestion}日以内</span>
-                    </div>
-                    {calc && (
-                      <div className="bg-slate-50 border border-slate-100 rounded-lg px-2.5 py-2 space-y-1">
-                        <div className="flex items-center justify-between text-[10px]">
-                          <span className="text-gray-500">実作業時間</span>
-                          <span className="font-semibold text-gray-700">{chatDraft.estimated_hours}h</span>
-                        </div>
-                        <div className="flex items-center justify-between text-[10px]">
-                          <span className="text-gray-500">経験プレミアム（{expLabel}）</span>
-                          <span className="font-semibold text-gray-700">+{calc.premiumHours}h</span>
-                        </div>
-                        <div className="flex items-center justify-between text-[10px]">
-                          <span className="text-gray-500">時間単価（年収{incLabel}）</span>
-                          <span className="font-semibold text-gray-700">¥{calc.hourlyRate.toLocaleString()}/h</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })()}
+              <div className="space-y-1.5">
+                <div className="flex gap-3 text-xs text-gray-500">
+                  <span className="font-bold text-blue-700">¥{chatDraft.price_suggestion.toLocaleString()}</span>
+                  <span>{chatDraft.days_suggestion}日以内</span>
+                </div>
+                {chatDraft.price_rationale && (
+                  <p className="text-[11px] text-gray-500 bg-slate-50 border border-slate-100 rounded-lg px-2.5 py-2 leading-relaxed">{chatDraft.price_rationale}</p>
+                )}
+              </div>
             </div>
             {qualityResult && (
               <div className={`rounded-xl px-3 py-2.5 text-xs leading-relaxed ${
@@ -1421,7 +1328,7 @@ type ServiceDraft = {
   title: string; description: string; experience_story: string;
   ai_usage?: string; recommended_tools?: string[];
   price_suggestion: number; days_suggestion: number; service_type: "spot" | "ongoing";
-  estimated_hours?: number; hourly_rate_min?: number; hourly_rate_max?: number; price_rationale?: string;
+  price_rationale?: string;
 };
 
 function ResumeUploadPanel({
