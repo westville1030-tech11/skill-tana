@@ -287,7 +287,8 @@ export default function TryPage() {
         body: JSON.stringify(body),
       });
       const data = await res.json();
-      if (data.error || !data.drafts?.length) { setDecidedError("読み込みに失敗しました。もう一度お試しください。"); return; }
+      if (data.error) { setDecidedError(data.error); return; }
+      if (!data.drafts?.length) { setDecidedError("商品案を生成できませんでした。テキストの量が少ない場合は、より詳しい内容を貼り付けてください。"); return; }
       setPasteDrafts(data.drafts);
     } finally {
       setPasteProcessing(false);

@@ -29,14 +29,14 @@ async function fetchUrlText(url: string): Promise<string> {
 async function generateDrafts(client: Anthropic, text: string) {
   const message = await client.messages.create({
     model: "claude-haiku-4-5-20251001",
-    max_tokens: 3000,
+    max_tokens: 5000,
     messages: [{
       role: "user",
       content: `以下はフリーランスサービス等の出品テキストです。
 
 ${text}
 
-このスキル・経験をもとに、副業・スポット発注向けの商品案を最大8個作ってください。
+このスキル・経験をもとに、副業・スポット発注向けの商品案を最大6個作ってください。
 成果物型・コンサル型・規模の大小などバリエーションをつけてください。
 
 説明・前置き不要。JSONのみ出力：
