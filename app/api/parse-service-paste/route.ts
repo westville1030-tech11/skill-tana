@@ -59,9 +59,9 @@ ${text}
 ]}
 
 product_typeは"deliverable"（納品物あり）か"consulting"（対話・セッション）のどちらか。
-price_suggestionはestimated_hours × hourly_rate_minとhourly_rate_maxの中間値を基準に設定。
-estimated_hoursはAI活用込みの実作業時間。hourly_rate_min/maxは出品者の経験年数・専門性から推定した適正時間単価の範囲。
-price_rationaleは「なぜこの価格か」を買い手が納得できる1文（例：「X年の実務経験をもとに、社内対応比50%のコストで同等成果を提供」）。`,
+estimated_hoursはAI活用込みの純粋な作業時間のみ（経験プレミアムは含めない）。
+price_suggestionはestimated_hours × hourly_rate_minとhourly_rate_maxの中間値で設定。
+price_rationaleは経験の希少性・再現困難性で価値を説明する1文（時間・工数への言及不要）。`,
     }],
   });
   return message;

@@ -27,7 +27,7 @@ recommended_toolsは成果物の内容に合わせて適切なAIツールを2〜
 - 議事録・サマリー: ChatGPT, NotebookLM
 - 資料・スライド: Gamma, ChatGPT
 
-estimated_hoursはAI活用込みの実作業時間。hourly_rate_min/maxは経験・専門性から推定した適正時間単価の範囲。price_suggestionはestimated_hours × 時間単価中間値を基準に設定。price_rationaleは「なぜこの価格か」を買い手が納得できる1文（60字以内）。
+estimated_hoursはAI活用込みの純粋な作業時間のみ（経験プレミアムは含めない）。price_rationaleは経験の希少性・再現困難性で価値を説明する1文・60字以内（時間・工数への言及不要）。
 
 トーンは親しみやすく、簡潔に。`;
 

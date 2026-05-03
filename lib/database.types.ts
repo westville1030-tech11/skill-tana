@@ -22,6 +22,8 @@ export type Profile = {
   category: "consultant" | "engineer" | "designer" | "other" | null;
   linkedin_url: string | null;
   hourly_rate: string | null;
+  experience_years: string | null;
+  annual_income_bracket: string | null;
   availability: "available" | "busy" | "part-time" | null;
   services: Service[] | null;
   company: string | null;

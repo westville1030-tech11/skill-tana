@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { calcServicePrice, EXPERIENCE_BRACKETS, INCOME_BRACKETS } from "@/lib/pricing";
 
 type Message = { role: "user" | "assistant"; content: string };
 
@@ -27,8 +28,43 @@ type DecidedMode = null | "form" | "file" | "paste";
 
 type SampleTable = { sheetName: string; headers: string[]; rows: string[][] };
 
-function DraftCard({ draft, label, badge, badgeColor, onSelect, isDeliverable }: {
+function PriceParamSelector({ expYears, setExpYears, incomeBracket, setIncomeBracket }: {
+  expYears: string; setExpYears: (v: string) => void;
+  incomeBracket: string; setIncomeBracket: (v: string) => void;
+}) {
+  return (
+    <div className="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3">
+      <p className="text-[11px] font-semibold text-amber-700 mb-2">💰 価格の前提を教えてください</p>
+      <div className="grid grid-cols-2 gap-2">
+        <div>
+          <label className="block text-[10px] text-gray-500 mb-1">経験年数</label>
+          <select
+            value={expYears}
+            onChange={(e) => setExpYears(e.target.value)}
+            className="w-full border border-amber-200 rounded-lg px-2.5 py-1.5 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-amber-400"
+          >
+            {EXPERIENCE_BRACKETS.map(b => <option key={b.value} value={b.value}>{b.label}</option>)}
+          </select>
+        </div>
+        <div>
+          <label className="block text-[10px] text-gray-500 mb-1">現在の年収（目安）</label>
+          <select
+            value={incomeBracket}
+            onChange={(e) => setIncomeBracket(e.target.value)}
+            className="w-full border border-amber-200 rounded-lg px-2.5 py-1.5 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-amber-400"
+          >
+            {INCOME_BRACKETS.map(b => <option key={b.value} value={b.value}>{b.label}</option>)}
+          </select>
+        </div>
+      </div>
+      <p className="text-[10px] text-amber-600 mt-1.5">価格 ＝（実作業時間 ＋ 経験プレミアム）× 時間単価で算出。変更は登録後にいつでも可能です。</p>
+    </div>
+  );
+}
+
+function DraftCard({ draft, label, badge, badgeColor, onSelect, isDeliverable, expYears, incomeBracket }: {
   draft: ServiceDraft; label: string; badge: string; badgeColor: string; onSelect: () => void; isDeliverable?: boolean;
+  expYears?: string; incomeBracket?: string;
 }) {
   const [sampleOpen, setSampleOpen] = useState(false);
   const [sampleData, setSampleData] = useState<SampleTable | null>(null);
@@ -129,31 +165,41 @@ function DraftCard({ draft, label, badge, badgeColor, onSelect, isDeliverable }:
           )}
         </div>
       )}
-      <div className="border-t border-gray-100 pt-2 space-y-1.5">
-        <div className="flex items-center gap-3 text-xs text-gray-500">
-          <span className="font-bold text-blue-700 text-sm">¥{draft.price_suggestion.toLocaleString()}</span>
-          <span>{draft.days_suggestion}日以内</span>
-        </div>
-        {(draft.estimated_hours || draft.price_rationale) && (
-          <div className="bg-slate-50 border border-slate-100 rounded-lg px-3 py-2 space-y-1.5">
-            {draft.estimated_hours && (
-              <div className="flex items-center justify-between text-[10px]">
-                <span className="text-gray-500">想定作業時間</span>
-                <span className="font-semibold text-gray-700">{draft.estimated_hours}時間</span>
+      {(() => {
+        const calc = (draft.estimated_hours && expYears && incomeBracket)
+          ? calcServicePrice(draft.estimated_hours, expYears, incomeBracket)
+          : null;
+        const displayPrice = calc?.price ?? draft.price_suggestion;
+        const expLabel = EXPERIENCE_BRACKETS.find(b => b.value === expYears)?.label ?? "";
+        const incLabel = INCOME_BRACKETS.find(b => b.value === incomeBracket)?.label ?? "";
+        return (
+          <div className="border-t border-gray-100 pt-2 space-y-1.5">
+            <div className="flex items-center gap-3 text-xs text-gray-500">
+              <span className="font-bold text-blue-700 text-sm">¥{displayPrice.toLocaleString()}</span>
+              <span>{draft.days_suggestion}日以内</span>
+            </div>
+            {calc && (
+              <div className="bg-slate-50 border border-slate-100 rounded-lg px-3 py-2 space-y-1.5">
+                <div className="flex items-center justify-between text-[10px]">
+                  <span className="text-gray-500">実作業時間</span>
+                  <span className="font-semibold text-gray-700">{draft.estimated_hours}h</span>
+                </div>
+                <div className="flex items-center justify-between text-[10px]">
+                  <span className="text-gray-500">経験プレミアム（{expLabel}）</span>
+                  <span className="font-semibold text-gray-700">+{calc.premiumHours}h</span>
+                </div>
+                <div className="flex items-center justify-between text-[10px]">
+                  <span className="text-gray-500">時間単価（年収{incLabel}）</span>
+                  <span className="font-semibold text-gray-700">¥{calc.hourlyRate.toLocaleString()}/h</span>
+                </div>
+                <p className="text-[10px] text-gray-400 border-t border-slate-200 pt-1 leading-relaxed">
+                  実作業 + 経験プレミアム × 時間単価で算出。実際の価格は登録後に変更できます。
+                </p>
               </div>
-            )}
-            {draft.hourly_rate_min && draft.hourly_rate_max && (
-              <div className="flex items-center justify-between text-[10px]">
-                <span className="text-gray-500">推奨時間単価</span>
-                <span className="font-semibold text-gray-700">¥{draft.hourly_rate_min.toLocaleString()}〜¥{draft.hourly_rate_max.toLocaleString()}/h</span>
-              </div>
-            )}
-            {draft.price_rationale && (
-              <p className="text-[10px] text-gray-500 leading-relaxed pt-0.5 border-t border-slate-200">{draft.price_rationale}</p>
             )}
           </div>
-        )}
-      </div>
+        );
+      })()}
       <button onClick={onSelect} className="w-full bg-amber-500 hover:bg-amber-600 transition-colors text-white font-bold py-3 rounded-xl text-sm mt-1">
         {label}で登録する →
       </button>
@@ -164,6 +210,10 @@ function DraftCard({ draft, label, badge, badgeColor, onSelect, isDeliverable }:
 export default function TryPage() {
   const [mode, setMode] = useState<Mode>(null);
   const [exploreMode, setExploreMode] = useState<ExploreMode>(null);
+
+  // 価格パラメータ
+  const [expYears, setExpYears] = useState("5_10");
+  const [incomeBracket, setIncomeBracket] = useState("600_800");
 
   // A型
   const [decidedMode, setDecidedMode] = useState<DecidedMode>(null);
@@ -443,6 +493,7 @@ export default function TryPage() {
               </p>
               <p className="text-xs text-gray-400 mt-1">内容は後で編集できます。</p>
             </div>
+            <PriceParamSelector expYears={expYears} setExpYears={setExpYears} incomeBracket={incomeBracket} setIncomeBracket={setIncomeBracket} />
             <div className={mode === "decided" ? "" : "grid sm:grid-cols-2 gap-4"}>
               {mode === "decided" ? (
                 <DraftCard
@@ -451,11 +502,12 @@ export default function TryPage() {
                   badge="✅ 出品内容"
                   badgeColor="bg-green-50 text-green-700"
                   onSelect={() => goRegister(drafts.deliverable)}
+                  expYears={expYears} incomeBracket={incomeBracket}
                 />
               ) : (
                 <>
-                  <DraftCard draft={drafts.deliverable} label="成果物型" badge="📄 成果物型" badgeColor="bg-blue-50 text-blue-700" onSelect={() => goRegister(drafts.deliverable)} isDeliverable />
-                  <DraftCard draft={drafts.consulting} label="コンサル型" badge="💬 コンサル型" badgeColor="bg-purple-50 text-purple-700" onSelect={() => goRegister(drafts.consulting)} />
+                  <DraftCard draft={drafts.deliverable} label="成果物型" badge="📄 成果物型" badgeColor="bg-blue-50 text-blue-700" onSelect={() => goRegister(drafts.deliverable)} isDeliverable expYears={expYears} incomeBracket={incomeBracket} />
+                  <DraftCard draft={drafts.consulting} label="コンサル型" badge="💬 コンサル型" badgeColor="bg-purple-50 text-purple-700" onSelect={() => goRegister(drafts.consulting)} expYears={expYears} incomeBracket={incomeBracket} />
                 </>
               )}
             </div>
@@ -722,6 +774,7 @@ export default function TryPage() {
                   <p className="text-sm font-bold text-gray-700">✨ {pasteDrafts.length}つの商品案ができました — 気に入ったものを選んでください</p>
                   <button onClick={() => setPasteDrafts(null)} className="text-xs text-gray-400 hover:text-gray-600">← 貼り直す</button>
                 </div>
+                <PriceParamSelector expYears={expYears} setExpYears={setExpYears} incomeBracket={incomeBracket} setIncomeBracket={setIncomeBracket} />
                 <div className="grid sm:grid-cols-2 gap-4">
                   {pasteDrafts.map((draft, i) => (
                     <DraftCard
@@ -732,6 +785,7 @@ export default function TryPage() {
                       badgeColor={draft.product_type === "deliverable" ? "bg-blue-50 text-blue-700" : "bg-purple-50 text-purple-700"}
                       onSelect={() => goRegister(draft)}
                       isDeliverable={draft.product_type === "deliverable"}
+                      expYears={expYears} incomeBracket={incomeBracket}
                     />
                   ))}
                 </div>
