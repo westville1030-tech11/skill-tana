@@ -24,8 +24,9 @@ type DecidedMode = null | "form" | "file" | "paste";
 
 type SampleTable = { sheetName: string; headers: string[]; rows: string[][] };
 
-function DraftCard({ draft, label, badge, badgeColor, onSelect, isDeliverable }: {
+function DraftCard({ draft, label, badge, badgeColor, onSelect, isDeliverable, selectable, isSelected, onToggleSelect }: {
   draft: ServiceDraft; label: string; badge: string; badgeColor: string; onSelect: () => void; isDeliverable?: boolean;
+  selectable?: boolean; isSelected?: boolean; onToggleSelect?: () => void;
 }) {
   const [sampleOpen, setSampleOpen] = useState(false);
   const [sampleData, setSampleData] = useState<SampleTable | null>(null);
@@ -54,8 +55,22 @@ function DraftCard({ draft, label, badge, badgeColor, onSelect, isDeliverable }:
   };
 
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-5 flex flex-col gap-3">
-      <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full self-start ${badgeColor}`}>{badge}</span>
+    <div
+      className={`bg-white border rounded-2xl p-5 flex flex-col gap-3 transition-all ${
+        selectable ? "cursor-pointer " + (isSelected ? "border-amber-400 ring-2 ring-amber-100" : "border-gray-200 hover:border-amber-200") : "border-gray-100"
+      }`}
+      onClick={selectable ? onToggleSelect : undefined}
+    >
+      <div className="flex items-start justify-between gap-2">
+        <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${badgeColor}`}>{badge}</span>
+        {selectable && (
+          <div className={`w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center mt-0.5 transition-colors ${
+            isSelected ? "border-amber-500 bg-amber-500" : "border-gray-300 bg-white"
+          }`}>
+            {isSelected && <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+          </div>
+        )}
+      </div>
       <div>
         <p className="text-xs text-gray-400 mb-0.5">タイトル</p>
         <p className="font-semibold text-gray-900 text-sm leading-snug">{draft.title}</p>
@@ -135,9 +150,11 @@ function DraftCard({ draft, label, badge, badgeColor, onSelect, isDeliverable }:
           <p className="text-[11px] text-gray-500 bg-slate-50 border border-slate-100 rounded-lg px-3 py-2 leading-relaxed">{draft.price_rationale}</p>
         )}
       </div>
-      <button onClick={onSelect} className="w-full bg-amber-500 hover:bg-amber-600 transition-colors text-white font-bold py-3 rounded-xl text-sm mt-1">
-        {label}で登録する →
-      </button>
+      {!selectable && (
+        <button onClick={onSelect} className="w-full bg-amber-500 hover:bg-amber-600 transition-colors text-white font-bold py-3 rounded-xl text-sm mt-1">
+          {label}で登録する →
+        </button>
+      )}
     </div>
   );
 }
@@ -158,6 +175,7 @@ export default function TryPage() {
   const [pasteProcessing, setPasteProcessing] = useState(false);
   const [pasteDrafts, setPasteDrafts] = useState<(ServiceDraft & { product_type: string })[] | null>(null);
   const [pasteNewIdeas, setPasteNewIdeas] = useState<(ServiceDraft & { product_type: string })[] | null>(null);
+  const [selectedPasteKeys, setSelectedPasteKeys] = useState<Set<string>>(new Set());
 
   // 壁打ち
   const [messages, setMessages] = useState<Message[]>([]);
@@ -187,13 +205,32 @@ export default function TryPage() {
     setDecidedError(""); setDecidedChecking(false);
     setMessages([]); setInput(""); setThinking(false);
     setResumeError(""); setResumeUploading(false);
-    setPasteText(""); setPasteUrl(""); setPasteInputMode("text"); setPasteProcessing(false); setPasteDrafts(null); setPasteNewIdeas(null);
+    setPasteText(""); setPasteUrl(""); setPasteInputMode("text"); setPasteProcessing(false); setPasteDrafts(null); setPasteNewIdeas(null); setSelectedPasteKeys(new Set());
     setDrafts(null); setRefineChat(false);
   };
 
   const goRegister = (draft: ServiceDraft) => {
     sessionStorage.setItem("pendingDraft", JSON.stringify(draft));
     window.location.href = "/profile/edit";
+  };
+
+  const goRegisterMultiple = () => {
+    const all = [
+      ...(pasteDrafts ?? []).map((d, i) => ({ key: `e-${i}`, draft: d })),
+      ...(pasteNewIdeas ?? []).map((d, i) => ({ key: `n-${i}`, draft: d })),
+    ];
+    const selected = all.filter(({ key }) => selectedPasteKeys.has(key)).map(({ draft }) => draft);
+    if (!selected.length) return;
+    sessionStorage.setItem("pendingDrafts", JSON.stringify(selected));
+    window.location.href = "/profile/edit";
+  };
+
+  const togglePasteKey = (key: string) => {
+    setSelectedPasteKeys(prev => {
+      const next = new Set(prev);
+      next.has(key) ? next.delete(key) : next.add(key);
+      return next;
+    });
   };
 
   // A型ファイル: アップロード → draft抽出 → チャット自動開始
@@ -711,17 +748,21 @@ export default function TryPage() {
                       <span className="w-1.5 h-1.5 rounded-full bg-blue-400 inline-block" />既存サービスの整理版
                     </p>
                     <div className="grid sm:grid-cols-2 gap-4">
-                      {pasteDrafts!.map((draft, i) => (
-                        <DraftCard
-                          key={i}
-                          draft={draft}
-                          label={draft.product_type === "deliverable" ? "成果物型" : "コンサル型"}
-                          badge={draft.product_type === "deliverable" ? "📄 成果物型" : "💬 コンサル型"}
-                          badgeColor={draft.product_type === "deliverable" ? "bg-blue-50 text-blue-700" : "bg-purple-50 text-purple-700"}
-                          onSelect={() => goRegister(draft)}
-                          isDeliverable={draft.product_type === "deliverable"}
-                        />
-                      ))}
+                      {pasteDrafts!.map((draft, i) => {
+                        const key = `e-${i}`;
+                        return (
+                          <DraftCard
+                            key={i}
+                            draft={draft}
+                            label={draft.product_type === "deliverable" ? "成果物型" : "コンサル型"}
+                            badge={draft.product_type === "deliverable" ? "📄 成果物型" : "💬 コンサル型"}
+                            badgeColor={draft.product_type === "deliverable" ? "bg-blue-50 text-blue-700" : "bg-purple-50 text-purple-700"}
+                            onSelect={() => goRegister(draft)}
+                            isDeliverable={draft.product_type === "deliverable"}
+                            selectable isSelected={selectedPasteKeys.has(key)} onToggleSelect={() => togglePasteKey(key)}
+                          />
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -731,18 +772,33 @@ export default function TryPage() {
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />AIが提案する新しい商品アイデア
                     </p>
                     <div className="grid sm:grid-cols-2 gap-4">
-                      {pasteNewIdeas!.map((draft, i) => (
-                        <DraftCard
-                          key={i}
-                          draft={draft}
-                          label={draft.product_type === "deliverable" ? "成果物型" : "コンサル型"}
-                          badge="💡 新アイデア"
-                          badgeColor="bg-emerald-50 text-emerald-700"
-                          onSelect={() => goRegister(draft)}
-                          isDeliverable={draft.product_type === "deliverable"}
-                        />
-                      ))}
+                      {pasteNewIdeas!.map((draft, i) => {
+                        const key = `n-${i}`;
+                        return (
+                          <DraftCard
+                            key={i}
+                            draft={draft}
+                            label={draft.product_type === "deliverable" ? "成果物型" : "コンサル型"}
+                            badge="💡 新アイデア"
+                            badgeColor="bg-emerald-50 text-emerald-700"
+                            onSelect={() => goRegister(draft)}
+                            isDeliverable={draft.product_type === "deliverable"}
+                            selectable isSelected={selectedPasteKeys.has(key)} onToggleSelect={() => togglePasteKey(key)}
+                          />
+                        );
+                      })}
                     </div>
+                  </div>
+                )}
+                {selectedPasteKeys.size > 0 && (
+                  <div className="sticky bottom-4 z-10">
+                    <button
+                      onClick={goRegisterMultiple}
+                      className="w-full bg-amber-500 hover:bg-amber-600 transition-colors text-white font-bold py-4 rounded-2xl text-sm shadow-lg flex items-center justify-center gap-2"
+                    >
+                      <span className="bg-white/20 text-white text-xs font-bold px-2 py-0.5 rounded-full">{selectedPasteKeys.size}件</span>
+                      選択した商品をまとめて登録する →
+                    </button>
                   </div>
                 )}
               </>

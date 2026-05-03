@@ -103,12 +103,42 @@ export default function EditProfilePage() {
         })
         .catch(() => {});
 
-      // /try から sessionStorage 経由で渡されたドラフトを読み込む
+      // /try から sessionStorage 経由で渡されたドラフトを読み込む（単体）
       const pending = sessionStorage.getItem("pendingDraft");
       if (pending) {
         sessionStorage.removeItem("pendingDraft");
         try {
           setChatDraft(JSON.parse(pending));
+        } catch {}
+      }
+
+      // /try からの複数ドラフト一括登録
+      const pendingMultiple = sessionStorage.getItem("pendingDrafts");
+      if (pendingMultiple) {
+        sessionStorage.removeItem("pendingDrafts");
+        try {
+          const drafts = JSON.parse(pendingMultiple) as Array<{
+            title: string; description: string; price_suggestion: number;
+            days_suggestion: number; service_type?: string; experience_story?: string;
+          }>;
+          const newServices = drafts.map(d => ({
+            id: crypto.randomUUID(),
+            title: d.title,
+            description: d.description,
+            price: d.price_suggestion,
+            days: d.days_suggestion,
+            service_type: (d.service_type ?? "spot") as "spot" | "ongoing",
+            experience_story: d.experience_story ?? "",
+          }));
+          setServices(prev => {
+            const combined = [...prev, ...newServices];
+            fetch("/api/my-profile", {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ services: combined }),
+            }).catch(() => {});
+            return combined;
+          });
         } catch {}
       }
     }
