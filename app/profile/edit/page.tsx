@@ -1202,6 +1202,10 @@ function ResumeUploadPanel({
 
   const handleFile = async (file: File) => {
     setError("");
+    if (file.size > 3 * 1024 * 1024) {
+      setError("ファイルサイズが大きすぎます（3MB以内にしてください）。PDFに変換するか、不要なページを削除してお試しください。");
+      return;
+    }
     setUploading(true);
     try {
       const base64 = await new Promise<string>((resolve, reject) => {
@@ -1253,7 +1257,7 @@ function ResumeUploadPanel({
         <label className="block cursor-pointer">
           <div className="border-2 border-dashed border-emerald-300 rounded-xl p-6 text-center hover:border-emerald-500 hover:bg-emerald-100/50 transition-colors">
             <p className="text-sm text-emerald-700 font-medium">クリックしてファイルを選択</p>
-            <p className="text-xs text-gray-400 mt-1">PDF・Word・PPT・Excel・JPG・PNG（10MB以内）</p>
+            <p className="text-xs text-gray-400 mt-1">PDF・Word・PPT・Excel・JPG・PNG（3MB以内）</p>
           </div>
           <input
             type="file"

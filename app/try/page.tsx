@@ -114,6 +114,10 @@ export default function TryPage() {
   // A型ファイル: アップロード → draft抽出 → チャット自動開始
   const handleDecidedFile = async (file: File) => {
     setResumeError("");
+    if (file.size > 3 * 1024 * 1024) {
+      setResumeError("ファイルサイズが大きすぎます（3MB以内にしてください）。PDFに変換するか、不要なページを削除してお試しください。");
+      return;
+    }
     setResumeUploading(true);
     try {
       const arrayBuffer = await file.arrayBuffer();
@@ -250,6 +254,10 @@ export default function TryPage() {
   // 履歴書アップロード
   const handleFileUpload = async (file: File) => {
     setResumeError("");
+    if (file.size > 3 * 1024 * 1024) {
+      setResumeError("ファイルサイズが大きすぎます（3MB以内にしてください）。PDFに変換するか、不要なページを削除してお試しください。");
+      return;
+    }
     setResumeUploading(true);
     try {
       const arrayBuffer = await file.arrayBuffer();
@@ -468,7 +476,7 @@ export default function TryPage() {
           <div className="bg-white border border-gray-100 rounded-2xl p-6 space-y-4">
             <div>
               <h2 className="font-bold text-gray-900 mb-1">仕事に関係するファイルをアップロード</h2>
-              <p className="text-xs text-gray-500">例：ランサーズ等の納品物、提案書、名刺、スライドなど　PDF / Word / PowerPoint / Excel / JPG / PNG に対応</p>
+              <p className="text-xs text-gray-500">例：ランサーズ等の納品物、提案書、名刺、スライドなど　PDF / Word / PowerPoint / Excel / JPG / PNG に対応（3MB以内）</p>
             </div>
             {resumeUploading ? (
               <div className="flex flex-col items-center justify-center py-16 gap-4 text-gray-400">
@@ -650,7 +658,7 @@ export default function TryPage() {
           <div className="bg-white border border-gray-100 rounded-2xl p-6 space-y-4">
             <div>
               <h2 className="font-bold text-gray-900 mb-1">仕事に関係するファイルをアップロード</h2>
-              <p className="text-xs text-gray-500">例：過去の作成物、提案書、名刺、履歴書、顧客とのやり取りなど　PDF / Word / PowerPoint / Excel / JPG / PNG に対応</p>
+              <p className="text-xs text-gray-500">例：過去の作成物、提案書、名刺、履歴書、顧客とのやり取りなど　PDF / Word / PowerPoint / Excel / JPG / PNG に対応（3MB以内）</p>
             </div>
 
             {resumeUploading ? (
