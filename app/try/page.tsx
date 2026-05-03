@@ -89,6 +89,7 @@ export default function TryPage() {
 
   // 共通
   const [drafts, setDrafts] = useState<Drafts>(null);
+  const [refineChat, setRefineChat] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -103,7 +104,7 @@ export default function TryPage() {
     setDecidedError(""); setDecidedChecking(false);
     setMessages([]); setInput(""); setThinking(false);
     setResumeError(""); setResumeUploading(false);
-    setDrafts(null);
+    setDrafts(null); setRefineChat(false);
   };
 
   const goRegister = (draft: ServiceDraft) => {
@@ -332,6 +333,60 @@ export default function TryPage() {
                 </>
               )}
             </div>
+
+            {/* ファイルアップ後：AIと磨くボタン */}
+            {mode === "explore" && exploreMode === "resume" && !refineChat && (
+              <button
+                onClick={async () => {
+                  setRefineChat(true);
+                  setThinking(true);
+                  const context = `ファイルから以下の2案が生成されました。\n\n【成果物型】${drafts.deliverable.title}：${drafts.deliverable.description}\n【コンサル型】${drafts.consulting.title}：${drafts.consulting.description}`;
+                  const init: Message[] = [{ role: "user", content: context }];
+                  try {
+                    const res = await fetch("/api/chat-service-create", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ messages: init }),
+                    });
+                    const data = await res.json();
+                    setMessages([...init, { role: "assistant", content: data.text }]);
+                  } finally {
+                    setThinking(false);
+                  }
+                }}
+                className="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition-colors text-sm"
+              >
+                この内容をAIと磨く
+              </button>
+            )}
+
+            {/* AIと磨く：チャット */}
+            {mode === "explore" && exploreMode === "resume" && refineChat && (
+              <div className="bg-white border border-gray-100 rounded-2xl p-5 flex flex-col gap-4">
+                <div className="space-y-3 max-h-[360px] overflow-y-auto">
+                  {messages.map((m, i) => m.role === "assistant" && (
+                    <div key={i} className="bg-blue-50 rounded-xl px-4 py-3 text-sm text-gray-700 leading-relaxed">{m.content}</div>
+                  ))}
+                  {thinking && <div className="text-xs text-gray-400 animate-pulse">考え中...</div>}
+                  <div ref={bottomRef} />
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    className="flex-1 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-blue-400"
+                    placeholder="気になる点や変えたい点を入力..."
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendChat(); } }}
+                  />
+                  <button
+                    onClick={sendChat}
+                    disabled={!input.trim() || thinking}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-bold disabled:opacity-40 hover:bg-blue-700 transition-colors"
+                  >送信</button>
+                </div>
+              </div>
+            )}
+
             <button onClick={reset} className="w-full text-xs text-gray-400 hover:text-gray-600 py-2">
               最初からやり直す
             </button>
