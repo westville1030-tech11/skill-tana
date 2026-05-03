@@ -32,7 +32,7 @@ async function generateDrafts(client: Anthropic, text: string) {
     max_tokens: 3000,
     messages: [{
       role: "user",
-      content: `以下はランサーズ・ココナラ等の出品テキストです。
+      content: `以下はフリーランスサービス等の出品テキストです。
 
 ${text}
 
@@ -55,7 +55,7 @@ ${text}
 ]}
 
 product_typeは"deliverable"（納品物あり）か"consulting"（対話・セッション）のどちらか。
-price_suggestionはランサーズの時間単価ではなく成果物・経験の価値ベースで設定。`,
+price_suggestionは時間単価ではなく成果物・経験の価値ベースで設定。`,
     }],
   });
   return message;
@@ -71,9 +71,9 @@ export async function POST(req: NextRequest) {
   if (url) {
     try {
       sourceText = await fetchUrlText(url);
-      if (!sourceText) return NextResponse.json({ error: "URLからテキストを取得できませんでした。テキストを直接貼り付けてお試しください。" }, { status: 400 });
+      if (!sourceText) return NextResponse.json({ error: "URLからテキストを取得できませんでした。ページのテキストをコピーして「テキストを貼り付け」からお試しください。" }, { status: 400 });
     } catch {
-      return NextResponse.json({ error: "URLの読み込みに失敗しました。ページが非公開か、アクセスが制限されている可能性があります。テキストを直接貼り付けてお試しください。" }, { status: 400 });
+      return NextResponse.json({ error: "URLの読み込みができませんでした。多くのサービスはセキュリティ上、直接読み込めない場合があります。ページのテキストをコピーして「テキストを貼り付け」からお試しください。" }, { status: 400 });
     }
   }
 

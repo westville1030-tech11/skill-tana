@@ -620,7 +620,7 @@ export default function TryPage() {
               >
                 <span className="text-2xl">📋</span>
                 <p className="font-bold text-gray-900 group-hover:text-blue-700">他サービスからコピペする</p>
-                <p className="text-xs text-gray-500 leading-relaxed">ランサーズ・ココナラ・クラウドワークスの出品内容をそのまま貼り付けるだけ。AIが自動で整理します。</p>
+                <p className="text-xs text-gray-500 leading-relaxed">他のフリーランスサービスの出品内容をそのまま貼り付けるだけ。AIが自動で整理します。</p>
               </button>
               <button
                 onClick={() => setDecidedMode("file")}
@@ -628,7 +628,7 @@ export default function TryPage() {
               >
                 <span className="text-2xl">📂</span>
                 <p className="font-bold text-gray-900 group-hover:text-blue-700">既存ファイルから読み込む</p>
-                <p className="text-xs text-gray-500 leading-relaxed">ランサーズ等の納品物・提案書・名刺など、仕事に関係するファイルをそのまま使えます。</p>
+                <p className="text-xs text-gray-500 leading-relaxed">納品物・提案書・名刺など、仕事に関係するファイルをそのまま使えます。</p>
               </button>
             </div>
           </>
@@ -639,7 +639,7 @@ export default function TryPage() {
           <div className="bg-white border border-gray-100 rounded-2xl p-6 space-y-4">
             <div>
               <h2 className="font-bold text-gray-900 mb-1">他サービスの出品内容を貼り付ける</h2>
-              <p className="text-xs text-gray-500">ランサーズ・ココナラ・クラウドワークス等の出品ページのテキストをそのまま貼り付けてください。AIがタイトル・説明・価格・納期を自動で整理します。</p>
+              <p className="text-xs text-gray-500">他のサービスの出品ページのテキストをそのまま貼り付けてください。AIがタイトル・説明・価格・納期を自動で整理します。</p>
             </div>
             {!pasteDrafts ? (
               <>
@@ -671,10 +671,10 @@ export default function TryPage() {
                       type="url"
                       value={pasteUrl}
                       onChange={(e) => setPasteUrl(e.target.value)}
-                      placeholder="https://www.lancers.jp/profile/xxx または https://coconala.com/services/xxx"
+                      placeholder="https://example.com/profile/xxx"
                       className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                    <p className="text-xs text-gray-400">ランサーズ・ココナラ・クラウドワークス等のプロフィールや出品ページのURLを入力してください。</p>
+                    <p className="text-xs text-gray-400">フリーランスサービス等のプロフィールや出品ページのURLを入力してください。サイトによっては読み込めない場合があります。</p>
                   </div>
                 )}
                 {decidedError && (
@@ -719,7 +719,7 @@ export default function TryPage() {
           <div className="bg-white border border-gray-100 rounded-2xl p-6 space-y-4">
             <div>
               <h2 className="font-bold text-gray-900 mb-1">仕事に関係するファイルをアップロード</h2>
-              <p className="text-xs text-gray-500">例：ランサーズ等の納品物、提案書、名刺、スライドなど　PDF / Word / PowerPoint / Excel / JPG / PNG に対応（3MB以内）</p>
+              <p className="text-xs text-gray-500">例：納品物、提案書、名刺、スライドなど　PDF / Word / PowerPoint / Excel / JPG / PNG に対応（3MB以内）</p>
             </div>
             {resumeUploading ? (
               <div className="flex flex-col items-center justify-center py-16 gap-4 text-gray-400">
