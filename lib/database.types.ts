@@ -5,6 +5,7 @@ export type Service = {
   price: number;
   days: number;
   service_type?: "spot" | "ongoing";
+  experience_type?: "failure" | "inheritance";
   frequency?: string;
   experience_story?: string; // 「どんな問題に直面し、どう解決したか」の実体験
 };

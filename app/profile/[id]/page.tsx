@@ -131,9 +131,13 @@ export default async function ProfilePage(props: { params: Promise<{ id: string 
                     <div key={s.id} className="border border-gray-200 rounded-xl p-5 space-y-3">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
-                          <h3 className="font-semibold text-gray-900">{s.title}</h3>
+                          <div className="flex items-center gap-2 flex-wrap mb-1">
+                            <h3 className="font-semibold text-gray-900">{s.title}</h3>
+                            {s.experience_type === "failure" && <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-medium">失敗から学んだ</span>}
+                            {s.experience_type === "inheritance" && <span className="text-xs bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full font-medium">継承・次世代へ</span>}
+                          </div>
                           {s.description && (
-                            <p className="text-sm text-gray-500 mt-1 leading-relaxed">{s.description}</p>
+                            <p className="text-sm text-gray-500 leading-relaxed">{s.description}</p>
                           )}
                         </div>
                         <div className="text-right flex-shrink-0">
@@ -164,9 +168,11 @@ export default async function ProfilePage(props: { params: Promise<{ id: string 
                     <div key={s.id} className="border border-purple-200 bg-purple-50 rounded-xl p-5 space-y-3">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
+                          <div className="flex items-center gap-2 flex-wrap mb-1">
                             <h3 className="font-semibold text-gray-900">{s.title}</h3>
                             <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-medium">継続</span>
+                            {s.experience_type === "failure" && <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-medium">失敗から学んだ</span>}
+                            {s.experience_type === "inheritance" && <span className="text-xs bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full font-medium">継承・次世代へ</span>}
                           </div>
                           {s.frequency && (
                             <p className="text-xs text-purple-600 mb-1 font-medium">{s.frequency}</p>

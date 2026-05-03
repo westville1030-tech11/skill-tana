@@ -12,7 +12,7 @@ const CATEGORIES = [
   { value: "other", label: "その他" },
 ];
 
-const emptyForm = { title: "", description: "", price: "", days: "", service_type: "spot" as "spot" | "ongoing", frequency: "" };
+const emptyForm = { title: "", description: "", price: "", days: "", service_type: "spot" as "spot" | "ongoing", experience_type: undefined as "failure" | "inheritance" | undefined, frequency: "" };
 
 export default function EditProfilePage() {
   const { data: session, status } = useSession();
@@ -351,6 +351,7 @@ export default function EditProfilePage() {
       price: Number(newForm.price),
       days: Number(newForm.days),
       service_type: newForm.service_type,
+      experience_type: newForm.experience_type,
       frequency: newForm.frequency || undefined,
     };
     const next = [...services, s];
@@ -400,13 +401,13 @@ export default function EditProfilePage() {
 
   const startEdit = (s: Service) => {
     setEditingId(s.id);
-    setEditForm({ title: s.title, description: s.description, price: String(s.price), days: String(s.days), service_type: s.service_type ?? "spot", frequency: s.frequency ?? "" });
+    setEditForm({ title: s.title, description: s.description, price: String(s.price), days: String(s.days), service_type: s.service_type ?? "spot", experience_type: s.experience_type, frequency: s.frequency ?? "" });
   };
 
   const saveEdit = () => {
     const next = services.map((s) =>
       s.id === editingId
-        ? { ...s, title: editForm.title, description: editForm.description, price: Number(editForm.price), days: Number(editForm.days), service_type: editForm.service_type, frequency: editForm.frequency || undefined }
+        ? { ...s, title: editForm.title, description: editForm.description, price: Number(editForm.price), days: Number(editForm.days), service_type: editForm.service_type, experience_type: editForm.experience_type, frequency: editForm.frequency || undefined }
         : s
     );
     setServices(next);
@@ -1120,6 +1121,20 @@ export default function EditProfilePage() {
                     className={`flex-1 py-1.5 rounded-lg text-sm font-medium transition-colors ${editForm.service_type === "ongoing" ? "bg-purple-700 text-white" : "bg-white border border-gray-300 text-gray-600"}`}
                   >継続サポート</button>
                 </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setEditForm((p) => ({ ...p, experience_type: undefined }))}
+                    className={`flex-1 py-1.5 rounded-lg text-xs font-medium transition-colors ${!editForm.experience_type ? "bg-gray-700 text-white" : "bg-white border border-gray-300 text-gray-600"}`}
+                  >通常</button>
+                  <button
+                    onClick={() => setEditForm((p) => ({ ...p, experience_type: "failure" }))}
+                    className={`flex-1 py-1.5 rounded-lg text-xs font-medium transition-colors ${editForm.experience_type === "failure" ? "bg-orange-600 text-white" : "bg-white border border-gray-300 text-gray-600"}`}
+                  >失敗から学んだ</button>
+                  <button
+                    onClick={() => setEditForm((p) => ({ ...p, experience_type: "inheritance" }))}
+                    className={`flex-1 py-1.5 rounded-lg text-xs font-medium transition-colors ${editForm.experience_type === "inheritance" ? "bg-teal-600 text-white" : "bg-white border border-gray-300 text-gray-600"}`}
+                  >継承・次世代へ</button>
+                </div>
                 <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white" value={editForm.title} onChange={(e) => setEditForm((p) => ({ ...p, title: e.target.value }))} placeholder="成果物タイトル" />
                 {editForm.service_type === "ongoing" && (
                   <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white" value={editForm.frequency} onChange={(e) => setEditForm((p) => ({ ...p, frequency: e.target.value }))} placeholder="例: 週1回MTG込み、月4回×1h" />
@@ -1143,9 +1158,11 @@ export default function EditProfilePage() {
             ) : (
               <div key={s.id} className={`border rounded-xl p-4 flex items-start justify-between gap-3 ${s.service_type === "ongoing" ? "border-purple-200 bg-purple-50" : "border-gray-200"}`}>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <h3 className="font-medium text-gray-900 text-sm">{s.title}</h3>
                     {s.service_type === "ongoing" && <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">継続</span>}
+                    {s.experience_type === "failure" && <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">失敗から学んだ</span>}
+                    {s.experience_type === "inheritance" && <span className="text-xs bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full">継承・次世代へ</span>}
                   </div>
                   {s.frequency && <p className="text-xs text-purple-600 mt-0.5">{s.frequency}</p>}
                   {s.description && <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{s.description}</p>}
@@ -1183,6 +1200,28 @@ export default function EditProfilePage() {
                 className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${newForm.service_type === "ongoing" ? "bg-purple-700 text-white" : "bg-white border border-gray-300 text-gray-600"}`}
               >
                 継続サポート
+              </button>
+            </div>
+
+            {/* 経験タイプ */}
+            <div className="flex gap-2">
+              <button
+                onClick={() => setNewForm((p) => ({ ...p, experience_type: undefined }))}
+                className={`flex-1 py-1.5 rounded-lg text-xs font-medium transition-colors ${!newForm.experience_type ? "bg-gray-700 text-white" : "bg-white border border-gray-300 text-gray-600"}`}
+              >
+                通常
+              </button>
+              <button
+                onClick={() => setNewForm((p) => ({ ...p, experience_type: "failure" }))}
+                className={`flex-1 py-1.5 rounded-lg text-xs font-medium transition-colors ${newForm.experience_type === "failure" ? "bg-orange-600 text-white" : "bg-white border border-gray-300 text-gray-600"}`}
+              >
+                失敗から学んだ
+              </button>
+              <button
+                onClick={() => setNewForm((p) => ({ ...p, experience_type: "inheritance" }))}
+                className={`flex-1 py-1.5 rounded-lg text-xs font-medium transition-colors ${newForm.experience_type === "inheritance" ? "bg-teal-600 text-white" : "bg-white border border-gray-300 text-gray-600"}`}
+              >
+                継承・次世代へ
               </button>
             </div>
 
