@@ -19,7 +19,7 @@ type ServiceDraft = {
 type Drafts = { deliverable: ServiceDraft; consulting: ServiceDraft } | null;
 type Mode = null | "decided" | "explore";
 type ExploreMode = null | "chat" | "resume";
-type DecidedMode = null | "form" | "file";
+type DecidedMode = null | "form" | "file" | "paste";
 
 type SampleTable = { sheetName: string; headers: string[]; rows: string[][] };
 
@@ -146,6 +146,8 @@ export default function TryPage() {
   const [decidedChatActive, setDecidedChatActive] = useState(false);
   const [decidedChecking, setDecidedChecking] = useState(false);
   const [decidedError, setDecidedError] = useState("");
+  const [pasteText, setPasteText] = useState("");
+  const [pasteProcessing, setPasteProcessing] = useState(false);
 
   // 壁打ち
   const [messages, setMessages] = useState<Message[]>([]);
@@ -175,6 +177,7 @@ export default function TryPage() {
     setDecidedError(""); setDecidedChecking(false);
     setMessages([]); setInput(""); setThinking(false);
     setResumeError(""); setResumeUploading(false);
+    setPasteText(""); setPasteProcessing(false);
     setDrafts(null); setRefineChat(false);
   };
 
@@ -240,6 +243,30 @@ export default function TryPage() {
   };
 
   // A型: フォーム送信 → チャット開始（初回メッセージを自動投稿）
+  const handlePaste = async () => {
+    if (!pasteText.trim()) return;
+    setPasteProcessing(true);
+    setDecidedError("");
+    try {
+      const res = await fetch("/api/parse-service-paste", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: pasteText }),
+      });
+      const data = await res.json();
+      if (data.error) { setDecidedError("読み込みに失敗しました。もう一度お試しください。"); return; }
+      setDecidedForm({
+        title: data.title ?? "",
+        description: data.description ?? "",
+        price: data.price ? String(data.price) : "",
+        days: data.days ? String(data.days) : "",
+      });
+      setDecidedMode("form");
+    } finally {
+      setPasteProcessing(false);
+    }
+  };
+
   const submitDecided = async () => {
     if (!decidedForm.title || !decidedForm.description) return;
     setDecidedChatActive(true);
@@ -576,7 +603,7 @@ export default function TryPage() {
               <h2 className="font-bold text-gray-900">どちらで出品内容を入力しますか？</h2>
               <p className="text-sm text-gray-500">AIが内容を確認してから登録に進みます。</p>
             </div>
-            <div className="grid sm:grid-cols-2 gap-4">
+            <div className="grid sm:grid-cols-3 gap-4">
               <button
                 onClick={() => setDecidedMode("form")}
                 className="bg-white border-2 border-gray-200 hover:border-blue-400 rounded-2xl p-6 text-left space-y-2 transition-all group"
@@ -584,6 +611,14 @@ export default function TryPage() {
                 <span className="text-2xl">✍️</span>
                 <p className="font-bold text-gray-900 group-hover:text-blue-700">内容を直接入力する</p>
                 <p className="text-xs text-gray-500 leading-relaxed">タイトル・説明・価格を入力してAIに確認してもらいます。</p>
+              </button>
+              <button
+                onClick={() => setDecidedMode("paste")}
+                className="bg-white border-2 border-gray-200 hover:border-blue-400 rounded-2xl p-6 text-left space-y-2 transition-all group"
+              >
+                <span className="text-2xl">📋</span>
+                <p className="font-bold text-gray-900 group-hover:text-blue-700">他サービスからコピペする</p>
+                <p className="text-xs text-gray-500 leading-relaxed">ランサーズ・ココナラ・クラウドワークスの出品内容をそのまま貼り付けるだけ。AIが自動で整理します。</p>
               </button>
               <button
                 onClick={() => setDecidedMode("file")}
@@ -595,6 +630,35 @@ export default function TryPage() {
               </button>
             </div>
           </>
+        )}
+
+        {/* ━━━ A型: コピペ ━━━ */}
+        {!drafts && mode === "decided" && !decidedChatActive && decidedMode === "paste" && (
+          <div className="bg-white border border-gray-100 rounded-2xl p-6 space-y-4">
+            <div>
+              <h2 className="font-bold text-gray-900 mb-1">他サービスの出品内容を貼り付ける</h2>
+              <p className="text-xs text-gray-500">ランサーズ・ココナラ・クラウドワークス等の出品ページのテキストをそのまま貼り付けてください。AIがタイトル・説明・価格・納期を自動で整理します。</p>
+            </div>
+            <textarea
+              value={pasteText}
+              onChange={(e) => setPasteText(e.target.value)}
+              placeholder={"例：\nサービス名: 新規事業計画書レビュー\n\n20年の事業開発経験をもとに、事業計画書のレビューとフィードバックを提供します。...\n\n価格: 30,000円\n納期: 3日"}
+              rows={10}
+              className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            />
+            {decidedError && (
+              <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-2">{decidedError}</p>
+            )}
+            <button
+              onClick={handlePaste}
+              disabled={!pasteText.trim() || pasteProcessing}
+              className="w-full bg-blue-600 text-white py-3.5 rounded-xl font-bold text-sm hover:bg-blue-700 transition-colors disabled:opacity-40 flex items-center justify-center gap-2"
+            >
+              {pasteProcessing ? (
+                <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin inline-block" />AIが読み込んでいます...</>
+              ) : "AIに整理してもらう →"}
+            </button>
+          </div>
         )}
 
         {/* ━━━ A型: ファイルアップロード ━━━ */}
