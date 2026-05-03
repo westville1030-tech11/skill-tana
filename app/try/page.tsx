@@ -87,7 +87,7 @@ function DraftCard({ draft, label, badge, badgeColor, onSelect, isDeliverable }:
             {sampleLoading ? (
               <><span className="flex gap-0.5">{[0,1,2].map(i => <span key={i} className="w-1 h-1 bg-teal-400 rounded-full animate-bounce" style={{animationDelay:`${i*0.15}s`}} />)}</span>サンプル生成中…</>
             ) : (
-              <>{sampleOpen ? "▲ サンプルを閉じる" : "📊 納品物のサンプルを見る"}</>
+              <>{sampleOpen ? "▲ 閉じる" : "📊 AIが提案する納品物の叩き案を見る"}</>
             )}
           </button>
           {sampleOpen && sampleData && (
