@@ -148,7 +148,7 @@ export default function TryPage() {
   const [decidedError, setDecidedError] = useState("");
   const [pasteText, setPasteText] = useState("");
   const [pasteProcessing, setPasteProcessing] = useState(false);
-  const [pasteDiagnosis, setPasteDiagnosis] = useState<{ positioning: string; price_thinking: string } | null>(null);
+  const [pasteDrafts, setPasteDrafts] = useState<(ServiceDraft & { product_type: string })[] | null>(null);
 
   // 壁打ち
   const [messages, setMessages] = useState<Message[]>([]);
@@ -178,7 +178,7 @@ export default function TryPage() {
     setDecidedError(""); setDecidedChecking(false);
     setMessages([]); setInput(""); setThinking(false);
     setResumeError(""); setResumeUploading(false);
-    setPasteText(""); setPasteProcessing(false); setPasteDiagnosis(null);
+    setPasteText(""); setPasteProcessing(false); setPasteDrafts(null);
     setDrafts(null); setRefineChat(false);
   };
 
@@ -247,7 +247,7 @@ export default function TryPage() {
   const handlePaste = async () => {
     if (!pasteText.trim()) return;
     setPasteProcessing(true);
-    setPasteDiagnosis(null);
+    setPasteDrafts(null);
     setDecidedError("");
     try {
       const res = await fetch("/api/parse-service-paste", {
@@ -256,18 +256,8 @@ export default function TryPage() {
         body: JSON.stringify({ text: pasteText }),
       });
       const data = await res.json();
-      if (data.error) { setDecidedError("読み込みに失敗しました。もう一度お試しください。"); return; }
-      setDecidedForm({
-        title: data.title ?? "",
-        description: data.description ?? "",
-        price: data.price ? String(data.price) : "",
-        days: data.days ? String(data.days) : "",
-      });
-      if (data.positioning || data.price_thinking) {
-        setPasteDiagnosis({ positioning: data.positioning ?? "", price_thinking: data.price_thinking ?? "" });
-      } else {
-        setDecidedMode("form");
-      }
+      if (data.error || !data.drafts?.length) { setDecidedError("読み込みに失敗しました。もう一度お試しください。"); return; }
+      setPasteDrafts(data.drafts);
     } finally {
       setPasteProcessing(false);
     }
@@ -645,7 +635,7 @@ export default function TryPage() {
               <h2 className="font-bold text-gray-900 mb-1">他サービスの出品内容を貼り付ける</h2>
               <p className="text-xs text-gray-500">ランサーズ・ココナラ・クラウドワークス等の出品ページのテキストをそのまま貼り付けてください。AIがタイトル・説明・価格・納期を自動で整理します。</p>
             </div>
-            {!pasteDiagnosis ? (
+            {!pasteDrafts ? (
               <>
                 <textarea
                   value={pasteText}
@@ -663,36 +653,28 @@ export default function TryPage() {
                   className="w-full bg-blue-600 text-white py-3.5 rounded-xl font-bold text-sm hover:bg-blue-700 transition-colors disabled:opacity-40 flex items-center justify-center gap-2"
                 >
                   {pasteProcessing ? (
-                    <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin inline-block" />AIが分析しています...</>
-                  ) : "AIに整理・分析してもらう →"}
+                    <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin inline-block" />AIが商品案を作っています...</>
+                  ) : "AIに商品案を出してもらう →"}
                 </button>
               </>
             ) : (
               <>
-                <div className="space-y-3">
-                  <p className="text-sm font-bold text-gray-700">📊 経験イチバでの出し方アドバイス</p>
-                  <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 space-y-1">
-                    <p className="text-[11px] font-bold text-blue-700">💡 商品の形</p>
-                    <p className="text-sm text-gray-700 leading-relaxed">{pasteDiagnosis.positioning}</p>
-                  </div>
-                  <div className="bg-amber-50 border border-amber-100 rounded-xl p-4 space-y-1">
-                    <p className="text-[11px] font-bold text-amber-700">💰 価格の考え方</p>
-                    <p className="text-sm text-gray-700 leading-relaxed">{pasteDiagnosis.price_thinking}</p>
-                  </div>
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-bold text-gray-700">✨ {pasteDrafts.length}つの商品案ができました — 気に入ったものを選んでください</p>
+                  <button onClick={() => setPasteDrafts(null)} className="text-xs text-gray-400 hover:text-gray-600">← 貼り直す</button>
                 </div>
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => { setPasteDiagnosis(null); }}
-                    className="flex-1 border border-gray-300 text-gray-600 py-3 rounded-xl text-sm hover:bg-gray-50 transition-colors"
-                  >
-                    ← 貼り直す
-                  </button>
-                  <button
-                    onClick={() => setDecidedMode("form")}
-                    className="flex-[2] bg-blue-600 text-white py-3 rounded-xl font-bold text-sm hover:bg-blue-700 transition-colors"
-                  >
-                    この内容で進む →
-                  </button>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  {pasteDrafts.map((draft, i) => (
+                    <DraftCard
+                      key={i}
+                      draft={draft}
+                      label={draft.product_type === "deliverable" ? "成果物型" : "コンサル型"}
+                      badge={draft.product_type === "deliverable" ? "📄 成果物型" : "💬 コンサル型"}
+                      badgeColor={draft.product_type === "deliverable" ? "bg-blue-50 text-blue-700" : "bg-purple-50 text-purple-700"}
+                      onSelect={() => goRegister(draft)}
+                      isDeliverable={draft.product_type === "deliverable"}
+                    />
+                  ))}
                 </div>
               </>
             )}

@@ -8,25 +8,33 @@ export async function POST(req: NextRequest) {
   const client = new Anthropic();
   const message = await client.messages.create({
     model: "claude-haiku-4-5-20251001",
-    max_tokens: 900,
+    max_tokens: 3000,
     messages: [{
       role: "user",
       content: `以下はランサーズ・ココナラ等の出品テキストです。
 
 ${text}
 
-次の4項目を分析してJSONで返してください。説明・前置き不要。JSONのみ出力。
+このスキル・経験をもとに、副業・スポット発注向けの商品案を最大8個作ってください。
+成果物型・コンサル型・規模の大小などバリエーションをつけてください。
 
-{
-  "title": "サービスタイトル（そのまま or 短く整理）",
-  "description": "説明文（200字以内に要約）",
-  "price": 0,
-  "days": 0,
-  "positioning": "このスキルを経験イチバでどう出品すべきか。成果物型・コンサル型どちらが向いているか、どんな切り口で出すと価値が伝わるかを2〜3文で。",
-  "price_thinking": "ランサーズ・ココナラは時間の切り売り型の価格体系だが、経験イチバでは経験・成果の価値で価格を設定する。この人のスキルをどう価値換算すべきか、考え方を2文で。具体的な金額は出さない。"
-}
+説明・前置き不要。JSONのみ出力：
+{"drafts":[
+  {
+    "title":"商品タイトル（30字以内）",
+    "description":"説明（80字以内）",
+    "experience_story":"この経歴から読み取れる実体験（100字程度、一人称なし）",
+    "ai_usage":"AIをどう使って納品するか（50字以内）",
+    "recommended_tools":["Claude","Perplexity"],
+    "price_suggestion":30000,
+    "days_suggestion":3,
+    "service_type":"spot",
+    "product_type":"deliverable"
+  }
+]}
 
-price・daysは元テキストに記載があれば抽出、なければ0。`,
+product_typeは"deliverable"（レポート・テンプレートなど納品物あり）か"consulting"（対話・セッション）のどちらか。
+recommended_toolsは2〜3個。price_suggestionはランサーズの時間単価ではなく成果物・経験の価値ベースで設定。`,
     }],
   });
 
@@ -37,7 +45,8 @@ price・daysは元テキストに記載があれば抽出、なければ0。`,
   if (!match) return NextResponse.json({ error: "parse error" }, { status: 500 });
 
   try {
-    return NextResponse.json(JSON.parse(match[0]));
+    const parsed = JSON.parse(match[0]);
+    return NextResponse.json({ drafts: parsed.drafts?.slice(0, 10) ?? [] });
   } catch {
     return NextResponse.json({ error: "json parse error" }, { status: 500 });
   }
