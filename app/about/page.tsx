@@ -19,7 +19,7 @@ export default function AboutPage() {
 
         <div className="space-y-6 text-gray-600 leading-relaxed text-[15px]">
           <p>
-            「歴史に学べ」とはよく言う。<br />
+            「歴史に学べ」とはよく言う。先人たちはどうやっていたのか——。<br />
             でも、社会の中で積み上げられた歴史が書き残されるのは、ほんの一部だ。
           </p>
           <p>
@@ -47,10 +47,6 @@ export default function AboutPage() {
             <li className="flex items-start gap-3">
               <span className="text-teal-300 font-bold flex-shrink-0">—</span>
               退職後も、現役中も、自分の経験が誰かの力になれる場所をつくる
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="text-teal-300 font-bold flex-shrink-0">—</span>
-              「他社はどうやっているか」に、リアルな声で答えられる国にする
             </li>
           </ul>
         </div>
