@@ -36,28 +36,34 @@ async function generateDrafts(client: Anthropic, text: string) {
 
 ${text}
 
-このスキル・経験をもとに、副業・スポット発注向けの商品案を最大6個作ってください。
-成果物型・コンサル型・規模の大小などバリエーションをつけてください。
+このスキル・経験をもとに、以下の2種類の商品案を合計6個作ってください。
+
+【既存サービスの整理版】3個：貼り付けた内容をもとに、経験イチバ向けに整理・バリエーション化した商品案
+【新しい商品アイデア】3個：同じスキル・経験から派生できる、まだ出品していないと思われる新しい商品案
 
 説明・前置き不要。JSONのみ出力：
-{"drafts":[
-  {
-    "title":"商品タイトル（30字以内）",
-    "description":"説明（80字以内）",
-    "experience_story":"この経歴から読み取れる実体験（100字程度、一人称なし）",
-    "ai_usage":"AIをどう使って納品するか（50字以内）",
-    "recommended_tools":["Claude","Perplexity"],
-    "price_suggestion":30000,
-    "days_suggestion":3,
-    "service_type":"spot",
-    "product_type":"deliverable",
-    "price_rationale":"この価格が妥当な理由を経験の希少性・再現困難性で説明する1文（60字以内）"
-  }
-]}
+{
+  "drafts":[
+    {
+      "title":"商品タイトル（30字以内）",
+      "description":"説明（80字以内）",
+      "experience_story":"この経歴から読み取れる実体験（100字程度、一人称なし）",
+      "ai_usage":"AIをどう使って納品するか（50字以内）",
+      "recommended_tools":["Claude","Perplexity"],
+      "price_suggestion":30000,
+      "days_suggestion":3,
+      "service_type":"spot",
+      "product_type":"deliverable",
+      "price_rationale":"この価格が妥当な理由を経験の希少性・再現困難性で説明する1文（60字以内）",
+      "is_new_idea":false
+    }
+  ]
+}
 
 product_typeは"deliverable"（納品物あり）か"consulting"（対話・セッション）のどちらか。
-price_suggestionは成果物・経験の価値ベースで設定（時間単価換算ではなく、買い手が得る価値から逆算）。
-price_rationaleは時間・工数への言及なし。経験の希少性や、同等のアウトカムを得るために買い手が払うコストとの比較で書く。`,
+is_new_ideaは【新しい商品アイデア】の3件をtrue、【既存サービスの整理版】の3件をfalseにする。
+price_suggestionは成果物・経験の価値ベースで設定。
+price_rationaleは時間・工数への言及なし。経験の希少性や買い手が同等成果を得るコストとの比較で書く。`,
     }],
   });
   return message;

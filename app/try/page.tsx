@@ -156,7 +156,7 @@ export default function TryPage() {
   const [pasteUrl, setPasteUrl] = useState("");
   const [pasteInputMode, setPasteInputMode] = useState<"text" | "url">("text");
   const [pasteProcessing, setPasteProcessing] = useState(false);
-  const [pasteDrafts, setPasteDrafts] = useState<(ServiceDraft & { product_type: string })[] | null>(null);
+  const [pasteDrafts, setPasteDrafts] = useState<(ServiceDraft & { product_type: string; is_new_idea?: boolean })[] | null>(null);
 
   // 壁打ち
   const [messages, setMessages] = useState<Message[]>([]);
@@ -698,25 +698,58 @@ export default function TryPage() {
                 </button>
               </>
             ) : (
-              <>
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-bold text-gray-700">✨ {pasteDrafts.length}つの商品案ができました — 気に入ったものを選んでください</p>
-                  <button onClick={() => setPasteDrafts(null)} className="text-xs text-gray-400 hover:text-gray-600">← 貼り直す</button>
-                </div>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  {pasteDrafts.map((draft, i) => (
-                    <DraftCard
-                      key={i}
-                      draft={draft}
-                      label={draft.product_type === "deliverable" ? "成果物型" : "コンサル型"}
-                      badge={draft.product_type === "deliverable" ? "📄 成果物型" : "💬 コンサル型"}
-                      badgeColor={draft.product_type === "deliverable" ? "bg-blue-50 text-blue-700" : "bg-purple-50 text-purple-700"}
-                      onSelect={() => goRegister(draft)}
-                      isDeliverable={draft.product_type === "deliverable"}
-                    />
-                  ))}
-                </div>
-              </>
+              {(() => {
+                const existing = pasteDrafts.filter(d => !d.is_new_idea);
+                const newIdeas = pasteDrafts.filter(d => d.is_new_idea);
+                return (
+                  <>
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-bold text-gray-700">商品案ができました — 気に入ったものを選んでください</p>
+                      <button onClick={() => setPasteDrafts(null)} className="text-xs text-gray-400 hover:text-gray-600">← 貼り直す</button>
+                    </div>
+                    {existing.length > 0 && (
+                      <div className="space-y-3">
+                        <p className="text-xs font-semibold text-gray-500 flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-blue-400 inline-block" />既存サービスの整理版
+                        </p>
+                        <div className="grid sm:grid-cols-2 gap-4">
+                          {existing.map((draft, i) => (
+                            <DraftCard
+                              key={i}
+                              draft={draft}
+                              label={draft.product_type === "deliverable" ? "成果物型" : "コンサル型"}
+                              badge={draft.product_type === "deliverable" ? "📄 成果物型" : "💬 コンサル型"}
+                              badgeColor={draft.product_type === "deliverable" ? "bg-blue-50 text-blue-700" : "bg-purple-50 text-purple-700"}
+                              onSelect={() => goRegister(draft)}
+                              isDeliverable={draft.product_type === "deliverable"}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {newIdeas.length > 0 && (
+                      <div className="space-y-3">
+                        <p className="text-xs font-semibold text-emerald-600 flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />AIが提案する新しい商品アイデア
+                        </p>
+                        <div className="grid sm:grid-cols-2 gap-4">
+                          {newIdeas.map((draft, i) => (
+                            <DraftCard
+                              key={i}
+                              draft={draft}
+                              label={draft.product_type === "deliverable" ? "成果物型" : "コンサル型"}
+                              badge="💡 新アイデア"
+                              badgeColor="bg-emerald-50 text-emerald-700"
+                              onSelect={() => goRegister(draft)}
+                              isDeliverable={draft.product_type === "deliverable"}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
             )}
           </div>
         )}
