@@ -21,9 +21,32 @@ type Mode = null | "decided" | "explore";
 type ExploreMode = null | "chat" | "resume";
 type DecidedMode = null | "form" | "file";
 
-function DraftCard({ draft, label, badge, badgeColor, onSelect }: {
-  draft: ServiceDraft; label: string; badge: string; badgeColor: string; onSelect: () => void;
+type SampleTable = { sheetName: string; headers: string[]; rows: string[][] };
+
+function DraftCard({ draft, label, badge, badgeColor, onSelect, isDeliverable }: {
+  draft: ServiceDraft; label: string; badge: string; badgeColor: string; onSelect: () => void; isDeliverable?: boolean;
 }) {
+  const [sampleOpen, setSampleOpen] = useState(false);
+  const [sampleData, setSampleData] = useState<SampleTable | null>(null);
+  const [sampleLoading, setSampleLoading] = useState(false);
+
+  const toggleSample = async () => {
+    if (sampleData) { setSampleOpen(v => !v); return; }
+    setSampleLoading(true);
+    try {
+      const res = await fetch("/api/service-sample-table", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: draft.title, description: draft.description }),
+      });
+      const data = await res.json();
+      setSampleData(data);
+      setSampleOpen(true);
+    } finally {
+      setSampleLoading(false);
+    }
+  };
+
   return (
     <div className="bg-white border border-gray-100 rounded-2xl p-5 flex flex-col gap-3">
       <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full self-start ${badgeColor}`}>{badge}</span>
@@ -50,6 +73,49 @@ function DraftCard({ draft, label, badge, badgeColor, onSelect }: {
               {draft.recommended_tools.map(tool => (
                 <span key={tool} className="bg-white border border-blue-200 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full">{tool}</span>
               ))}
+            </div>
+          )}
+        </div>
+      )}
+      {isDeliverable && (
+        <div>
+          <button
+            onClick={toggleSample}
+            disabled={sampleLoading}
+            className="text-[11px] text-teal-600 hover:text-teal-800 font-semibold flex items-center gap-1 disabled:opacity-50"
+          >
+            {sampleLoading ? (
+              <><span className="flex gap-0.5">{[0,1,2].map(i => <span key={i} className="w-1 h-1 bg-teal-400 rounded-full animate-bounce" style={{animationDelay:`${i*0.15}s`}} />)}</span>サンプル生成中…</>
+            ) : (
+              <>{sampleOpen ? "▲ サンプルを閉じる" : "📊 納品物のサンプルを見る"}</>
+            )}
+          </button>
+          {sampleOpen && sampleData && (
+            <div className="mt-2 border border-teal-100 rounded-xl overflow-hidden">
+              <div className="bg-teal-50 px-3 py-1.5 flex items-center gap-2">
+                <span className="text-[10px] font-bold text-teal-700">📄 {sampleData.sheetName}</span>
+                <span className="text-[9px] text-teal-500">（AIが生成したサンプルイメージです）</span>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-[10px]">
+                  <thead>
+                    <tr className="bg-gray-50 border-b border-teal-100">
+                      {sampleData.headers.map((h, i) => (
+                        <th key={i} className="px-2.5 py-1.5 text-left font-semibold text-gray-600 whitespace-nowrap">{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sampleData.rows.map((row, ri) => (
+                      <tr key={ri} className={ri % 2 === 0 ? "bg-white" : "bg-gray-50/60"}>
+                        {row.map((cell, ci) => (
+                          <td key={ci} className="px-2.5 py-1.5 text-gray-600 whitespace-nowrap border-b border-gray-100">{cell}</td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </div>
@@ -328,7 +394,7 @@ export default function TryPage() {
                 />
               ) : (
                 <>
-                  <DraftCard draft={drafts.deliverable} label="成果物型" badge="📄 成果物型" badgeColor="bg-blue-50 text-blue-700" onSelect={() => goRegister(drafts.deliverable)} />
+                  <DraftCard draft={drafts.deliverable} label="成果物型" badge="📄 成果物型" badgeColor="bg-blue-50 text-blue-700" onSelect={() => goRegister(drafts.deliverable)} isDeliverable />
                   <DraftCard draft={drafts.consulting} label="コンサル型" badge="💬 コンサル型" badgeColor="bg-purple-50 text-purple-700" onSelect={() => goRegister(drafts.consulting)} />
                 </>
               )}
