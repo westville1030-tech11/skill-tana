@@ -39,10 +39,17 @@ const OFFICE_TYPES = [
   "application/vnd.ms-powerpoint",
   "application/vnd.ms-excel",
 ];
+const OFFICE_EXTS = [".docx", ".pptx", ".xlsx", ".doc", ".ppt", ".xls"];
+
+function isOfficeFile(mediaType: string, fileName: string) {
+  if (OFFICE_TYPES.includes(mediaType)) return true;
+  const lower = fileName.toLowerCase();
+  return OFFICE_EXTS.some((ext) => lower.endsWith(ext));
+}
 
 export async function POST(req: NextRequest) {
-  const { fileBase64, mediaType } = await req.json();
-  if (!fileBase64 || !mediaType) {
+  const { fileBase64, mediaType, fileName = "" } = await req.json();
+  if (!fileBase64) {
     return NextResponse.json({ error: "ファイルが必要です" }, { status: 400 });
   }
 
@@ -50,9 +57,15 @@ export async function POST(req: NextRequest) {
 
   let messageContent: Anthropic.MessageParam["content"];
 
-  if (OFFICE_TYPES.includes(mediaType)) {
+  if (isOfficeFile(mediaType, fileName)) {
     const buffer = Buffer.from(fileBase64, "base64");
-    const ast = await OfficeParser.parseOffice(buffer);
+    let ast;
+    try {
+      ast = await OfficeParser.parseOffice(buffer);
+    } catch (e) {
+      console.error("officeparser error:", e);
+      return NextResponse.json({ error: "Officeファイルの読み込みに失敗しました。別の形式でお試しください。" }, { status: 400 });
+    }
     const text = ast.toText();
     if (!text?.trim()) {
       return NextResponse.json({ error: "ファイルからテキストを抽出できませんでした" }, { status: 400 });

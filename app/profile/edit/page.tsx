@@ -1213,7 +1213,7 @@ function ResumeUploadPanel({
       const res = await fetch("/api/resume-service-draft", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fileBase64: base64, mediaType: file.type }),
+        body: JSON.stringify({ fileBase64: base64, mediaType: file.type, fileName: file.name }),
       });
       const data = await res.json();
       if (!res.ok || (!data.deliverableDraft && !data.consultingDraft)) {

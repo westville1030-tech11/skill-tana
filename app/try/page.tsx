@@ -127,7 +127,7 @@ export default function TryPage() {
       const res = await fetch("/api/resume-service-draft", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fileBase64: base64, mediaType: file.type }),
+        body: JSON.stringify({ fileBase64: base64, mediaType: file.type, fileName: file.name }),
       });
       const data = await res.json();
       if (data.error) { setResumeError(data.error); return; }
@@ -258,7 +258,7 @@ export default function TryPage() {
       const res = await fetch("/api/resume-service-draft", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fileBase64: base64, mediaType: file.type }),
+        body: JSON.stringify({ fileBase64: base64, mediaType: file.type, fileName: file.name }),
       });
       const data = await res.json();
       if (data.error) { setResumeError(data.error); return; }
