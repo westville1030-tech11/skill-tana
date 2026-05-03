@@ -849,7 +849,8 @@ export default function EditProfilePage() {
                     </div>
                   )}
                   <div className="space-y-1.5">
-                    <div className="flex gap-2 text-[11px] text-gray-500">
+                    <div className="flex items-center gap-2 text-[11px] text-gray-500">
+                      <span className="text-[10px] text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">参考価格</span>
                       <span className="font-bold text-blue-700">¥{d.price_suggestion.toLocaleString()}</span>
                       <span>{d.days_suggestion}日以内</span>
                     </div>
@@ -1029,7 +1030,8 @@ export default function EditProfilePage() {
                 </div>
               )}
               <div className="space-y-1.5">
-                <div className="flex gap-3 text-xs text-gray-500">
+                <div className="flex items-center gap-3 text-xs text-gray-500">
+                  <span className="text-[10px] text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">参考価格</span>
                   <span className="font-bold text-blue-700">¥{chatDraft.price_suggestion.toLocaleString()}</span>
                   <span>{chatDraft.days_suggestion}日以内</span>
                 </div>

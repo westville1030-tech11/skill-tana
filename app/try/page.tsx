@@ -143,6 +143,7 @@ function DraftCard({ draft, label, badge, badgeColor, onSelect, isDeliverable, s
       )}
       <div className="border-t border-gray-100 pt-2 space-y-1.5">
         <div className="flex items-center gap-3 text-xs text-gray-500">
+          <span className="text-[10px] text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">参考価格</span>
           <span className="font-bold text-blue-700 text-sm">¥{draft.price_suggestion.toLocaleString()}</span>
           <span>{draft.days_suggestion}日以内</span>
         </div>
