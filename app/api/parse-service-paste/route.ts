@@ -1,11 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 
-export async function POST(req: NextRequest) {
-  const { text } = await req.json();
-  if (!text) return NextResponse.json({ error: "text required" }, { status: 400 });
+function extractTextFromHtml(html: string): string {
+  return html
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
+    .replace(/&nbsp;/g, " ").replace(/&quot;/g, '"')
+    .replace(/\s{2,}/g, " ")
+    .trim()
+    .slice(0, 6000);
+}
 
-  const client = new Anthropic();
+async function fetchUrlText(url: string): Promise<string> {
+  const res = await fetch(url, {
+    headers: {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      "Accept-Language": "ja,en;q=0.9",
+    },
+    signal: AbortSignal.timeout(10000),
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const html = await res.text();
+  return extractTextFromHtml(html);
+}
+
+async function generateDrafts(client: Anthropic, text: string) {
   const message = await client.messages.create({
     model: "claude-haiku-4-5-20251001",
     max_tokens: 3000,
@@ -33,11 +54,30 @@ ${text}
   }
 ]}
 
-product_typeは"deliverable"（レポート・テンプレートなど納品物あり）か"consulting"（対話・セッション）のどちらか。
-recommended_toolsは2〜3個。price_suggestionはランサーズの時間単価ではなく成果物・経験の価値ベースで設定。`,
+product_typeは"deliverable"（納品物あり）か"consulting"（対話・セッション）のどちらか。
+price_suggestionはランサーズの時間単価ではなく成果物・経験の価値ベースで設定。`,
     }],
   });
+  return message;
+}
 
+export async function POST(req: NextRequest) {
+  const { text, url } = await req.json();
+  if (!text && !url) return NextResponse.json({ error: "text or url required" }, { status: 400 });
+
+  const client = new Anthropic();
+  let sourceText = text ?? "";
+
+  if (url) {
+    try {
+      sourceText = await fetchUrlText(url);
+      if (!sourceText) return NextResponse.json({ error: "URLからテキストを取得できませんでした。テキストを直接貼り付けてお試しください。" }, { status: 400 });
+    } catch {
+      return NextResponse.json({ error: "URLの読み込みに失敗しました。ページが非公開か、アクセスが制限されている可能性があります。テキストを直接貼り付けてお試しください。" }, { status: 400 });
+    }
+  }
+
+  const message = await generateDrafts(client, sourceText);
   const content = message.content[0];
   if (content.type !== "text") return NextResponse.json({ error: "AI error" }, { status: 500 });
 

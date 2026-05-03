@@ -147,6 +147,8 @@ export default function TryPage() {
   const [decidedChecking, setDecidedChecking] = useState(false);
   const [decidedError, setDecidedError] = useState("");
   const [pasteText, setPasteText] = useState("");
+  const [pasteUrl, setPasteUrl] = useState("");
+  const [pasteInputMode, setPasteInputMode] = useState<"text" | "url">("text");
   const [pasteProcessing, setPasteProcessing] = useState(false);
   const [pasteDrafts, setPasteDrafts] = useState<(ServiceDraft & { product_type: string })[] | null>(null);
 
@@ -178,7 +180,7 @@ export default function TryPage() {
     setDecidedError(""); setDecidedChecking(false);
     setMessages([]); setInput(""); setThinking(false);
     setResumeError(""); setResumeUploading(false);
-    setPasteText(""); setPasteProcessing(false); setPasteDrafts(null);
+    setPasteText(""); setPasteUrl(""); setPasteInputMode("text"); setPasteProcessing(false); setPasteDrafts(null);
     setDrafts(null); setRefineChat(false);
   };
 
@@ -245,15 +247,19 @@ export default function TryPage() {
 
   // A型: フォーム送信 → チャット開始（初回メッセージを自動投稿）
   const handlePaste = async () => {
-    if (!pasteText.trim()) return;
+    const hasInput = pasteInputMode === "url" ? pasteUrl.trim() : pasteText.trim();
+    if (!hasInput) return;
     setPasteProcessing(true);
     setPasteDrafts(null);
     setDecidedError("");
     try {
+      const body = pasteInputMode === "url"
+        ? { url: pasteUrl.trim() }
+        : { text: pasteText };
       const res = await fetch("/api/parse-service-paste", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: pasteText }),
+        body: JSON.stringify(body),
       });
       const data = await res.json();
       if (data.error || !data.drafts?.length) { setDecidedError("読み込みに失敗しました。もう一度お試しください。"); return; }
@@ -637,19 +643,46 @@ export default function TryPage() {
             </div>
             {!pasteDrafts ? (
               <>
-                <textarea
-                  value={pasteText}
-                  onChange={(e) => setPasteText(e.target.value)}
-                  placeholder={"例：\nサービス名: 新規事業計画書レビュー\n\n20年の事業開発経験をもとに、事業計画書のレビューとフィードバックを提供します。...\n\n価格: 30,000円\n納期: 3日"}
-                  rows={10}
-                  className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                />
+                <div className="flex gap-1 bg-gray-100 rounded-lg p-1 self-start">
+                  <button
+                    onClick={() => setPasteInputMode("text")}
+                    className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${pasteInputMode === "text" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+                  >
+                    テキストを貼り付け
+                  </button>
+                  <button
+                    onClick={() => setPasteInputMode("url")}
+                    className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${pasteInputMode === "url" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+                  >
+                    URLを入力
+                  </button>
+                </div>
+                {pasteInputMode === "text" ? (
+                  <textarea
+                    value={pasteText}
+                    onChange={(e) => setPasteText(e.target.value)}
+                    placeholder={"例：\nサービス名: 新規事業計画書レビュー\n\n20年の事業開発経験をもとに、事業計画書のレビューとフィードバックを提供します。...\n\n価格: 30,000円\n納期: 3日"}
+                    rows={10}
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  />
+                ) : (
+                  <div className="space-y-2">
+                    <input
+                      type="url"
+                      value={pasteUrl}
+                      onChange={(e) => setPasteUrl(e.target.value)}
+                      placeholder="https://www.lancers.jp/profile/xxx または https://coconala.com/services/xxx"
+                      className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <p className="text-xs text-gray-400">ランサーズ・ココナラ・クラウドワークス等のプロフィールや出品ページのURLを入力してください。</p>
+                  </div>
+                )}
                 {decidedError && (
                   <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-2">{decidedError}</p>
                 )}
                 <button
                   onClick={handlePaste}
-                  disabled={!pasteText.trim() || pasteProcessing}
+                  disabled={(pasteInputMode === "text" ? !pasteText.trim() : !pasteUrl.trim()) || pasteProcessing}
                   className="w-full bg-blue-600 text-white py-3.5 rounded-xl font-bold text-sm hover:bg-blue-700 transition-colors disabled:opacity-40 flex items-center justify-center gap-2"
                 >
                   {pasteProcessing ? (
