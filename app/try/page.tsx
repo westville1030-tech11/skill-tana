@@ -156,7 +156,8 @@ export default function TryPage() {
   const [pasteUrl, setPasteUrl] = useState("");
   const [pasteInputMode, setPasteInputMode] = useState<"text" | "url">("text");
   const [pasteProcessing, setPasteProcessing] = useState(false);
-  const [pasteDrafts, setPasteDrafts] = useState<(ServiceDraft & { product_type: string; is_new_idea?: boolean })[] | null>(null);
+  const [pasteDrafts, setPasteDrafts] = useState<(ServiceDraft & { product_type: string })[] | null>(null);
+  const [pasteNewIdeas, setPasteNewIdeas] = useState<(ServiceDraft & { product_type: string })[] | null>(null);
 
   // 壁打ち
   const [messages, setMessages] = useState<Message[]>([]);
@@ -186,7 +187,7 @@ export default function TryPage() {
     setDecidedError(""); setDecidedChecking(false);
     setMessages([]); setInput(""); setThinking(false);
     setResumeError(""); setResumeUploading(false);
-    setPasteText(""); setPasteUrl(""); setPasteInputMode("text"); setPasteProcessing(false); setPasteDrafts(null);
+    setPasteText(""); setPasteUrl(""); setPasteInputMode("text"); setPasteProcessing(false); setPasteDrafts(null); setPasteNewIdeas(null);
     setDrafts(null); setRefineChat(false);
   };
 
@@ -269,8 +270,9 @@ export default function TryPage() {
       });
       const data = await res.json();
       if (data.error) { setDecidedError(data.error); return; }
-      if (!data.drafts?.length) { setDecidedError("商品案を生成できませんでした。テキストの量が少ない場合は、より詳しい内容を貼り付けてください。"); return; }
-      setPasteDrafts(data.drafts);
+      if (!data.drafts?.length && !data.new_ideas?.length) { setDecidedError("商品案を生成できませんでした。テキストの量が少ない場合は、より詳しい内容を貼り付けてください。"); return; }
+      setPasteDrafts(data.drafts ?? []);
+      setPasteNewIdeas(data.new_ideas ?? []);
     } finally {
       setPasteProcessing(false);
     }
@@ -648,7 +650,7 @@ export default function TryPage() {
               <h2 className="font-bold text-gray-900 mb-1">他サービスの出品内容を貼り付ける</h2>
               <p className="text-xs text-gray-500">他のサービスの出品ページのテキストをそのまま貼り付けてください。AIがタイトル・説明・価格・納期を自動で整理します。</p>
             </div>
-            {!pasteDrafts ? (
+            {!pasteDrafts && !pasteNewIdeas ? (
               <>
                 <div className="flex gap-1 bg-gray-100 rounded-lg p-1 self-start">
                   <button
@@ -698,58 +700,52 @@ export default function TryPage() {
                 </button>
               </>
             ) : (
-              {(() => {
-                const existing = pasteDrafts.filter(d => !d.is_new_idea);
-                const newIdeas = pasteDrafts.filter(d => d.is_new_idea);
-                return (
-                  <>
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-bold text-gray-700">商品案ができました — 気に入ったものを選んでください</p>
-                      <button onClick={() => setPasteDrafts(null)} className="text-xs text-gray-400 hover:text-gray-600">← 貼り直す</button>
+              <>
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-bold text-gray-700">商品案ができました — 気に入ったものを選んでください</p>
+                  <button onClick={() => { setPasteDrafts(null); setPasteNewIdeas(null); }} className="text-xs text-gray-400 hover:text-gray-600">← 貼り直す</button>
+                </div>
+                {(pasteDrafts?.length ?? 0) > 0 && (
+                  <div className="space-y-3">
+                    <p className="text-xs font-semibold text-gray-500 flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-blue-400 inline-block" />既存サービスの整理版
+                    </p>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      {pasteDrafts!.map((draft, i) => (
+                        <DraftCard
+                          key={i}
+                          draft={draft}
+                          label={draft.product_type === "deliverable" ? "成果物型" : "コンサル型"}
+                          badge={draft.product_type === "deliverable" ? "📄 成果物型" : "💬 コンサル型"}
+                          badgeColor={draft.product_type === "deliverable" ? "bg-blue-50 text-blue-700" : "bg-purple-50 text-purple-700"}
+                          onSelect={() => goRegister(draft)}
+                          isDeliverable={draft.product_type === "deliverable"}
+                        />
+                      ))}
                     </div>
-                    {existing.length > 0 && (
-                      <div className="space-y-3">
-                        <p className="text-xs font-semibold text-gray-500 flex items-center gap-1.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-blue-400 inline-block" />既存サービスの整理版
-                        </p>
-                        <div className="grid sm:grid-cols-2 gap-4">
-                          {existing.map((draft, i) => (
-                            <DraftCard
-                              key={i}
-                              draft={draft}
-                              label={draft.product_type === "deliverable" ? "成果物型" : "コンサル型"}
-                              badge={draft.product_type === "deliverable" ? "📄 成果物型" : "💬 コンサル型"}
-                              badgeColor={draft.product_type === "deliverable" ? "bg-blue-50 text-blue-700" : "bg-purple-50 text-purple-700"}
-                              onSelect={() => goRegister(draft)}
-                              isDeliverable={draft.product_type === "deliverable"}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    {newIdeas.length > 0 && (
-                      <div className="space-y-3">
-                        <p className="text-xs font-semibold text-emerald-600 flex items-center gap-1.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />AIが提案する新しい商品アイデア
-                        </p>
-                        <div className="grid sm:grid-cols-2 gap-4">
-                          {newIdeas.map((draft, i) => (
-                            <DraftCard
-                              key={i}
-                              draft={draft}
-                              label={draft.product_type === "deliverable" ? "成果物型" : "コンサル型"}
-                              badge="💡 新アイデア"
-                              badgeColor="bg-emerald-50 text-emerald-700"
-                              onSelect={() => goRegister(draft)}
-                              isDeliverable={draft.product_type === "deliverable"}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </>
-                );
-              })()}
+                  </div>
+                )}
+                {(pasteNewIdeas?.length ?? 0) > 0 && (
+                  <div className="space-y-3">
+                    <p className="text-xs font-semibold text-emerald-600 flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />AIが提案する新しい商品アイデア
+                    </p>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      {pasteNewIdeas!.map((draft, i) => (
+                        <DraftCard
+                          key={i}
+                          draft={draft}
+                          label={draft.product_type === "deliverable" ? "成果物型" : "コンサル型"}
+                          badge="💡 新アイデア"
+                          badgeColor="bg-emerald-50 text-emerald-700"
+                          onSelect={() => goRegister(draft)}
+                          isDeliverable={draft.product_type === "deliverable"}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         )}

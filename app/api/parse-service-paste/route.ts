@@ -36,10 +36,7 @@ async function generateDrafts(client: Anthropic, text: string) {
 
 ${text}
 
-このスキル・経験をもとに、以下の2種類の商品案を合計6個作ってください。
-
-【既存サービスの整理版】3個：貼り付けた内容をもとに、経験イチバ向けに整理・バリエーション化した商品案
-【新しい商品アイデア】3個：同じスキル・経験から派生できる、まだ出品していないと思われる新しい商品案
+このスキル・経験をもとに、以下の2種類の商品案を各3個ずつ作ってください。
 
 説明・前置き不要。JSONのみ出力：
 {
@@ -54,14 +51,28 @@ ${text}
       "days_suggestion":3,
       "service_type":"spot",
       "product_type":"deliverable",
-      "price_rationale":"この価格が妥当な理由を経験の希少性・再現困難性で説明する1文（60字以内）",
-      "is_new_idea":false
+      "price_rationale":"この価格が妥当な理由を経験の希少性・再現困難性で説明する1文（60字以内）"
+    }
+  ],
+  "new_ideas":[
+    {
+      "title":"新しい商品タイトル（30字以内）",
+      "description":"説明（80字以内）",
+      "experience_story":"この経歴から読み取れる実体験（100字程度、一人称なし）",
+      "ai_usage":"AIをどう使って納品するか（50字以内）",
+      "recommended_tools":["Claude","Perplexity"],
+      "price_suggestion":30000,
+      "days_suggestion":3,
+      "service_type":"spot",
+      "product_type":"deliverable",
+      "price_rationale":"この価格が妥当な理由を経験の希少性・再現困難性で説明する1文（60字以内）"
     }
   ]
 }
 
+draftsは貼り付けた既存サービスをもとに整理・バリエーション化した商品案3個。
+new_ideasは同じスキル・経験から派生できる、まだ出品していないと思われる新しい商品案3個。
 product_typeは"deliverable"（納品物あり）か"consulting"（対話・セッション）のどちらか。
-is_new_ideaは【新しい商品アイデア】の3件をtrue、【既存サービスの整理版】の3件をfalseにする。
 price_suggestionは成果物・経験の価値ベースで設定。
 price_rationaleは時間・工数への言及なし。経験の希少性や買い手が同等成果を得るコストとの比較で書く。`,
     }],
@@ -94,7 +105,10 @@ export async function POST(req: NextRequest) {
 
   try {
     const parsed = JSON.parse(match[0]);
-    return NextResponse.json({ drafts: parsed.drafts?.slice(0, 10) ?? [] });
+    return NextResponse.json({
+      drafts: parsed.drafts?.slice(0, 3) ?? [],
+      new_ideas: parsed.new_ideas?.slice(0, 3) ?? [],
+    });
   } catch {
     return NextResponse.json({ error: "json parse error" }, { status: 500 });
   }
