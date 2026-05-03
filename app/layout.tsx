@@ -20,8 +20,12 @@ export default function RootLayout({
         <SessionProvider>
           <Navbar />
           <main className="flex-1">{children}</main>
-          <footer className="border-t border-gray-100 bg-white py-8 text-center text-sm text-gray-400">
-            © 2025 経験イチバ · 登録料・利用料・手数料、すべて永久無料
+          <footer className="border-t border-gray-100 bg-white py-8 text-center text-sm text-gray-400 space-y-2">
+            <div className="flex justify-center gap-6">
+              <a href="/terms" className="hover:text-gray-600 transition-colors">利用規約</a>
+              <a href="/privacy" className="hover:text-gray-600 transition-colors">プライバシーポリシー</a>
+            </div>
+            <div>© 2025 経験イチバ · 登録料・利用料・手数料、すべて永久無料</div>
           </footer>
         </SessionProvider>
       </body>

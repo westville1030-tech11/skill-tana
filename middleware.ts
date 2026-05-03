@@ -7,6 +7,8 @@ const ALLOWED_PATHS = [
   "/signup",
   "/profile/edit",
   "/inbox",
+  "/terms",
+  "/privacy",
 ];
 
 export function middleware(request: NextRequest) {
