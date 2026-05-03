@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
-import { OfficeParser } from "officeparser";
+import AdmZip from "adm-zip";
 
 const PROMPT = `以下は履歴書または職務経歴書です。この人物の経験をもとに、副業・スポット発注向けの商品案を2つ作ってください。
 
@@ -31,6 +31,40 @@ function extractJson(text: string, startTag: string, endTag: string) {
   return null;
 }
 
+function stripXml(xml: string): string {
+  return xml
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"').replace(/&apos;/g, "'")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
+function extractTextFromZip(buffer: Buffer, fileName: string): string {
+  const ext = fileName.toLowerCase().split(".").pop();
+  const zip = new AdmZip(buffer);
+  const texts: string[] = [];
+
+  if (ext === "docx") {
+    const entry = zip.getEntry("word/document.xml");
+    if (entry) texts.push(stripXml(entry.getData().toString("utf8")));
+  } else if (ext === "pptx") {
+    zip.getEntries()
+      .filter(e => e.entryName.match(/^ppt\/slides\/slide\d+\.xml$/))
+      .sort((a, b) => a.entryName.localeCompare(b.entryName))
+      .forEach(e => texts.push(stripXml(e.getData().toString("utf8"))));
+  } else if (ext === "xlsx") {
+    const shared = zip.getEntry("xl/sharedStrings.xml");
+    if (shared) texts.push(stripXml(shared.getData().toString("utf8")));
+    zip.getEntries()
+      .filter(e => e.entryName.match(/^xl\/worksheets\/sheet\d+\.xml$/))
+      .forEach(e => texts.push(stripXml(e.getData().toString("utf8"))));
+  }
+
+  return texts.join("\n").trim();
+}
+
+const OFFICE_EXTS = ["docx", "pptx", "xlsx", "doc", "ppt", "xls"];
 const OFFICE_TYPES = [
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   "application/vnd.openxmlformats-officedocument.presentationml.presentation",
@@ -39,12 +73,11 @@ const OFFICE_TYPES = [
   "application/vnd.ms-powerpoint",
   "application/vnd.ms-excel",
 ];
-const OFFICE_EXTS = [".docx", ".pptx", ".xlsx", ".doc", ".ppt", ".xls"];
 
 function isOfficeFile(mediaType: string, fileName: string) {
   if (OFFICE_TYPES.includes(mediaType)) return true;
-  const lower = fileName.toLowerCase();
-  return OFFICE_EXTS.some((ext) => lower.endsWith(ext));
+  const ext = fileName.toLowerCase().split(".").pop() ?? "";
+  return OFFICE_EXTS.includes(ext);
 }
 
 export async function POST(req: NextRequest) {
@@ -54,26 +87,23 @@ export async function POST(req: NextRequest) {
   }
 
   const client = new Anthropic();
-
   let messageContent: Anthropic.MessageParam["content"];
 
   if (isOfficeFile(mediaType, fileName)) {
-    const buffer = Buffer.from(fileBase64, "base64");
-    let ast;
     try {
-      ast = await OfficeParser.parseOffice(buffer);
+      const buffer = Buffer.from(fileBase64, "base64");
+      const text = extractTextFromZip(buffer, fileName);
+      if (!text) {
+        return NextResponse.json({ error: "ファイルからテキストを抽出できませんでした。PDF形式でお試しください。" }, { status: 400 });
+      }
+      messageContent = [
+        { type: "text", text: `以下はアップロードされたファイルから抽出したテキストです:\n\n${text}` },
+        { type: "text", text: PROMPT },
+      ];
     } catch (e) {
-      console.error("officeparser error:", e);
-      return NextResponse.json({ error: "Officeファイルの読み込みに失敗しました。別の形式でお試しください。" }, { status: 400 });
+      console.error("Office extract error:", e);
+      return NextResponse.json({ error: "Officeファイルの読み込みに失敗しました。PDF形式でお試しください。" }, { status: 400 });
     }
-    const text = ast.toText();
-    if (!text?.trim()) {
-      return NextResponse.json({ error: "ファイルからテキストを抽出できませんでした" }, { status: 400 });
-    }
-    messageContent = [
-      { type: "text", text: `以下はアップロードされたファイルから抽出したテキストです:\n\n${text}` },
-      { type: "text", text: PROMPT },
-    ];
   } else if (mediaType === "application/pdf") {
     messageContent = [
       { type: "document" as const, source: { type: "base64" as const, media_type: "application/pdf" as const, data: fileBase64 } },
