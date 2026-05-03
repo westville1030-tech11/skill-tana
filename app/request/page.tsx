@@ -104,19 +104,21 @@ export default function RequestPage() {
 
       <h1 className="text-2xl font-bold text-gray-900 mb-2">発注相談</h1>
       <p className="text-gray-500 text-sm mb-6">
-        AIと壁打ちしながら依頼内容を整理します。{REQUIRED_ROUNDS}回やりとりすると依頼が送れるようになります。
+        AIと壁打ちしながら依頼内容を整理します。数回のやりとりで、経験者に伝わる依頼文に仕上げます。
       </p>
 
       {/* 進捗インジケーター */}
-      <div className="flex items-center gap-2 mb-6">
-        {Array.from({ length: REQUIRED_ROUNDS }).map((_, i) => (
-          <div
-            key={i}
-            className={`h-1.5 flex-1 rounded-full transition-colors ${i < aiRounds ? "bg-blue-600" : "bg-gray-200"}`}
-          />
-        ))}
-        <span className="text-xs text-gray-400 flex-shrink-0 ml-1">
-          {canSubmit ? "完了" : `あと${remaining}回`}
+      <div className="flex items-center gap-3 mb-6">
+        <div className="flex gap-1.5 flex-1">
+          {Array.from({ length: REQUIRED_ROUNDS }).map((_, i) => (
+            <div
+              key={i}
+              className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${i < aiRounds ? "bg-blue-500" : "bg-gray-200"}`}
+            />
+          ))}
+        </div>
+        <span className={`text-xs flex-shrink-0 font-medium transition-colors ${canSubmit ? "text-emerald-600" : aiRounds > 0 ? "text-blue-500" : "text-gray-400"}`}>
+          {canSubmit ? "依頼内容が整いました" : aiRounds === 0 ? "依頼の解像度" : aiRounds === 1 ? "整理中..." : "精緻化中..."}
         </span>
       </div>
 
