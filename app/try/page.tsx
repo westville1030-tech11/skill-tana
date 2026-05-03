@@ -129,6 +129,11 @@ export default function TryPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fileBase64: base64, mediaType: file.type, fileName: file.name }),
       });
+      if (!res.ok) {
+        const text = await res.text();
+        setResumeError(`サーバーエラー (${res.status}): ${text.slice(0, 200)}`);
+        return;
+      }
       const data = await res.json();
       if (data.error) { setResumeError(data.error); return; }
       const draft = data.deliverableDraft ?? data.consultingDraft;
@@ -150,8 +155,8 @@ export default function TryPage() {
       });
       const chatData = await chatRes.json();
       setMessages([...next, { role: "assistant", content: chatData.text }]);
-    } catch {
-      setResumeError("読み込みに失敗しました。PDF・画像ファイルをお試しください。");
+    } catch (e) {
+      setResumeError(`読み込みエラー: ${e instanceof Error ? e.message : String(e)}`);
     } finally {
       setResumeUploading(false);
       setThinking(false);
@@ -260,14 +265,19 @@ export default function TryPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fileBase64: base64, mediaType: file.type, fileName: file.name }),
       });
+      if (!res.ok) {
+        const text = await res.text();
+        setResumeError(`サーバーエラー (${res.status}): ${text.slice(0, 200)}`);
+        return;
+      }
       const data = await res.json();
       if (data.error) { setResumeError(data.error); return; }
       setDrafts({
         deliverable: data.deliverableDraft ?? data.consultingDraft,
         consulting: data.consultingDraft ?? data.deliverableDraft,
       });
-    } catch {
-      setResumeError("読み込みに失敗しました。PDF・画像ファイルをお試しください。");
+    } catch (e) {
+      setResumeError(`読み込みエラー: ${e instanceof Error ? e.message : String(e)}`);
     } finally {
       setResumeUploading(false);
     }
