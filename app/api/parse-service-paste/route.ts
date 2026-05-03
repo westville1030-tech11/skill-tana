@@ -50,12 +50,18 @@ ${text}
     "price_suggestion":30000,
     "days_suggestion":3,
     "service_type":"spot",
-    "product_type":"deliverable"
+    "product_type":"deliverable",
+    "estimated_hours":8,
+    "hourly_rate_min":3000,
+    "hourly_rate_max":8000,
+    "price_rationale":"価格の根拠を1文で（60字以内）"
   }
 ]}
 
 product_typeは"deliverable"（納品物あり）か"consulting"（対話・セッション）のどちらか。
-price_suggestionは時間単価ではなく成果物・経験の価値ベースで設定。`,
+price_suggestionはestimated_hours × hourly_rate_minとhourly_rate_maxの中間値を基準に設定。
+estimated_hoursはAI活用込みの実作業時間。hourly_rate_min/maxは出品者の経験年数・専門性から推定した適正時間単価の範囲。
+price_rationaleは「なぜこの価格か」を買い手が納得できる1文（例：「X年の実務経験をもとに、社内対応比50%のコストで同等成果を提供」）。`,
     }],
   });
   return message;

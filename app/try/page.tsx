@@ -14,6 +14,10 @@ type ServiceDraft = {
   price_suggestion: number;
   days_suggestion: number;
   service_type: string;
+  estimated_hours?: number;
+  hourly_rate_min?: number;
+  hourly_rate_max?: number;
+  price_rationale?: string;
 };
 
 type Drafts = { deliverable: ServiceDraft; consulting: ServiceDraft } | null;
@@ -125,9 +129,30 @@ function DraftCard({ draft, label, badge, badgeColor, onSelect, isDeliverable }:
           )}
         </div>
       )}
-      <div className="flex gap-3 text-xs text-gray-500 border-t border-gray-100 pt-2">
-        <span className="font-bold text-blue-700">¥{draft.price_suggestion.toLocaleString()}</span>
-        <span>{draft.days_suggestion}日以内</span>
+      <div className="border-t border-gray-100 pt-2 space-y-1.5">
+        <div className="flex items-center gap-3 text-xs text-gray-500">
+          <span className="font-bold text-blue-700 text-sm">¥{draft.price_suggestion.toLocaleString()}</span>
+          <span>{draft.days_suggestion}日以内</span>
+        </div>
+        {(draft.estimated_hours || draft.price_rationale) && (
+          <div className="bg-slate-50 border border-slate-100 rounded-lg px-3 py-2 space-y-1.5">
+            {draft.estimated_hours && (
+              <div className="flex items-center justify-between text-[10px]">
+                <span className="text-gray-500">想定作業時間</span>
+                <span className="font-semibold text-gray-700">{draft.estimated_hours}時間</span>
+              </div>
+            )}
+            {draft.hourly_rate_min && draft.hourly_rate_max && (
+              <div className="flex items-center justify-between text-[10px]">
+                <span className="text-gray-500">推奨時間単価</span>
+                <span className="font-semibold text-gray-700">¥{draft.hourly_rate_min.toLocaleString()}〜¥{draft.hourly_rate_max.toLocaleString()}/h</span>
+              </div>
+            )}
+            {draft.price_rationale && (
+              <p className="text-[10px] text-gray-500 leading-relaxed pt-0.5 border-t border-slate-200">{draft.price_rationale}</p>
+            )}
+          </div>
+        )}
       </div>
       <button onClick={onSelect} className="w-full bg-amber-500 hover:bg-amber-600 transition-colors text-white font-bold py-3 rounded-xl text-sm mt-1">
         {label}で登録する →

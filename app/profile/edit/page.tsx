@@ -58,6 +58,7 @@ export default function EditProfilePage() {
     title: string; description: string; experience_story: string;
     ai_usage?: string; recommended_tools?: string[];
     price_suggestion: number; days_suggestion: number; service_type: "spot" | "ongoing";
+    estimated_hours?: number; hourly_rate_min?: number; hourly_rate_max?: number; price_rationale?: string;
   };
   const [chatDrafts, setChatDrafts] = useState<{ deliverable: ChatDraftType; consulting: ChatDraftType } | null>(null);
   const [chatDraft, setChatDraft] = useState<ChatDraftType | null>(null);
@@ -816,9 +817,30 @@ export default function EditProfilePage() {
                       )}
                     </div>
                   )}
-                  <div className="flex gap-2 text-[11px] text-gray-500">
-                    <span className="font-bold text-blue-700">¥{d.price_suggestion.toLocaleString()}</span>
-                    <span>{d.days_suggestion}日以内</span>
+                  <div className="space-y-1.5">
+                    <div className="flex gap-2 text-[11px] text-gray-500">
+                      <span className="font-bold text-blue-700">¥{d.price_suggestion.toLocaleString()}</span>
+                      <span>{d.days_suggestion}日以内</span>
+                    </div>
+                    {(d.estimated_hours || d.price_rationale) && (
+                      <div className="bg-white/60 border border-slate-200 rounded-lg px-2.5 py-2 space-y-1">
+                        {d.estimated_hours && (
+                          <div className="flex items-center justify-between text-[10px]">
+                            <span className="text-gray-500">想定作業時間</span>
+                            <span className="font-semibold text-gray-700">{d.estimated_hours}時間</span>
+                          </div>
+                        )}
+                        {d.hourly_rate_min && d.hourly_rate_max && (
+                          <div className="flex items-center justify-between text-[10px]">
+                            <span className="text-gray-500">推奨時間単価</span>
+                            <span className="font-semibold text-gray-700">¥{d.hourly_rate_min.toLocaleString()}〜¥{d.hourly_rate_max.toLocaleString()}/h</span>
+                          </div>
+                        )}
+                        {d.price_rationale && (
+                          <p className="text-[10px] text-gray-500 leading-relaxed pt-0.5 border-t border-slate-200">{d.price_rationale}</p>
+                        )}
+                      </div>
+                    )}
                   </div>
                   {isDeliverable && (
                     <div>
@@ -991,9 +1013,30 @@ export default function EditProfilePage() {
                   />
                 </div>
               )}
-              <div className="flex gap-3 text-xs text-gray-500">
-                <span>¥{chatDraft.price_suggestion.toLocaleString()}</span>
-                <span>{chatDraft.days_suggestion}日以内</span>
+              <div className="space-y-1.5">
+                <div className="flex gap-3 text-xs text-gray-500">
+                  <span className="font-bold text-blue-700">¥{chatDraft.price_suggestion.toLocaleString()}</span>
+                  <span>{chatDraft.days_suggestion}日以内</span>
+                </div>
+                {(chatDraft.estimated_hours || chatDraft.price_rationale) && (
+                  <div className="bg-slate-50 border border-slate-100 rounded-lg px-2.5 py-2 space-y-1">
+                    {chatDraft.estimated_hours && (
+                      <div className="flex items-center justify-between text-[10px]">
+                        <span className="text-gray-500">想定作業時間</span>
+                        <span className="font-semibold text-gray-700">{chatDraft.estimated_hours}時間</span>
+                      </div>
+                    )}
+                    {chatDraft.hourly_rate_min && chatDraft.hourly_rate_max && (
+                      <div className="flex items-center justify-between text-[10px]">
+                        <span className="text-gray-500">推奨時間単価</span>
+                        <span className="font-semibold text-gray-700">¥{chatDraft.hourly_rate_min.toLocaleString()}〜¥{chatDraft.hourly_rate_max.toLocaleString()}/h</span>
+                      </div>
+                    )}
+                    {chatDraft.price_rationale && (
+                      <p className="text-[10px] text-gray-500 leading-relaxed pt-0.5 border-t border-slate-200">{chatDraft.price_rationale}</p>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
             {qualityResult && (
@@ -1317,6 +1360,7 @@ type ServiceDraft = {
   title: string; description: string; experience_story: string;
   ai_usage?: string; recommended_tools?: string[];
   price_suggestion: number; days_suggestion: number; service_type: "spot" | "ongoing";
+  estimated_hours?: number; hourly_rate_min?: number; hourly_rate_max?: number; price_rationale?: string;
 };
 
 function ResumeUploadPanel({
