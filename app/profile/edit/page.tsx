@@ -712,7 +712,7 @@ export default function EditProfilePage() {
                 onClick={() => setShowResumeUpload(true)}
                 className="text-sm bg-emerald-700 text-white px-4 py-2 rounded-lg hover:bg-emerald-800 transition-colors"
               >
-                📄 履歴書から提案
+                📄 実績資料から提案
               </button>
               <button onClick={() => setShowAddForm(true)} className="text-sm border border-gray-300 text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
                 手動で追加
@@ -829,7 +829,7 @@ export default function EditProfilePage() {
                 <button
                   onClick={() => {
                     if (chatDrafts) {
-                      const initMsg = `履歴書から2つの商品案を作りました。\n\n📄 成果物型：${chatDrafts.deliverable.title}\n${chatDrafts.deliverable.description}\n\n💬 コンサル型：${chatDrafts.consulting.title}\n${chatDrafts.consulting.description}\n\n修正したい点や追加したい要素があれば教えてください。`;
+                      const initMsg = `資料から2つの商品案を作りました。\n\n📄 成果物型：${chatDrafts.deliverable.title}\n${chatDrafts.deliverable.description}\n\n💬 コンサル型：${chatDrafts.consulting.title}\n${chatDrafts.consulting.description}\n\n修正したい点や追加したい要素があれば教えてください。`;
                       setChatMessages([{ role: "assistant", content: initMsg }]);
                       setChatRounds(0);
                       setResumeRefineActive(true);
@@ -1301,11 +1301,11 @@ function ResumeUploadPanel({
   return (
     <div className="mb-4 border border-emerald-200 bg-emerald-50 rounded-xl p-4 space-y-3">
       <div className="flex items-center justify-between">
-        <p className="text-xs font-semibold text-emerald-700">📄 履歴書・職務経歴書から商品案を作る</p>
+        <p className="text-xs font-semibold text-emerald-700">📄 実績資料から商品案を作る</p>
         <button onClick={onCancel} className="text-xs text-gray-400 hover:text-gray-600">キャンセル</button>
       </div>
       <p className="text-xs text-emerald-700 leading-relaxed">
-        PDF・Word・PowerPoint・Excel・画像をアップロードすると、AIが経歴を読み取って成果物型・コンサル型の2案を提案します。
+        履歴書・提案書・過去成果物など、PDF・Word・PowerPoint・Excel・画像をアップロードすると、AIが内容を読み取って成果物型・コンサル型の2案を提案します。
       </p>
       {uploading ? (
         <div className="flex items-center justify-center gap-2 py-6">

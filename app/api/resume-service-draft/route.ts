@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import AdmZip from "adm-zip";
 
-const PROMPT = `以下は履歴書または職務経歴書です。この人物の経験をもとに、副業・スポット発注向けの商品案を2つ作ってください。
+const PROMPT = `以下は経歴・実績に関する資料です（履歴書、職務経歴書、提案書、過去成果物など）。この人物の経験をもとに、副業・スポット発注向けの商品案を2つ作ってください。
 
 説明文・前置き・マークダウン記法は一切不要です。区切り文字とJSONだけ出力してください。
 
