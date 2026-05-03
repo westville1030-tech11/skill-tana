@@ -15,6 +15,9 @@ export function Navbar() {
         </Link>
 
         <nav className="hidden md:flex items-center gap-6 text-sm text-gray-600">
+          <Link href="/about" className="hover:text-blue-700 transition-colors">
+            私たちの想い
+          </Link>
           <Link href="/browse" className="hover:text-blue-700 transition-colors">
             イチバの棚を見る
           </Link>

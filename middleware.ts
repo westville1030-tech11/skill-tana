@@ -9,6 +9,7 @@ const ALLOWED_PATHS = [
   "/inbox",
   "/terms",
   "/privacy",
+  "/about",
 ];
 
 export function middleware(request: NextRequest) {
