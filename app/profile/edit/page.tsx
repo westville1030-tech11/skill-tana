@@ -63,6 +63,9 @@ export default function EditProfilePage() {
   const [chatDraft, setChatDraft] = useState<ChatDraftType | null>(null);
   const [showResumeUpload, setShowResumeUpload] = useState(false);
   const [resumeRefineActive, setResumeRefineActive] = useState(false);
+  const [deliverableSampleOpen, setDeliverableSampleOpen] = useState(false);
+  const [deliverableSampleData, setDeliverableSampleData] = useState<{ sheetName: string; headers: string[]; rows: string[][] } | null>(null);
+  const [deliverableSampleLoading, setDeliverableSampleLoading] = useState(false);
   const [qualityChecking, setQualityChecking] = useState(false);
   const [qualityResult, setQualityResult] = useState<{score: string; feedback: string} | null>(null);
   const [addQualityChecking, setAddQualityChecking] = useState(false);
@@ -109,6 +112,11 @@ export default function EditProfilePage() {
       }
     }
   }, [session]);
+
+  useEffect(() => {
+    setDeliverableSampleData(null);
+    setDeliverableSampleOpen(false);
+  }, [chatDrafts?.deliverable.title, chatDrafts?.deliverable.description]);
 
   if (status === "loading") {
     return <div className="flex items-center justify-center py-32 text-gray-400">読み込み中...</div>;
@@ -788,9 +796,9 @@ export default function EditProfilePage() {
             <p className="text-xs font-semibold text-emerald-700">✓ 2つの商品案ができました — どちらかを選んでください</p>
             <div className="grid grid-cols-2 gap-3">
               {[
-                { d: chatDrafts.deliverable, badge: "📄 成果物型", color: "border-blue-200 bg-blue-50" },
-                { d: chatDrafts.consulting,  badge: "💬 コンサル型", color: "border-purple-200 bg-purple-50" },
-              ].map(({ d, badge, color }) => (
+                { d: chatDrafts.deliverable, badge: "📄 成果物型", color: "border-blue-200 bg-blue-50", isDeliverable: true },
+                { d: chatDrafts.consulting,  badge: "💬 コンサル型", color: "border-purple-200 bg-purple-50", isDeliverable: false },
+              ].map(({ d, badge, color, isDeliverable }) => (
                 <div key={badge} className={`border rounded-xl p-3 space-y-2 ${color}`}>
                   <span className="text-[10px] font-bold text-gray-600">{badge}</span>
                   <p className="text-xs font-semibold text-gray-900 leading-snug">{d.title}</p>
@@ -812,6 +820,64 @@ export default function EditProfilePage() {
                     <span className="font-bold text-blue-700">¥{d.price_suggestion.toLocaleString()}</span>
                     <span>{d.days_suggestion}日以内</span>
                   </div>
+                  {isDeliverable && (
+                    <div>
+                      <button
+                        onClick={async () => {
+                          if (deliverableSampleData) { setDeliverableSampleOpen(v => !v); return; }
+                          setDeliverableSampleLoading(true);
+                          try {
+                            const res = await fetch("/api/service-sample-table", {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ title: d.title, description: d.description }),
+                            });
+                            const data = await res.json();
+                            setDeliverableSampleData(data);
+                            setDeliverableSampleOpen(true);
+                          } finally {
+                            setDeliverableSampleLoading(false);
+                          }
+                        }}
+                        disabled={deliverableSampleLoading}
+                        className="text-[10px] text-teal-600 hover:text-teal-800 font-semibold flex items-center gap-1 disabled:opacity-50"
+                      >
+                        {deliverableSampleLoading ? (
+                          <><span className="flex gap-0.5">{[0,1,2].map(i => <span key={i} className="w-1 h-1 bg-teal-400 rounded-full animate-bounce" style={{animationDelay:`${i*0.15}s`}} />)}</span>生成中…</>
+                        ) : (
+                          <>{deliverableSampleOpen ? "▲ 閉じる" : "📊 AIが提案する納品物の叩き案を見る"}</>
+                        )}
+                      </button>
+                      {deliverableSampleOpen && deliverableSampleData && (
+                        <div className="mt-1 border border-teal-100 rounded-xl overflow-hidden">
+                          <div className="bg-teal-50 px-2 py-1 flex items-center gap-1">
+                            <span className="text-[9px] font-bold text-teal-700">📄 {deliverableSampleData.sheetName}</span>
+                            <span className="text-[8px] text-teal-400">（AIサンプル）</span>
+                          </div>
+                          <div className="overflow-x-auto">
+                            <table className="w-full text-[9px]">
+                              <thead>
+                                <tr className="bg-gray-50 border-b border-teal-100">
+                                  {deliverableSampleData.headers.map((h, i) => (
+                                    <th key={i} className="px-2 py-1 text-left font-semibold text-gray-600 whitespace-nowrap">{h}</th>
+                                  ))}
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {deliverableSampleData.rows.map((row, ri) => (
+                                  <tr key={ri} className={ri % 2 === 0 ? "bg-white" : "bg-gray-50/60"}>
+                                    {row.map((cell, ci) => (
+                                      <td key={ci} className="px-2 py-1 text-gray-600 whitespace-nowrap border-b border-gray-100">{cell}</td>
+                                    ))}
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                   <button
                     onClick={() => setChatDraft(d)}
                     className="w-full bg-white border border-gray-300 text-gray-700 text-xs py-1.5 rounded-lg hover:bg-gray-50"
