@@ -148,6 +148,7 @@ export default function TryPage() {
   const [decidedError, setDecidedError] = useState("");
   const [pasteText, setPasteText] = useState("");
   const [pasteProcessing, setPasteProcessing] = useState(false);
+  const [pasteDiagnosis, setPasteDiagnosis] = useState<{ positioning: string; price_thinking: string } | null>(null);
 
   // 壁打ち
   const [messages, setMessages] = useState<Message[]>([]);
@@ -177,7 +178,7 @@ export default function TryPage() {
     setDecidedError(""); setDecidedChecking(false);
     setMessages([]); setInput(""); setThinking(false);
     setResumeError(""); setResumeUploading(false);
-    setPasteText(""); setPasteProcessing(false);
+    setPasteText(""); setPasteProcessing(false); setPasteDiagnosis(null);
     setDrafts(null); setRefineChat(false);
   };
 
@@ -246,6 +247,7 @@ export default function TryPage() {
   const handlePaste = async () => {
     if (!pasteText.trim()) return;
     setPasteProcessing(true);
+    setPasteDiagnosis(null);
     setDecidedError("");
     try {
       const res = await fetch("/api/parse-service-paste", {
@@ -261,7 +263,11 @@ export default function TryPage() {
         price: data.price ? String(data.price) : "",
         days: data.days ? String(data.days) : "",
       });
-      setDecidedMode("form");
+      if (data.positioning || data.price_thinking) {
+        setPasteDiagnosis({ positioning: data.positioning ?? "", price_thinking: data.price_thinking ?? "" });
+      } else {
+        setDecidedMode("form");
+      }
     } finally {
       setPasteProcessing(false);
     }
@@ -639,25 +645,57 @@ export default function TryPage() {
               <h2 className="font-bold text-gray-900 mb-1">他サービスの出品内容を貼り付ける</h2>
               <p className="text-xs text-gray-500">ランサーズ・ココナラ・クラウドワークス等の出品ページのテキストをそのまま貼り付けてください。AIがタイトル・説明・価格・納期を自動で整理します。</p>
             </div>
-            <textarea
-              value={pasteText}
-              onChange={(e) => setPasteText(e.target.value)}
-              placeholder={"例：\nサービス名: 新規事業計画書レビュー\n\n20年の事業開発経験をもとに、事業計画書のレビューとフィードバックを提供します。...\n\n価格: 30,000円\n納期: 3日"}
-              rows={10}
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-            />
-            {decidedError && (
-              <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-2">{decidedError}</p>
+            {!pasteDiagnosis ? (
+              <>
+                <textarea
+                  value={pasteText}
+                  onChange={(e) => setPasteText(e.target.value)}
+                  placeholder={"例：\nサービス名: 新規事業計画書レビュー\n\n20年の事業開発経験をもとに、事業計画書のレビューとフィードバックを提供します。...\n\n価格: 30,000円\n納期: 3日"}
+                  rows={10}
+                  className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                />
+                {decidedError && (
+                  <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-2">{decidedError}</p>
+                )}
+                <button
+                  onClick={handlePaste}
+                  disabled={!pasteText.trim() || pasteProcessing}
+                  className="w-full bg-blue-600 text-white py-3.5 rounded-xl font-bold text-sm hover:bg-blue-700 transition-colors disabled:opacity-40 flex items-center justify-center gap-2"
+                >
+                  {pasteProcessing ? (
+                    <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin inline-block" />AIが分析しています...</>
+                  ) : "AIに整理・分析してもらう →"}
+                </button>
+              </>
+            ) : (
+              <>
+                <div className="space-y-3">
+                  <p className="text-sm font-bold text-gray-700">📊 経験イチバでの出し方アドバイス</p>
+                  <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 space-y-1">
+                    <p className="text-[11px] font-bold text-blue-700">💡 商品の形</p>
+                    <p className="text-sm text-gray-700 leading-relaxed">{pasteDiagnosis.positioning}</p>
+                  </div>
+                  <div className="bg-amber-50 border border-amber-100 rounded-xl p-4 space-y-1">
+                    <p className="text-[11px] font-bold text-amber-700">💰 価格の考え方</p>
+                    <p className="text-sm text-gray-700 leading-relaxed">{pasteDiagnosis.price_thinking}</p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => { setPasteDiagnosis(null); }}
+                    className="flex-1 border border-gray-300 text-gray-600 py-3 rounded-xl text-sm hover:bg-gray-50 transition-colors"
+                  >
+                    ← 貼り直す
+                  </button>
+                  <button
+                    onClick={() => setDecidedMode("form")}
+                    className="flex-[2] bg-blue-600 text-white py-3 rounded-xl font-bold text-sm hover:bg-blue-700 transition-colors"
+                  >
+                    この内容で進む →
+                  </button>
+                </div>
+              </>
             )}
-            <button
-              onClick={handlePaste}
-              disabled={!pasteText.trim() || pasteProcessing}
-              className="w-full bg-blue-600 text-white py-3.5 rounded-xl font-bold text-sm hover:bg-blue-700 transition-colors disabled:opacity-40 flex items-center justify-center gap-2"
-            >
-              {pasteProcessing ? (
-                <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin inline-block" />AIが読み込んでいます...</>
-              ) : "AIに整理してもらう →"}
-            </button>
           </div>
         )}
 
