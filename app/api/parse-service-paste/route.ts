@@ -70,8 +70,8 @@ ${text}
   ]
 }
 
-draftsは貼り付けた既存サービスをもとに整理・バリエーション化した商品案3個。
-new_ideasは同じスキル・経験から派生できる、まだ出品していないと思われる新しい商品案3個。
+draftsは貼り付けた既存サービスをもとに整理・バリエーション化した商品案2個。
+new_ideasは同じスキル・経験から派生できる、まだ出品していないと思われる新しい商品案4個。
 product_typeは"deliverable"（納品物あり）か"consulting"（対話・セッション）のどちらか。
 price_suggestionは成果物・経験の価値ベースで設定。
 price_rationaleは時間・工数への言及なし。経験の希少性や買い手が同等成果を得るコストとの比較で書く。`,
@@ -106,8 +106,8 @@ export async function POST(req: NextRequest) {
   try {
     const parsed = JSON.parse(match[0]);
     return NextResponse.json({
-      drafts: parsed.drafts?.slice(0, 3) ?? [],
-      new_ideas: parsed.new_ideas?.slice(0, 3) ?? [],
+      drafts: parsed.drafts?.slice(0, 2) ?? [],
+      new_ideas: parsed.new_ideas?.slice(0, 4) ?? [],
     });
   } catch {
     return NextResponse.json({ error: "json parse error" }, { status: 500 });
