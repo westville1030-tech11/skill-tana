@@ -30,6 +30,11 @@ function DraftCard({ draft, label, badge, badgeColor, onSelect, isDeliverable }:
   const [sampleData, setSampleData] = useState<SampleTable | null>(null);
   const [sampleLoading, setSampleLoading] = useState(false);
 
+  useEffect(() => {
+    setSampleData(null);
+    setSampleOpen(false);
+  }, [draft.title, draft.description]);
+
   const toggleSample = async () => {
     if (sampleData) { setSampleOpen(v => !v); return; }
     setSampleLoading(true);
