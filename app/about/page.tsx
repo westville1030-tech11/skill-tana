@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "私たちの想い | 経験イチバ",
+  title: "このサービスについて | 経験イチバ",
   description: "知見の流通市場をつくる。経験イチバが生まれた理由。",
 };
 
@@ -12,7 +12,7 @@ export default function AboutPage() {
       <section className="max-w-2xl mx-auto px-4 pt-20 pb-24">
         <Link href="/" className="text-sm text-teal-600 hover:underline">← トップへ戻る</Link>
 
-        <p className="text-sm font-bold text-teal-600 tracking-widest mt-10 mb-4">私たちの想い</p>
+        <p className="text-sm font-bold text-teal-600 tracking-widest mt-10 mb-4">このサービスについて</p>
         <h1 className="text-4xl font-black text-gray-900 leading-tight mb-12">
           知見の流通市場を<br />つくる。
         </h1>

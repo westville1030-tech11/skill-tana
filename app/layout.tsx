@@ -22,7 +22,7 @@ export default function RootLayout({
           <main className="flex-1">{children}</main>
           <footer className="border-t border-gray-100 bg-white py-8 text-center text-sm text-gray-400 space-y-2">
             <div className="flex justify-center gap-6">
-              <a href="/about" className="hover:text-gray-600 transition-colors">私たちの想い</a>
+              <a href="/about" className="hover:text-gray-600 transition-colors">このサービスについて</a>
               <a href="/terms" className="hover:text-gray-600 transition-colors">利用規約</a>
               <a href="/privacy" className="hover:text-gray-600 transition-colors">プライバシーポリシー</a>
             </div>
