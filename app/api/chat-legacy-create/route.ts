@@ -35,6 +35,14 @@ export async function POST(req: NextRequest) {
 
   const client = new Anthropic();
 
+  if (messages.length === 0) {
+    return NextResponse.json({
+      text: "あなたのキャリアの中で、一番泥臭かった・しんどかった時期や出来事を教えていただけますか？どんな状況でしたか？",
+      sessionDraft: null,
+      documentDraft: null,
+    });
+  }
+
   const response = await client.messages.create({
     model: "claude-haiku-4-5-20251001",
     max_tokens: 1500,
