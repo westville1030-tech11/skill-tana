@@ -10,11 +10,11 @@ const SYSTEM_FINALIZE = `
 説明文・前置き・マークダウン記法は一切不要です。区切り文字とJSONだけ出力してください。
 
 SESSION_START
-{"title":"セッションタイトル（30字以内）","description":"どんな経験を持つ人と話せるか（80字以内）","experience_story":"語られた実体験の核心（150字程度、一人称なし）","ai_usage":"セッション準備にAIをどう使うか（50字以内）","recommended_tools":["Gemini","ChatGPT"],"price_suggestion":15000,"days_suggestion":1,"service_type":"spot","price_rationale":"この経験を直接聞ける価値を経験の希少性・再現困難性で説明する1文（60字以内）","target_buyer":"この経験から学びたい・力を借りたい人物像（50字以内）"}
+{"title":"セッションタイトル（30字以内）","description":"どんな経験を持つ人と話せるか（80字以内）","experience_story":"語られた実体験の核心（150字程度、一人称なし）","ai_usage":"セッション準備にAIをどう使うか（50字以内）","recommended_tools":["Gemini","ChatGPT"],"price_suggestion":15000,"days_suggestion":1,"service_type":"spot","price_rationale":"この経験を直接聞ける価値を経験の希少性・再現困難性で説明する1文（60字以内）","target_buyer":"この経験から学びたい個人の人物像・キャリアステージ（50字以内）","target_company":"この経験を必要としている企業の業種・規模・担当者の役職（50字以内）"}
 SESSION_END
 
 DOCUMENT_START
-{"title":"経験録のタイトル（30字以内）","description":"どんな経験がどんな形で残るか（80字以内）","experience_story":"語られた実体験の核心（150字程度、一人称なし）","ai_usage":"AIと一緒に経験を文書化する方法（50字以内）","recommended_tools":["Claude","NotebookLM"],"price_suggestion":10000,"days_suggestion":7,"service_type":"spot","price_rationale":"この経験を文書として得られる価値を経験の希少性・再現困難性で説明する1文（60字以内）","target_buyer":"この経験録を必要としている人物像（50字以内）"}
+{"title":"経験録のタイトル（30字以内）","description":"どんな経験がどんな形で残るか（80字以内）","experience_story":"語られた実体験の核心（150字程度、一人称なし）","ai_usage":"AIと一緒に経験を文書化する方法（50字以内）","recommended_tools":["Claude","NotebookLM"],"price_suggestion":10000,"days_suggestion":7,"service_type":"spot","price_rationale":"この経験を文書として得られる価値を経験の希少性・再現困難性で説明する1文（60字以内）","target_buyer":"この経験録を必要としている個人の人物像・キャリアステージ（50字以内）","target_company":"この経験録を活用したい企業の業種・規模・担当者の役職（50字以内）"}
 DOCUMENT_END`;
 
 function buildSystem(userCount: number, isFinalize: boolean): string {

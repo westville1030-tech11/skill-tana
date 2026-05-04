@@ -16,6 +16,7 @@ type ServiceDraft = {
   service_type: string;
   price_rationale?: string;
   target_buyer?: string;
+  target_company?: string;
 };
 
 type Drafts = { deliverable: ServiceDraft; consulting: ServiceDraft } | null;
@@ -94,6 +95,12 @@ function DraftCard({ draft, label, badge, badgeColor, onSelect, isDeliverable, s
           <div className="space-y-1">
             <p className="text-[10px] font-semibold text-emerald-600">👤 こんな方に届けたい</p>
             <p className="text-[11px] text-gray-600 leading-relaxed">{draft.target_buyer}</p>
+          </div>
+        )}
+        {draft.target_company && (
+          <div className="space-y-1">
+            <p className="text-[10px] font-semibold text-indigo-600">🏢 こんな企業・組織に届けたい</p>
+            <p className="text-[11px] text-gray-600 leading-relaxed">{draft.target_company}</p>
           </div>
         )}
       </div>
