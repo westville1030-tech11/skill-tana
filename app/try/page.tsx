@@ -595,19 +595,25 @@ export default function TryPage() {
             <div className="grid sm:grid-cols-2 gap-4">
               <button
                 onClick={() => setFlowType("skill")}
-                className="bg-white border-2 border-gray-200 hover:border-blue-400 rounded-2xl p-6 text-left space-y-3 transition-all group"
+                className="bg-white border-2 border-gray-200 hover:border-blue-400 rounded-2xl p-6 text-left space-y-3 transition-all group flex flex-col"
               >
                 <span className="text-2xl">💼</span>
                 <p className="font-bold text-gray-900 group-hover:text-blue-700">スキル・成果物を<br />売りたい</p>
                 <p className="text-xs text-gray-500 leading-relaxed">副業・フリーランスとして、自分のスキルを商品化します。AIがすばやく商品案を作ります。</p>
+                <div className="mt-auto pt-3 w-full bg-blue-600 group-hover:bg-blue-700 text-white text-sm font-bold text-center py-2 rounded-xl transition-colors">
+                  こちらを選ぶ →
+                </div>
               </button>
               <button
                 onClick={() => setFlowType("legacy")}
-                className="bg-white border-2 border-gray-200 hover:border-teal-400 rounded-2xl p-6 text-left space-y-3 transition-all group"
+                className="bg-white border-2 border-gray-200 hover:border-teal-400 rounded-2xl p-6 text-left space-y-3 transition-all group flex flex-col"
               >
                 <span className="text-2xl">📖</span>
                 <p className="font-bold text-gray-900 group-hover:text-teal-700">経験・知恵を<br />形に残したい</p>
                 <p className="text-xs text-gray-500 leading-relaxed">長年の経験を話しながら、対話セッションや経験録として後世に伝える形にします。</p>
+                <div className="mt-auto pt-3 w-full bg-teal-600 group-hover:bg-teal-700 text-white text-sm font-bold text-center py-2 rounded-xl transition-colors">
+                  こちらを選ぶ →
+                </div>
               </button>
             </div>
           </>
