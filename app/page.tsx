@@ -22,7 +22,7 @@ export default function Home() {
                 <span className="text-blue-300">卒業する。</span>
               </h1>
               <p className="text-slate-300 text-sm leading-relaxed mb-8 max-w-sm mx-auto lg:mx-0">
-                ビザスクの1時間制、ランサーズの20%手数料。固定価格の成果物なら、AIを使うほど稼げて、一度作れば何度でも売れる。
+                時間を切り売りするのは、もう古い。固定価格の成果物なら、AIを使うほど稼げて、一度作れば何度でも売れる。
               </p>
 
               <div className="grid sm:grid-cols-2 gap-4 mb-6">
@@ -78,10 +78,10 @@ export default function Home() {
       <section className="bg-slate-950 px-4 py-10 border-t border-white/5">
         <div className="max-w-2xl mx-auto text-center space-y-2">
           <p className="text-white text-lg md:text-xl font-bold leading-snug tracking-tight">
-            このイチバでは、AIを相棒に使うことを前提に働きます。
+            このイチバでは、AIを相棒にすることを前提とします。
           </p>
           <p className="text-slate-400 text-sm leading-relaxed">
-            AIで速くなった時間は、そのまま経験者の利益になる。だから固定価格が成り立つ。
+            副業の始め方が分からなかった人も、会社の枠を超えて個人として動きたかった人も。経験があれば、ここから始められる。
           </p>
         </div>
       </section>
@@ -91,49 +91,58 @@ export default function Home() {
         <div className="max-w-3xl mx-auto">
           <p className="text-xs font-bold text-blue-600 tracking-widest text-center mb-3">発注する側の話</p>
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">
-            複数人から、並列で買う。
+            経験者の知見を、手元に置く。
           </h2>
-          <p className="text-center text-gray-400 text-sm mb-12">¥15,000〜、成果物として手元に残る。同じ予算で1人より多くの知見を。</p>
+          <p className="text-center text-gray-400 text-sm mb-12">¥15,000〜、成果物として受け取れる。話して終わりにしない。</p>
 
-          <div className="grid md:grid-cols-3 gap-5 mb-10">
-            <div className="rounded-2xl bg-blue-50 border border-blue-100 p-5">
-              <p className="text-2xl mb-3">📦</p>
-              <p className="font-bold text-gray-900 text-sm mb-2">成果物で受け取れる</p>
-              <p className="text-xs text-gray-500 leading-relaxed">
-                話して終わりにならない。テンプレート・レポート・チェックリストとして手元に残り、社内説得の根拠にも使える。
-              </p>
+          <div className="grid sm:grid-cols-2 gap-4 mb-10">
+            <div className="rounded-2xl bg-blue-50 border border-blue-100 p-5 flex gap-4">
+              <p className="text-2xl flex-shrink-0">📦</p>
+              <div>
+                <p className="font-bold text-gray-900 text-sm mb-1">成果物として手元に残る</p>
+                <p className="text-xs text-gray-500 leading-relaxed">テンプレート・チェックリスト・レポート形式で受け取れる。社内共有・稟議の根拠としてそのまま使える。</p>
+              </div>
             </div>
-            <div className="rounded-2xl bg-blue-50 border border-blue-100 p-5">
-              <p className="text-2xl mb-3">🔀</p>
-              <p className="font-bold text-gray-900 text-sm mb-2">複数人から並列調達できる</p>
-              <p className="text-xs text-gray-500 leading-relaxed">
-                同じテーマで3人から同時購入もOK。視点を比較して意思決定の精度を上げる、新しい調達の使い方。
-              </p>
+            <div className="rounded-2xl bg-blue-50 border border-blue-100 p-5 flex gap-4">
+              <p className="text-2xl flex-shrink-0">🧠</p>
+              <div>
+                <p className="font-bold text-gray-900 text-sm mb-1">AIでは出ない現場のリアル</p>
+                <p className="text-xs text-gray-500 leading-relaxed">AIが生成する一般論ではなく、実体験を持つ人の知見が入っている。その違いが、使える情報かどうかを分ける。</p>
+              </div>
             </div>
-            <div className="rounded-2xl bg-blue-50 border border-blue-100 p-5">
-              <p className="text-2xl mb-3">💸</p>
-              <p className="font-bold text-gray-900 text-sm mb-2">手数料ゼロで価格が正直</p>
-              <p className="text-xs text-gray-500 leading-relaxed">
-                出品者は手数料を価格に上乗せしない。同じ品質なら、他のプラットフォームより安く調達できる。
-              </p>
+            <div className="rounded-2xl bg-blue-50 border border-blue-100 p-5 flex gap-4">
+              <p className="text-2xl flex-shrink-0">🔀</p>
+              <div>
+                <p className="font-bold text-gray-900 text-sm mb-1">複数人から並列で調達できる</p>
+                <p className="text-xs text-gray-500 leading-relaxed">同じテーマで複数人から同時購入もOK。視点を比べて意思決定の精度を上げる、新しい知見の取り方。</p>
+              </div>
+            </div>
+            <div className="rounded-2xl bg-blue-50 border border-blue-100 p-5 flex gap-4">
+              <p className="text-2xl flex-shrink-0">💸</p>
+              <div>
+                <p className="font-bold text-gray-900 text-sm mb-1">¥15,000〜、手数料ゼロで正直な価格</p>
+                <p className="text-xs text-gray-500 leading-relaxed">出品者は手数料を価格に上乗せしない。小さく試して、合えば深掘りする発注が気軽にできる。</p>
+              </div>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-gray-200 overflow-hidden">
-            <div className="grid grid-cols-2">
-              <div className="bg-gray-50 p-5 border-r border-gray-200">
-                <p className="text-[10px] font-bold text-gray-400 tracking-widest mb-3">スポットコンサル（時間課金）</p>
-                <p className="text-sm font-bold text-gray-600 mb-1">¥50,000 × 1人 × 1回</p>
-                <p className="text-xs text-gray-400 leading-relaxed">1時間の会話。成果物は残らない。同じ人に再発注が必要。</p>
-              </div>
-              <div className="bg-blue-50 p-5">
-                <p className="text-[10px] font-bold text-blue-400 tracking-widest mb-3">経験イチバ（成果物・複数発注）</p>
-                <p className="text-sm font-bold text-blue-700 mb-1">¥15,000 × 3人 × 同時購入</p>
-                <p className="text-xs text-blue-600 leading-relaxed">3人の視点を成果物で比較。¥5,000安くて、3倍の情報量。</p>
-              </div>
-            </div>
-            <div className="bg-blue-600 px-6 py-3 text-center">
-              <p className="text-sm text-white font-bold">同じ予算で、複数の知見を成果物として並列調達できる</p>
+          <div className="rounded-2xl border border-gray-100 bg-gray-50 p-6">
+            <p className="text-xs font-bold text-gray-400 tracking-widest mb-5">こういう時に使う</p>
+            <div className="space-y-3">
+              {[
+                { scene: "AIで調べても一般論しか出てこない", detail: "海外調達の交渉術、融資が通る書類の作り方、採用で本当に見ているポイント——検索では出てこない現場の答えが欲しい時。" },
+                { scene: "社内に前例がない領域で叩き台が欲しい", detail: "初めて取り組む業務・市場・業種。ゼロから考えるより、経験者の成果物を叩き台にした方が圧倒的に速い。" },
+                { scene: "意思決定前に複数の視点を揃えたい", detail: "1人の意見では心許ない。同じテーマで3人から購入して比較すれば、判断の根拠が厚くなる。" },
+                { scene: "小さく試してから動きたい", detail: "大きな外注の前に、¥15,000〜の成果物で方向性を確認する。失敗コストを下げて、動ける範囲を広げる。" },
+              ].map((item) => (
+                <div key={item.scene} className="flex gap-3 items-start">
+                  <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-blue-400 mt-2" />
+                  <div>
+                    <p className="text-sm font-bold text-gray-800">{item.scene}</p>
+                    <p className="text-xs text-gray-400 leading-relaxed mt-0.5">{item.detail}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -142,8 +151,8 @@ export default function Home() {
       {/* 経験→商品化 事例 */}
       <section className="py-28 px-4 bg-white border-t border-gray-100">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">こんな経験が、商品になります</h2>
-          <p className="text-center text-gray-400 mb-14">AIが実体験を整理して、誰かに届く形に変えます</p>
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">時間を売らずに、経験を届けた事例</h2>
+          <p className="text-center text-gray-400 mb-14">副業初挑戦から、個人として動き始めたプロまで</p>
 
           <div className="space-y-8">
             {commercializationCases.map((c) => (
@@ -916,28 +925,28 @@ const commercializationCases = [
     experienceValue: "「なぜ断られたか」の本当の理由は事業内容ではなく書類の見せ方にある、という30年分の審査現場で気づいたインサイト。AIには書けない融資担当者側のリアル。",
   },
   {
-    role: "育休中の親（元SNSマーケ担当）",
-    experience: "産前は大手ECのSNSマーケ担当だった。育休中に自社の子ども服ブランドのInstagramを趣味で試したら、3ヶ月でフォロワーが1万人になった。同じ悩みを持つ育休ママたちに発信したのが効いた。",
-    productTitle: "ゼロから1万フォロワーへのInstagram育成ロードマップ（育児・子どもジャンル特化）",
+    role: "フリーランス（Web制作・ブランディング8年）",
+    experience: "クラウドワークスで案件を取り続けていたが、手数料20%と単価競争に疲弊していた。8年かけて体系化した「中小企業がリブランディングで失敗するパターン」を成果物にしたら、同じ情報を価格競争なしで届けられると気づいた。",
+    productTitle: "中小企業のリブランディング失敗パターン10と回避チェックリスト",
     deliverables: [
-      "ジャンル別「バズる投稿テーマ」の選び方と投稿カレンダー",
-      "育児アカウントでエンゲージメントが上がる構成パターン",
-      "フォロワー増加の踊り場を突破するための施策リスト",
+      "8年間の実案件から見えたリブランディング失敗パターン（10事例）",
+      "「デザインより先に決めるべきこと」判断フローチャート",
+      "社内承認を通すためのリブランディング提案書テンプレート",
     ],
-    price: "¥20,000",
-    experienceValue: "自社ブランドで実際にバズった投稿・滑った投稿の両方の実体験から見えた「エンゲージメントが上がる瞬間のパターン」は、一般的なSNS攻略記事には載っていない。",
+    price: "¥25,000",
+    experienceValue: "「ロゴを変えた後に社内から反発が起きる」という失敗パターンは、実際に現場で経験したプロセスの落とし穴。統計やハウツー記事には載っていない。",
   },
   {
-    role: "専業主婦（元経理担当10年）",
-    experience: "子育てで退職して8年経つが、夫の個人事業の経理を全部独学でこなしてきた。確定申告・弥生会計・インボイス対応まで自己流でやっていたら、近所の同業者から教えてほしいと言われるようになった。",
-    productTitle: "個人事業主の確定申告・弥生会計セットアップ完全ガイド（初心者向け）",
+    role: "現役コンサルタント（戦略ファーム10年・副業初挑戦）",
+    experience: "スポットの問い合わせが来るたびに1時間ずつ同じことを話していた。「業界参入の判断軸」「PMIで失敗しないチェックポイント」など、自分が何百時間も考えてきたことを成果物にまとめたら、時間を使わずに届けられると気づいた。",
+    productTitle: "業界参入判断フレームワーク（戦略ファーム出身者が実際に使う評価軸）",
     deliverables: [
-      "開業から確定申告まで時系列でやることリスト",
-      "インボイス登録の要否判断フローと登録手順",
-      "弥生会計の初期設定から月次入力までの操作手順書",
+      "新規事業参入時にファームが使うスクリーニング基準と評価軸",
+      "「参入すべきでない」判断を下した実案件の要素分解",
+      "クライアントへの最初のヒアリングで使う15の質問リスト",
     ],
-    price: "¥15,000",
-    experienceValue: "夫の事業で実際に「ここで詰まった」経験があるからこそ書ける、弥生会計の初期設定でほぼ全員がはまるポイントと回避策。マニュアルには書いていない現場の感覚。",
+    price: "¥45,000",
+    experienceValue: "「参入判断の肝は市場規模より競合の撤退障壁」という気づきは、十数件の参入調査を経て見えてきたパターン認識。AIが生成するフレームワークとは根拠が違う。",
   },
   {
     role: "海外在住・越境人材（シンガポール10年）",
@@ -964,16 +973,16 @@ const commercializationCases = [
     experienceValue: "交渉の場で「実際に使えた言い回し」と相手の反応パターンは15年分の実録。金型費を無償化した時の相手の出方や、こちらが折れた瞬間の空気感は、テンプレートに魂を入れる部分。",
   },
   {
-    role: "元教育者（高校理科教員20年）",
-    experience: "20年間高校で理科を教えた。最後の5年で気づいたのは、苦手な生徒に共通するのは『手順を覚えようとして失敗の原因を考えない』こと。原因思考を教えたら担当クラスの偏差値が平均8上がった。",
-    productTitle: "理科・数学が苦手な中高生の原因思考力を育てる授業設計テンプレート",
+    role: "IT企業プロダクトマネージャー（現役・副業初挑戦）",
+    experience: "「副業したいけど何をすればいいか分からない」という状態が3年続いた。社内では当たり前に使っていたロードマップ設計やユーザーインタビューの手法が、外では高く評価されると気づいたのは同僚の一言がきっかけだった。",
+    productTitle: "スタートアップ向けプロダクトロードマップ設計テンプレート（PM10年の実務版）",
     deliverables: [
-      "「なぜ間違えたか」を生徒自身が言語化できるワークシート",
-      "原因思考を習慣化する授業導入5分ルーティン",
-      "保護者向け「家庭でできる思考習慣サポート」説明資料",
+      "四半期ロードマップの優先順位づけに使う評価マトリクス",
+      "ユーザーインタビューで本当のニーズを引き出す質問設計書",
+      "経営陣への提案に使ったロードマップ説明資料の実例（個人情報除去済み）",
     ],
-    price: "¥25,000",
-    experienceValue: "担当クラスで平均偏差値が8上がった授業実践の記録と、「原因思考を教えた瞬間に生徒の目が変わった」具体的な場面の描写。再現性の根拠になる経験者だけが持つデータ。",
+    price: "¥30,000",
+    experienceValue: "「機能要望の多さと優先度は反比例することが多い」という逆説は、数百件のインタビューを経て体得したもの。テンプレートに込めた判断基準の背景は、AIには書けない。",
   },
 ];
 
