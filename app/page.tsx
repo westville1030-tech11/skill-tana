@@ -43,7 +43,7 @@ export default function Home() {
                   <p className="text-sm text-slate-300 leading-relaxed">
                     ¥15,000〜、複数人から並列で購入できる。同じ予算で1人のコンサルより多くの知見を。
                   </p>
-                  <Link href="/browse"
+                  <Link href="/request"
                     className="mt-auto block text-center bg-white/15 border border-white/25 text-white py-3 px-4 rounded-xl text-sm font-bold hover:bg-white/20 transition-colors">
                     経験者を探す →
                   </Link>
@@ -81,8 +81,53 @@ export default function Home() {
             このイチバでは、AIを相棒にすることを前提とします。
           </p>
           <p className="text-slate-400 text-sm leading-relaxed">
-            副業の始め方が分からなかった人も、会社の枠を超えて個人として動きたかった人も。経験があれば、ここから始められる。
+            AIを使うほど稼げる。一度作れば何度でも売れる。時間給では届かなかった、新しい稼ぎ方がここにある。
           </p>
+        </div>
+      </section>
+
+      {/* 経験→商品化 事例 */}
+      <section className="py-28 px-4 bg-white border-t border-gray-100">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">時間を売らずに、経験を届けた事例</h2>
+          <p className="text-center text-gray-400 mb-14">副業初挑戦から、個人として動き始めたプロまで</p>
+
+          <div className="space-y-8">
+            {commercializationCases.map((c) => (
+              <div key={c.role} className="grid md:grid-cols-2 gap-0 rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+                {/* 左：実体験 */}
+                <div className="bg-amber-50 p-6 flex flex-col gap-3">
+                  <span className="text-xs font-bold text-amber-700 bg-amber-100 px-3 py-1 rounded-full self-start">{c.role}</span>
+                  <p className="text-xs font-semibold text-amber-800 mb-1">経験者が語った事実</p>
+                  <blockquote className="text-sm text-gray-700 leading-relaxed border-l-2 border-amber-300 pl-3 italic">
+                    「{c.experience}」
+                  </blockquote>
+                </div>
+                {/* 右：商品化案 */}
+                <div className="bg-white p-6 flex flex-col gap-3 border-l border-gray-100">
+                  <span className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full self-start">AI × 実体験の商品化案</span>
+                  <p className="font-bold text-gray-900 text-sm leading-snug">{c.productTitle}</p>
+                  <ul className="space-y-1.5">
+                    {c.deliverables.map((d, i) => (
+                      <li key={i} className="flex items-start gap-2 text-xs text-gray-600 leading-relaxed">
+                        <span className="text-blue-400 font-bold flex-shrink-0 mt-0.5">✓</span>
+                        {d}
+                      </li>
+                    ))}
+                  </ul>
+                  {c.experienceValue && (
+                    <div className="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3">
+                      <p className="text-[10px] font-bold text-amber-700 mb-1">📌 経験者だから加えられること</p>
+                      <p className="text-xs text-gray-700 leading-relaxed">{c.experienceValue}</p>
+                    </div>
+                  )}
+                  <div className="mt-auto pt-3 border-t border-gray-100">
+                    <span className="num text-blue-700 font-black text-base">{c.price}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -144,51 +189,6 @@ export default function Home() {
                 </div>
               ))}
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 経験→商品化 事例 */}
-      <section className="py-28 px-4 bg-white border-t border-gray-100">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">時間を売らずに、経験を届けた事例</h2>
-          <p className="text-center text-gray-400 mb-14">副業初挑戦から、個人として動き始めたプロまで</p>
-
-          <div className="space-y-8">
-            {commercializationCases.map((c) => (
-              <div key={c.role} className="grid md:grid-cols-2 gap-0 rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
-                {/* 左：実体験 */}
-                <div className="bg-amber-50 p-6 flex flex-col gap-3">
-                  <span className="text-xs font-bold text-amber-700 bg-amber-100 px-3 py-1 rounded-full self-start">{c.role}</span>
-                  <p className="text-xs font-semibold text-amber-800 mb-1">経験者が語った事実</p>
-                  <blockquote className="text-sm text-gray-700 leading-relaxed border-l-2 border-amber-300 pl-3 italic">
-                    「{c.experience}」
-                  </blockquote>
-                </div>
-                {/* 右：商品化案 */}
-                <div className="bg-white p-6 flex flex-col gap-3 border-l border-gray-100">
-                  <span className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full self-start">AI × 実体験の商品化案</span>
-                  <p className="font-bold text-gray-900 text-sm leading-snug">{c.productTitle}</p>
-                  <ul className="space-y-1.5">
-                    {c.deliverables.map((d, i) => (
-                      <li key={i} className="flex items-start gap-2 text-xs text-gray-600 leading-relaxed">
-                        <span className="text-blue-400 font-bold flex-shrink-0 mt-0.5">✓</span>
-                        {d}
-                      </li>
-                    ))}
-                  </ul>
-                  {c.experienceValue && (
-                    <div className="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3">
-                      <p className="text-[10px] font-bold text-amber-700 mb-1">📌 経験者だから加えられること</p>
-                      <p className="text-xs text-gray-700 leading-relaxed">{c.experienceValue}</p>
-                    </div>
-                  )}
-                  <div className="mt-auto pt-3 border-t border-gray-100">
-                    <span className="num text-blue-700 font-black text-base">{c.price}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
