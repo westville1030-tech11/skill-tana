@@ -180,7 +180,7 @@ export default function TryPage() {
   const [legacyThinking, setLegacyThinking] = useState(false);
   const [legacyDrafts, setLegacyDrafts] = useState<{ session: ServiceDraft; document: ServiceDraft } | null>(null);
   const [legacyRounds, setLegacyRounds] = useState(0);
-  const [legacyContinue, setLegacyContinue] = useState(false);
+  const [nextButtonRound, setNextButtonRound] = useState(3);
 
   const [mode, setMode] = useState<Mode>(null);
   const [exploreMode, setExploreMode] = useState<ExploreMode>(null);
@@ -230,7 +230,7 @@ export default function TryPage() {
     setResumeError(""); setResumeUploading(false);
     setPasteText(""); setPasteUrl(""); setPasteInputMode("text"); setPasteProcessing(false); setPasteDrafts(null); setPasteNewIdeas(null); setSelectedPasteKeys(new Set());
     setDrafts(null); setRefineChat(false);
-    setLegacyMessages([]); setLegacyInput(""); setLegacyThinking(false); setLegacyDrafts(null); setLegacyRounds(0); setLegacyContinue(false);
+    setLegacyMessages([]); setLegacyInput(""); setLegacyThinking(false); setLegacyDrafts(null); setLegacyRounds(0); setNextButtonRound(3);
   };
 
   const goRegister = (draft: ServiceDraft) => {
@@ -695,7 +695,7 @@ export default function TryPage() {
                 </div>
                 {legacyMessages.length > 0 && (
                   <div className="border-t border-gray-100 pt-4">
-                    {legacyRounds >= 3 && !legacyContinue ? (
+                    {legacyRounds >= nextButtonRound ? (
                       <div className="flex gap-3">
                         <button
                           onClick={finalizeLegacy}
@@ -705,7 +705,7 @@ export default function TryPage() {
                           まとめる →
                         </button>
                         <button
-                          onClick={() => setLegacyContinue(true)}
+                          onClick={() => setNextButtonRound(legacyRounds + 3)}
                           className="flex-1 border border-gray-200 text-gray-600 font-bold py-3 rounded-xl text-sm hover:border-gray-300 transition-colors"
                         >
                           まだ続ける

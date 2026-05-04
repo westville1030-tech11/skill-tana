@@ -43,7 +43,7 @@ function buildSystem(userCount: number, isFinalize: boolean): string {
 
   return SYSTEM_BASE + `
 
-【指示】自由に対話を続けてください。ユーザーが「まとめてください」などまとめを求めたときは、それに応じて会話を締めくくってください（JSON出力は不要）。`;
+【指示】追加の深掘りフェーズです。ユーザーの回答に対して、1問だけ質問してください。それ以上は聞かないこと。`;
 }
 
 function extractJson(text: string, startTag: string, endTag: string) {
@@ -52,7 +52,7 @@ function extractJson(text: string, startTag: string, endTag: string) {
   return null;
 }
 
-const FINALIZE_TRIGGERS = ["まとめてください", "まとめましょう", "まとめて", "形にして", "お願いします", "はい"];
+const FINALIZE_TRIGGERS = ["まとめてください", "まとめましょう", "まとめて", "まとめる", "纏めて", "纏める", "形にして", "お願いします", "はい", "yes", "ok", "OK"];
 
 export async function POST(req: NextRequest) {
   const { messages } = await req.json() as {
