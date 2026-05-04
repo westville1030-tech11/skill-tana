@@ -15,6 +15,7 @@ type ServiceDraft = {
   days_suggestion: number;
   service_type: string;
   price_rationale?: string;
+  target_buyer?: string;
 };
 
 type Drafts = { deliverable: ServiceDraft; consulting: ServiceDraft } | null;
@@ -152,6 +153,12 @@ function DraftCard({ draft, label, badge, badgeColor, onSelect, isDeliverable, s
           <p className="text-[11px] text-gray-500 bg-slate-50 border border-slate-100 rounded-lg px-3 py-2 leading-relaxed">{draft.price_rationale}</p>
         )}
       </div>
+      {draft.target_buyer && (
+        <div className="bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2.5">
+          <p className="text-[10px] font-semibold text-emerald-700 mb-1">👤 こんな方に届けたい</p>
+          <p className="text-[11px] text-gray-600 leading-relaxed">{draft.target_buyer}</p>
+        </div>
+      )}
       {!selectable && (
         <button onClick={onSelect} className="w-full bg-amber-500 hover:bg-amber-600 transition-colors text-white font-bold py-3 rounded-xl text-sm mt-1">
           {label}で登録する →
@@ -412,11 +419,8 @@ export default function TryPage() {
   };
 
   // OBフロー チャット
-  const sendLegacyChat = async () => {
-    const text = legacyInput.trim();
-    if (!text || legacyThinking) return;
-    setLegacyInput("");
-    const next: Message[] = [...legacyMessages, { role: "user", content: text }];
+  const sendLegacyMessage = async (text: string, currentMessages: Message[]) => {
+    const next: Message[] = [...currentMessages, { role: "user", content: text }];
     setLegacyMessages(next);
     setLegacyThinking(true);
     try {
@@ -426,8 +430,7 @@ export default function TryPage() {
         body: JSON.stringify({ messages: next }),
       });
       const data = await res.json();
-      const newRounds = legacyRounds + 1;
-      setLegacyRounds(newRounds);
+      setLegacyRounds(prev => prev + 1);
       setLegacyMessages([...next, { role: "assistant", content: data.text }]);
       if (data.sessionDraft || data.documentDraft) {
         setLegacyDrafts({
@@ -438,6 +441,18 @@ export default function TryPage() {
     } finally {
       setLegacyThinking(false);
     }
+  };
+
+  const sendLegacyChat = async () => {
+    const text = legacyInput.trim();
+    if (!text || legacyThinking) return;
+    setLegacyInput("");
+    await sendLegacyMessage(text, legacyMessages);
+  };
+
+  const finalizeLegacy = () => {
+    if (legacyThinking) return;
+    sendLegacyMessage("まとめてください", legacyMessages);
   };
 
   // 履歴書アップロード
@@ -697,6 +712,17 @@ export default function TryPage() {
                 )}
               </div>
             )}
+            {legacyRounds >= 3 && !legacyThinking && (
+              <div className="border border-teal-200 bg-teal-50 rounded-2xl p-4 space-y-2">
+                <p className="text-xs text-teal-700">十分に話せましたか？今の内容をもとに2つの商品案を作ることができます。</p>
+                <button
+                  onClick={finalizeLegacy}
+                  className="w-full bg-teal-600 hover:bg-teal-700 transition-colors text-white font-bold py-3 rounded-xl text-sm"
+                >
+                  この内容でまとめる →
+                </button>
+              </div>
+            )}
           </div>
         )}
 
@@ -710,14 +736,14 @@ export default function TryPage() {
             <div className="grid sm:grid-cols-2 gap-4">
               <DraftCard
                 draft={legacyDrafts.session}
-                label="話を聞く時間として登録する"
+                label="対話セッション"
                 badge="💬 対話セッション"
                 badgeColor="bg-purple-50 text-purple-700"
                 onSelect={() => goRegister(legacyDrafts.session)}
               />
               <DraftCard
                 draft={legacyDrafts.document}
-                label="経験録として登録する"
+                label="経験録"
                 badge="📖 経験録"
                 badgeColor="bg-teal-50 text-teal-700"
                 onSelect={() => goRegister(legacyDrafts.document)}
