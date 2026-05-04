@@ -10,51 +10,52 @@ export default function Home() {
 
             {/* Left */}
             <div className="flex-1 text-center lg:text-left">
-              <div className="flex flex-col items-center lg:items-start gap-2 mb-8">
+              <div className="flex flex-col items-center lg:items-start mb-6">
                 <div className="inline-flex items-center gap-2 bg-white/10 border border-white/15 text-white text-sm font-medium px-5 py-2 rounded-full">
                   <span className="w-2 h-2 bg-emerald-400 rounded-full inline-block flex-shrink-0" />
-                  個人の取引手数料・登録料は永久無料。AIが運営するから、成約しても一切引かれません。
+                  成約手数料・登録料 永久¥0
                 </div>
               </div>
 
-              <h1 className="text-4xl md:text-5xl font-black text-white leading-tight mb-5 tracking-tight">
-                あなたの経験を、<br />
-                <span className="text-blue-300">誰かの答えに。</span>
+              <h1 className="text-4xl md:text-5xl font-black text-white leading-tight mb-4 tracking-tight">
+                手数料ゼロで、<br />
+                <span className="text-blue-300">経験を売り買いする場所。</span>
               </h1>
-              <div className="grid sm:grid-cols-2 gap-4 mb-6 mt-8">
-                {/* 経験者 */}
-                <div className="bg-white/8 border border-white/15 rounded-2xl p-5 flex flex-col gap-4">
+              <p className="text-slate-300 text-sm leading-relaxed mb-8 max-w-sm mx-auto lg:mx-0">
+                AIで仕事が変わる時代。スキルより深い「経験」が、次の武器になる。
+              </p>
+
+              <div className="grid sm:grid-cols-2 gap-4 mb-6">
+                {/* 経験を売りたい */}
+                <div className="bg-white/8 border border-white/15 rounded-2xl p-5 flex flex-col gap-3">
+                  <p className="text-xs font-bold text-amber-300 tracking-wide">経験を届けたい方へ</p>
                   <p className="text-sm text-slate-300 leading-relaxed">
-                    「自分の経験が商品化できるなんて、考えたこともなかった…」
+                    成約しても手数料は一切なし。受注額がそのまま手元に残る。
                   </p>
                   <Link href="/try"
                     className="mt-auto block text-center bg-gradient-to-r from-amber-500 to-amber-400 text-white py-3 px-4 rounded-xl text-sm font-bold hover:opacity-90 transition-opacity shadow-lg shadow-amber-900/30">
-                    AIに相談して商品化提案を受けてみる →
+                    経験を出品する →
                   </Link>
                 </div>
-                {/* 発注者 */}
-                <div className="bg-white/8 border border-white/15 rounded-2xl p-5 flex flex-col gap-4">
+                {/* 経験者に相談したい */}
+                <div className="bg-white/8 border border-white/15 rounded-2xl p-5 flex flex-col gap-3">
+                  <p className="text-xs font-bold text-blue-300 tracking-wide">経験者に相談したい方へ</p>
                   <p className="text-sm text-slate-300 leading-relaxed">
-                    「課題をどう伝えて発注するか、不安…」
+                    社外の経験者に、固定価格で相談できる。
                   </p>
-                  <Link href="/request"
+                  <Link href="/browse"
                     className="mt-auto block text-center bg-white/15 border border-white/25 text-white py-3 px-4 rounded-xl text-sm font-bold hover:bg-white/20 transition-colors">
-                    曖昧なままAIに伝え、壁打ちの上で発注提案を受けてみる →
+                    経験者を探す →
                   </Link>
                 </div>
-              </div>
-              <div className="text-center lg:text-left mb-8">
-                <Link href="/browse" className="text-slate-400 text-sm hover:text-white transition-colors">
-                  まずイチバの棚を見てみる →
-                </Link>
               </div>
 
               {/* キラーワード3つ */}
               <div className="grid grid-cols-3 gap-3">
                 {[
-                  { value: "¥0 手数料なし", desc: "成約しても引かれない" },
-                  { value: "経験を商品化して届ける", desc: "AIが一緒に作る" },
-                  { value: "AIの目でひと確認", desc: "実体験を確かめる" },
+                  { value: "¥0 手数料", desc: "成約しても引かれない" },
+                  { value: "AI×経験", desc: "一般論で終わらせない" },
+                  { value: "固定価格", desc: "AIを使うほど稼げる" },
                 ].map((item) => (
                   <div key={item.value} className="bg-white/8 border border-white/10 rounded-xl px-3 py-3 text-center">
                     <p className="text-xs font-bold text-white leading-snug">{item.value}</p>
