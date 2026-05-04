@@ -58,111 +58,114 @@ function DraftCard({ draft, label, badge, badgeColor, onSelect, isDeliverable, s
 
   return (
     <div
-      className={`bg-white border rounded-2xl p-5 flex flex-col gap-3 transition-all ${
+      className={`bg-white border rounded-2xl overflow-hidden flex flex-col transition-all ${
         selectable ? "cursor-pointer " + (isSelected ? "border-amber-400 ring-2 ring-amber-100" : "border-gray-200 hover:border-amber-200") : "border-gray-100"
       }`}
       onClick={selectable ? onToggleSelect : undefined}
     >
-      <div className="flex items-start justify-between gap-2">
-        <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${badgeColor}`}>{badge}</span>
-        {selectable && (
-          <div className={`w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center mt-0.5 transition-colors ${
-            isSelected ? "border-amber-500 bg-amber-500" : "border-gray-300 bg-white"
-          }`}>
-            {isSelected && <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+      {/* ── 商品情報 ── */}
+      <div className="p-5 flex flex-col gap-3">
+        <div className="flex items-start justify-between gap-2">
+          <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${badgeColor}`}>{badge}</span>
+          {selectable && (
+            <div className={`w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center mt-0.5 transition-colors ${
+              isSelected ? "border-amber-500 bg-amber-500" : "border-gray-300 bg-white"
+            }`}>
+              {isSelected && <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+            </div>
+          )}
+        </div>
+        <p className="font-semibold text-gray-900 text-sm leading-snug">{draft.title}</p>
+        <p className="text-xs text-gray-600 leading-relaxed">{draft.description}</p>
+        {draft.ai_usage && (
+          <div className="space-y-1.5">
+            <p className="text-[10px] font-semibold text-blue-600">🤖 AIの活用方法</p>
+            <p className="text-[11px] text-gray-600 leading-relaxed">{draft.ai_usage}</p>
+            {draft.recommended_tools && draft.recommended_tools.length > 0 && (
+              <div className="flex flex-wrap gap-1">
+                {draft.recommended_tools.map(tool => (
+                  <span key={tool} className="bg-blue-50 border border-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full">{tool}</span>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+        {draft.target_buyer && (
+          <div className="space-y-1">
+            <p className="text-[10px] font-semibold text-emerald-600">👤 こんな方に届けたい</p>
+            <p className="text-[11px] text-gray-600 leading-relaxed">{draft.target_buyer}</p>
           </div>
         )}
       </div>
-      <div>
-        <p className="text-xs text-gray-400 mb-0.5">タイトル</p>
-        <p className="font-semibold text-gray-900 text-sm leading-snug">{draft.title}</p>
-      </div>
-      <div>
-        <p className="text-xs text-gray-400 mb-0.5">説明</p>
-        <p className="text-xs text-gray-600 leading-relaxed">{draft.description}</p>
-      </div>
-      {draft.experience_story && (
-        <div className="bg-amber-50 border border-amber-100 rounded-lg px-3 py-2.5">
-          <p className="text-[10px] font-semibold text-amber-700 mb-1">💬 実体験</p>
-          <p className="text-[11px] text-gray-600 leading-relaxed">{draft.experience_story}</p>
-        </div>
-      )}
-      {draft.ai_usage && (
-        <div className="bg-blue-50 border border-blue-100 rounded-lg px-3 py-2.5">
-          <p className="text-[10px] font-semibold text-blue-700 mb-1">🤖 AIの活用方法</p>
-          <p className="text-[11px] text-gray-600 leading-relaxed">{draft.ai_usage}</p>
-          {draft.recommended_tools && draft.recommended_tools.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-2">
-              {draft.recommended_tools.map(tool => (
-                <span key={tool} className="bg-white border border-blue-200 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full">{tool}</span>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-      {isDeliverable && (
-        <div>
-          <button
-            onClick={toggleSample}
-            disabled={sampleLoading}
-            className="text-[11px] text-teal-600 hover:text-teal-800 font-semibold flex items-center gap-1 disabled:opacity-50"
-          >
-            {sampleLoading ? (
-              <><span className="flex gap-0.5">{[0,1,2].map(i => <span key={i} className="w-1 h-1 bg-teal-400 rounded-full animate-bounce" style={{animationDelay:`${i*0.15}s`}} />)}</span>サンプル生成中…</>
-            ) : (
-              <>{sampleOpen ? "▲ 閉じる" : "📊 AIが提案する納品物の叩き案を見る"}</>
-            )}
-          </button>
-          {sampleOpen && sampleData && (
-            <div className="mt-2 border border-teal-100 rounded-xl overflow-hidden">
-              <div className="bg-teal-50 px-3 py-1.5 flex items-center gap-2">
-                <span className="text-[10px] font-bold text-teal-700">📄 {sampleData.sheetName}</span>
-                <span className="text-[9px] text-teal-500">（AIが生成したサンプルイメージです）</span>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-[10px]">
-                  <thead>
-                    <tr className="bg-gray-50 border-b border-teal-100">
-                      {sampleData.headers.map((h, i) => (
-                        <th key={i} className="px-2.5 py-1.5 text-left font-semibold text-gray-600 whitespace-nowrap">{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {sampleData.rows.map((row, ri) => (
-                      <tr key={ri} className={ri % 2 === 0 ? "bg-white" : "bg-gray-50/60"}>
-                        {row.map((cell, ci) => (
-                          <td key={ci} className="px-2.5 py-1.5 text-gray-600 whitespace-nowrap border-b border-gray-100">{cell}</td>
+
+      {/* ── 補足情報 ── */}
+      <div className="bg-gray-50 border-t border-gray-100 px-5 py-4 flex flex-col gap-3">
+        {draft.experience_story && (
+          <div className="space-y-1">
+            <p className="text-[10px] font-semibold text-amber-600">💬 実体験</p>
+            <p className="text-[11px] text-gray-600 leading-relaxed">{draft.experience_story}</p>
+          </div>
+        )}
+        {isDeliverable && (
+          <div>
+            <button
+              onClick={toggleSample}
+              disabled={sampleLoading}
+              className="text-[11px] text-teal-600 hover:text-teal-800 font-semibold flex items-center gap-1 disabled:opacity-50"
+            >
+              {sampleLoading ? (
+                <><span className="flex gap-0.5">{[0,1,2].map(i => <span key={i} className="w-1 h-1 bg-teal-400 rounded-full animate-bounce" style={{animationDelay:`${i*0.15}s`}} />)}</span>サンプル生成中…</>
+              ) : (
+                <>{sampleOpen ? "▲ 閉じる" : "📊 AIが提案する納品物の叩き案を見る"}</>
+              )}
+            </button>
+            {sampleOpen && sampleData && (
+              <div className="mt-2 border border-teal-100 rounded-xl overflow-hidden">
+                <div className="bg-teal-50 px-3 py-1.5 flex items-center gap-2">
+                  <span className="text-[10px] font-bold text-teal-700">📄 {sampleData.sheetName}</span>
+                  <span className="text-[9px] text-teal-500">（AIが生成したサンプルイメージです）</span>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-[10px]">
+                    <thead>
+                      <tr className="bg-gray-50 border-b border-teal-100">
+                        {sampleData.headers.map((h, i) => (
+                          <th key={i} className="px-2.5 py-1.5 text-left font-semibold text-gray-600 whitespace-nowrap">{h}</th>
                         ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {sampleData.rows.map((row, ri) => (
+                        <tr key={ri} className={ri % 2 === 0 ? "bg-white" : "bg-gray-50/60"}>
+                          {row.map((cell, ci) => (
+                            <td key={ci} className="px-2.5 py-1.5 text-gray-600 whitespace-nowrap border-b border-gray-100">{cell}</td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
-          )}
-        </div>
-      )}
-      <div className="border-t border-gray-100 pt-2 space-y-1.5">
+            )}
+          </div>
+        )}
         <div className="flex items-center gap-3 text-xs text-gray-500">
-          <span className="text-[10px] text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">参考価格</span>
-          <span className="font-bold text-blue-700 text-sm">¥{draft.price_suggestion.toLocaleString()}</span>
+          <span className="text-[10px] text-gray-400 bg-gray-200 px-1.5 py-0.5 rounded">参考価格</span>
+          <span className="font-bold text-gray-800 text-sm">¥{draft.price_suggestion.toLocaleString()}</span>
           <span>{draft.days_suggestion}日以内</span>
         </div>
         {draft.price_rationale && (
-          <p className="text-[11px] text-gray-500 bg-slate-50 border border-slate-100 rounded-lg px-3 py-2 leading-relaxed">{draft.price_rationale}</p>
+          <p className="text-[11px] text-gray-500 leading-relaxed">{draft.price_rationale}</p>
         )}
       </div>
-      {draft.target_buyer && (
-        <div className="bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2.5">
-          <p className="text-[10px] font-semibold text-emerald-700 mb-1">👤 こんな方に届けたい</p>
-          <p className="text-[11px] text-gray-600 leading-relaxed">{draft.target_buyer}</p>
-        </div>
-      )}
+
+      {/* ── 登録ボタン ── */}
       {!selectable && (
-        <button onClick={onSelect} className="w-full bg-amber-500 hover:bg-amber-600 transition-colors text-white font-bold py-3 rounded-xl text-sm mt-1">
-          {label}で登録する →
-        </button>
+        <div className="px-5 py-4">
+          <button onClick={onSelect} className="w-full bg-amber-500 hover:bg-amber-600 transition-colors text-white font-bold py-3 rounded-xl text-sm">
+            {label}で登録する →
+          </button>
+        </div>
       )}
     </div>
   );
