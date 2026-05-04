@@ -41,7 +41,7 @@ export default function Home() {
                 <div className="bg-white/8 border border-white/15 rounded-2xl p-5 flex flex-col gap-3">
                   <p className="text-xs font-bold text-blue-300 tracking-wide">経験者に相談したい方へ</p>
                   <p className="text-sm text-slate-300 leading-relaxed">
-                    社外の経験者に、固定価格で相談できる。
+                    ¥15,000〜、成果物として手元に残る。コンサルより安く、話すだけで終わらない。
                   </p>
                   <Link href="/browse"
                     className="mt-auto block text-center bg-white/15 border border-white/25 text-white py-3 px-4 rounded-xl text-sm font-bold hover:bg-white/20 transition-colors">
@@ -83,6 +83,59 @@ export default function Home() {
           <p className="text-slate-400 text-sm leading-relaxed">
             AIで速くなった時間は、そのまま経験者の利益になる。だから固定価格が成り立つ。
           </p>
+        </div>
+      </section>
+
+      {/* 発注側メリット */}
+      <section className="py-20 px-4 bg-white border-t border-gray-100">
+        <div className="max-w-3xl mx-auto">
+          <p className="text-xs font-bold text-blue-600 tracking-widest text-center mb-3">発注する側の話</p>
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">
+            相談より安く、コンサルより気軽に。
+          </h2>
+          <p className="text-center text-gray-400 text-sm mb-12">¥15,000〜、成果物として手元に残る。話して終わりにならない。</p>
+
+          <div className="grid md:grid-cols-3 gap-5 mb-10">
+            <div className="rounded-2xl bg-blue-50 border border-blue-100 p-5">
+              <p className="text-2xl mb-3">📦</p>
+              <p className="font-bold text-gray-900 text-sm mb-2">成果物で受け取れる</p>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                話し合いで終わらず、テンプレート・レポート・チェックリストとして手元に残る。社内説得の根拠にも使える。
+              </p>
+            </div>
+            <div className="rounded-2xl bg-blue-50 border border-blue-100 p-5">
+              <p className="text-2xl mb-3">💸</p>
+              <p className="font-bold text-gray-900 text-sm mb-2">手数料ゼロで価格が正直</p>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                出品者は手数料を価格に上乗せする必要がない。同じ品質なら、他より安く調達できる。
+              </p>
+            </div>
+            <div className="rounded-2xl bg-blue-50 border border-blue-100 p-5">
+              <p className="text-2xl mb-3">🔀</p>
+              <p className="font-bold text-gray-900 text-sm mb-2">複数人から並列で買える</p>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                1人に¥50,000 払う代わりに、3人から¥15,000ずつ購入。視点を比較して意思決定の精度を上げる。
+              </p>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-gray-200 overflow-hidden">
+            <div className="grid grid-cols-2">
+              <div className="bg-gray-50 p-5 border-r border-gray-200">
+                <p className="text-[10px] font-bold text-gray-400 tracking-widest mb-3">スポットコンサル（時間課金）</p>
+                <p className="text-sm font-bold text-gray-600 mb-1">¥50,000 × 1人</p>
+                <p className="text-xs text-gray-400 leading-relaxed">1時間の会話。成果物は残らない。</p>
+              </div>
+              <div className="bg-blue-50 p-5">
+                <p className="text-[10px] font-bold text-blue-400 tracking-widest mb-3">経験イチバ（成果物）</p>
+                <p className="text-sm font-bold text-blue-700 mb-1">¥15,000 × 3人</p>
+                <p className="text-xs text-blue-600 leading-relaxed">3人の視点を成果物で比較。同じ予算で3倍の情報量。</p>
+              </div>
+            </div>
+            <div className="bg-blue-600 px-6 py-3 text-center">
+              <p className="text-sm text-white font-bold">同じ予算で、複数の経験者から成果物を並列調達できる</p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -277,18 +330,26 @@ export default function Home() {
 
       {/* CTA */}
       <section className="py-28 px-4 bg-gradient-to-br from-slate-900 via-blue-950 to-blue-800">
-        <div className="max-w-xl mx-auto text-center">
-          <h2 className="text-3xl font-black text-white mb-4">今すぐイチバの棚に並べる</h2>
-          <p className="text-slate-300 mb-6">メールアドレスがあれば30秒で登録完了。</p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/try"
-              className="bg-gradient-to-r from-blue-500 to-blue-400 text-white px-10 py-4 rounded-xl font-bold hover:opacity-90 transition-opacity shadow-lg shadow-blue-900/50">
-              スキルを登録
-            </Link>
-            <Link href="/browse"
-              className="border border-white/20 text-white px-10 py-4 rounded-xl font-bold hover:bg-white/10 transition-colors">
-              イチバの棚を見る
-            </Link>
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-3xl font-black text-white mb-4">さあ、イチバを使ってみる</h2>
+          <p className="text-slate-300 mb-10">出品も発注も、すべて手数料ゼロ。</p>
+          <div className="grid sm:grid-cols-2 gap-5 max-w-lg mx-auto">
+            <div className="bg-white/8 border border-white/15 rounded-2xl p-5 flex flex-col gap-3 text-left">
+              <p className="text-xs font-bold text-amber-300 tracking-wide">経験を届けたい方へ</p>
+              <p className="text-sm text-slate-300 leading-relaxed">AIと壁打ちしながら、30分で出品できる。</p>
+              <Link href="/try"
+                className="mt-auto block text-center bg-gradient-to-r from-amber-500 to-amber-400 text-white py-3 px-4 rounded-xl text-sm font-bold hover:opacity-90 transition-opacity">
+                経験を出品する →
+              </Link>
+            </div>
+            <div className="bg-white/8 border border-white/15 rounded-2xl p-5 flex flex-col gap-3 text-left">
+              <p className="text-xs font-bold text-blue-300 tracking-wide">経験者に相談したい方へ</p>
+              <p className="text-sm text-slate-300 leading-relaxed">¥15,000〜、成果物として手元に残る。</p>
+              <Link href="/browse"
+                className="mt-auto block text-center bg-white/15 border border-white/25 text-white py-3 px-4 rounded-xl text-sm font-bold hover:bg-white/20 transition-colors">
+                経験者を探す →
+              </Link>
+            </div>
           </div>
         </div>
       </section>

@@ -51,7 +51,9 @@ ${text}
       "days_suggestion":3,
       "service_type":"spot",
       "product_type":"deliverable",
-      "price_rationale":"この価格が妥当な理由を経験の希少性・再現困難性で説明する1文（60字以内）"
+      "price_rationale":"この価格が妥当な理由を経験の希少性・再現困難性で説明する1文（60字以内）",
+      "target_buyer":"この成果物を必要としている個人の人物像・キャリアステージ（50字以内）",
+      "target_company":"この成果物を活用したい企業の業種・規模・担当者の役職（50字以内）"
     }
   ],
   "new_ideas":[
@@ -65,7 +67,9 @@ ${text}
       "days_suggestion":3,
       "service_type":"spot",
       "product_type":"deliverable",
-      "price_rationale":"この価格が妥当な理由を経験の希少性・再現困難性で説明する1文（60字以内）"
+      "price_rationale":"この価格が妥当な理由を経験の希少性・再現困難性で説明する1文（60字以内）",
+      "target_buyer":"この成果物を必要としている個人の人物像・キャリアステージ（50字以内）",
+      "target_company":"この成果物を活用したい企業の業種・規模・担当者の役職（50字以内）"
     }
   ]
 }
