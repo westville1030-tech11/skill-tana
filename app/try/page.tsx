@@ -743,19 +743,21 @@ export default function TryPage() {
             <div className="grid sm:grid-cols-2 gap-4">
               <button
                 onClick={() => setMode("decided")}
-                className="bg-white border-2 border-gray-200 hover:border-blue-400 rounded-2xl p-6 text-left space-y-2 transition-all group"
+                className="bg-white border-2 border-gray-200 hover:border-blue-400 rounded-2xl p-6 text-left space-y-2 transition-all group flex flex-col"
               >
                 <span className="text-2xl">✍️</span>
                 <p className="font-bold text-gray-900 group-hover:text-blue-700">出品する内容が<br />決まっている</p>
                 <p className="text-xs text-gray-500 leading-relaxed">タイトル・説明・価格を入力して、AIに内容を確認してもらいます</p>
+                <div className="mt-auto pt-3 w-full bg-blue-600 group-hover:bg-blue-700 text-white text-sm font-bold text-center py-2 rounded-xl transition-colors">こちらを選ぶ →</div>
               </button>
               <button
                 onClick={() => setMode("explore")}
-                className="bg-white border-2 border-gray-200 hover:border-blue-400 rounded-2xl p-6 text-left space-y-2 transition-all group"
+                className="bg-white border-2 border-gray-200 hover:border-blue-400 rounded-2xl p-6 text-left space-y-2 transition-all group flex flex-col"
               >
                 <span className="text-2xl">🔍</span>
                 <p className="font-bold text-gray-900 group-hover:text-blue-700">何を出せばいいか<br />まだ分からない</p>
                 <p className="text-xs text-gray-500 leading-relaxed">AIが経験をヒアリングして、商品案を2つ作ります</p>
+                <div className="mt-auto pt-3 w-full bg-blue-600 group-hover:bg-blue-700 text-white text-sm font-bold text-center py-2 rounded-xl transition-colors">こちらを選ぶ →</div>
               </button>
             </div>
           </>
@@ -844,27 +846,30 @@ export default function TryPage() {
             <div className="grid sm:grid-cols-3 gap-4">
               <button
                 onClick={() => setDecidedMode("form")}
-                className="bg-white border-2 border-gray-200 hover:border-blue-400 rounded-2xl p-6 text-left space-y-2 transition-all group"
+                className="bg-white border-2 border-gray-200 hover:border-blue-400 rounded-2xl p-6 text-left space-y-2 transition-all group flex flex-col"
               >
                 <span className="text-2xl">✍️</span>
                 <p className="font-bold text-gray-900 group-hover:text-blue-700">内容を直接入力する</p>
                 <p className="text-xs text-gray-500 leading-relaxed">タイトル・説明・価格を入力してAIに確認してもらいます。</p>
+                <div className="mt-auto pt-3 w-full bg-blue-600 group-hover:bg-blue-700 text-white text-sm font-bold text-center py-2 rounded-xl transition-colors">こちらを選ぶ →</div>
               </button>
               <button
                 onClick={() => setDecidedMode("paste")}
-                className="bg-white border-2 border-gray-200 hover:border-blue-400 rounded-2xl p-6 text-left space-y-2 transition-all group"
+                className="bg-white border-2 border-gray-200 hover:border-blue-400 rounded-2xl p-6 text-left space-y-2 transition-all group flex flex-col"
               >
                 <span className="text-2xl">📋</span>
                 <p className="font-bold text-gray-900 group-hover:text-blue-700">他サービスからコピペする</p>
                 <p className="text-xs text-gray-500 leading-relaxed">他のフリーランスサービスの出品内容をそのまま貼り付けるだけ。AIが自動で整理します。</p>
+                <div className="mt-auto pt-3 w-full bg-blue-600 group-hover:bg-blue-700 text-white text-sm font-bold text-center py-2 rounded-xl transition-colors">こちらを選ぶ →</div>
               </button>
               <button
                 onClick={() => setDecidedMode("file")}
-                className="bg-white border-2 border-gray-200 hover:border-blue-400 rounded-2xl p-6 text-left space-y-2 transition-all group"
+                className="bg-white border-2 border-gray-200 hover:border-blue-400 rounded-2xl p-6 text-left space-y-2 transition-all group flex flex-col"
               >
                 <span className="text-2xl">📂</span>
                 <p className="font-bold text-gray-900 group-hover:text-blue-700">既存ファイルから読み込む</p>
                 <p className="text-xs text-gray-500 leading-relaxed">納品物・提案書・名刺など、仕事に関係するファイルをそのまま使えます。</p>
+                <div className="mt-auto pt-3 w-full bg-blue-600 group-hover:bg-blue-700 text-white text-sm font-bold text-center py-2 rounded-xl transition-colors">こちらを選ぶ →</div>
               </button>
             </div>
           </>
@@ -1109,19 +1114,21 @@ export default function TryPage() {
             <div className="grid sm:grid-cols-2 gap-4">
               <button
                 onClick={() => setExploreMode("chat")}
-                className="bg-white border-2 border-gray-200 hover:border-blue-400 rounded-2xl p-6 text-left space-y-2 transition-all group"
+                className="bg-white border-2 border-gray-200 hover:border-blue-400 rounded-2xl p-6 text-left space-y-2 transition-all group flex flex-col"
               >
                 <span className="text-2xl">💬</span>
                 <p className="font-bold text-gray-900 group-hover:text-blue-700">AIと話しながら<br />決める</p>
                 <p className="text-xs text-gray-500 leading-relaxed">経験をヒアリングして商品案を作ります。話すように入力するだけでOK。</p>
+                <div className="mt-auto pt-3 w-full bg-blue-600 group-hover:bg-blue-700 text-white text-sm font-bold text-center py-2 rounded-xl transition-colors">こちらを選ぶ →</div>
               </button>
               <button
                 onClick={() => setExploreMode("resume")}
-                className="bg-white border-2 border-gray-200 hover:border-blue-400 rounded-2xl p-6 text-left space-y-2 transition-all group"
+                className="bg-white border-2 border-gray-200 hover:border-blue-400 rounded-2xl p-6 text-left space-y-2 transition-all group flex flex-col"
               >
                 <span className="text-2xl">📄</span>
                 <p className="font-bold text-gray-900 group-hover:text-blue-700">仕事に関係するファイルから<br />提案してもらう</p>
                 <p className="text-xs text-gray-500 leading-relaxed">提案書・名刺・履歴書など何でもOK。AIが内容を読んで2案を提案します。</p>
+                <div className="mt-auto pt-3 w-full bg-blue-600 group-hover:bg-blue-700 text-white text-sm font-bold text-center py-2 rounded-xl transition-colors">こちらを選ぶ →</div>
               </button>
             </div>
           </>
