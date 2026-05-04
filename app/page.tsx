@@ -74,6 +74,18 @@ export default function Home() {
         </div>
       </section>
 
+      {/* AI前提宣言 */}
+      <section className="bg-slate-950 px-4 py-10 border-t border-white/5">
+        <div className="max-w-2xl mx-auto text-center space-y-2">
+          <p className="text-white text-lg md:text-xl font-bold leading-snug tracking-tight">
+            このイチバでは、AIを相棒に使うことを前提に働きます。
+          </p>
+          <p className="text-slate-400 text-sm leading-relaxed">
+            AIで速くなった時間は、そのまま経験者の利益になる。だから固定価格が成り立つ。
+          </p>
+        </div>
+      </section>
+
       {/* 経験→商品化 事例 */}
       <section className="py-28 px-4 bg-white border-t border-gray-100">
         <div className="max-w-4xl mx-auto">
