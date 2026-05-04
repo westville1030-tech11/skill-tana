@@ -14,7 +14,7 @@ export default function AboutPage() {
 
         <p className="text-sm font-bold text-teal-600 tracking-widest mt-10 mb-4">このサービスについて</p>
         <h1 className="text-4xl font-black text-gray-900 leading-tight mb-12">
-          埋もれた経験を、<br />社会へ循環させる
+          埋もれた経験を、<br />社会に循環させる
         </h1>
 
         <div className="space-y-6 text-gray-600 leading-relaxed text-[15px]">
