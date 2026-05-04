@@ -18,11 +18,11 @@ export default function Home() {
               </div>
 
               <h1 className="text-4xl md:text-5xl font-black text-white leading-tight mb-4 tracking-tight">
-                手数料ゼロで、<br />
-                <span className="text-blue-300">経験を売り買いする場所。</span>
+                時間給を、<br />
+                <span className="text-blue-300">卒業する。</span>
               </h1>
               <p className="text-slate-300 text-sm leading-relaxed mb-8 max-w-sm mx-auto lg:mx-0">
-                AIで仕事が変わる時代。スキルより深い「経験」が、次の武器になる。
+                ビザスクの1時間制、ランサーズの20%手数料。固定価格の成果物なら、AIを使うほど稼げて、一度作れば何度でも売れる。
               </p>
 
               <div className="grid sm:grid-cols-2 gap-4 mb-6">
@@ -30,7 +30,7 @@ export default function Home() {
                 <div className="bg-white/8 border border-white/15 rounded-2xl p-5 flex flex-col gap-3">
                   <p className="text-xs font-bold text-amber-300 tracking-wide">経験を届けたい方へ</p>
                   <p className="text-sm text-slate-300 leading-relaxed">
-                    成約しても手数料は一切なし。受注額がそのまま手元に残る。
+                    一度作れば、何度でも売れる。AIと壁打ちして成果物を出品。手数料ゼロで全額が手元に。
                   </p>
                   <Link href="/try"
                     className="mt-auto block text-center bg-gradient-to-r from-amber-500 to-amber-400 text-white py-3 px-4 rounded-xl text-sm font-bold hover:opacity-90 transition-opacity shadow-lg shadow-amber-900/30">
@@ -39,9 +39,9 @@ export default function Home() {
                 </div>
                 {/* 経験者に相談したい */}
                 <div className="bg-white/8 border border-white/15 rounded-2xl p-5 flex flex-col gap-3">
-                  <p className="text-xs font-bold text-blue-300 tracking-wide">経験者に相談したい方へ</p>
+                  <p className="text-xs font-bold text-blue-300 tracking-wide">経験者から調達したい方へ</p>
                   <p className="text-sm text-slate-300 leading-relaxed">
-                    ¥15,000〜、成果物として手元に残る。コンサルより安く、話すだけで終わらない。
+                    ¥15,000〜、複数人から並列で購入できる。同じ予算で1人のコンサルより多くの知見を。
                   </p>
                   <Link href="/browse"
                     className="mt-auto block text-center bg-white/15 border border-white/25 text-white py-3 px-4 rounded-xl text-sm font-bold hover:bg-white/20 transition-colors">
@@ -54,8 +54,8 @@ export default function Home() {
               <div className="grid grid-cols-3 gap-3">
                 {[
                   { value: "¥0 手数料", desc: "成約しても引かれない" },
-                  { value: "AI×経験", desc: "一般論で終わらせない" },
-                  { value: "固定価格", desc: "AIを使うほど稼げる" },
+                  { value: "何度でも販売", desc: "一度作れば複数人に届く" },
+                  { value: "固定価格", desc: "時間給より稼げる" },
                 ].map((item) => (
                   <div key={item.value} className="bg-white/8 border border-white/10 rounded-xl px-3 py-3 text-center">
                     <p className="text-xs font-bold text-white leading-snug">{item.value}</p>
@@ -91,30 +91,30 @@ export default function Home() {
         <div className="max-w-3xl mx-auto">
           <p className="text-xs font-bold text-blue-600 tracking-widest text-center mb-3">発注する側の話</p>
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-3">
-            相談より安く、コンサルより気軽に。
+            複数人から、並列で買う。
           </h2>
-          <p className="text-center text-gray-400 text-sm mb-12">¥15,000〜、成果物として手元に残る。話して終わりにならない。</p>
+          <p className="text-center text-gray-400 text-sm mb-12">¥15,000〜、成果物として手元に残る。同じ予算で1人より多くの知見を。</p>
 
           <div className="grid md:grid-cols-3 gap-5 mb-10">
             <div className="rounded-2xl bg-blue-50 border border-blue-100 p-5">
               <p className="text-2xl mb-3">📦</p>
               <p className="font-bold text-gray-900 text-sm mb-2">成果物で受け取れる</p>
               <p className="text-xs text-gray-500 leading-relaxed">
-                話し合いで終わらず、テンプレート・レポート・チェックリストとして手元に残る。社内説得の根拠にも使える。
+                話して終わりにならない。テンプレート・レポート・チェックリストとして手元に残り、社内説得の根拠にも使える。
+              </p>
+            </div>
+            <div className="rounded-2xl bg-blue-50 border border-blue-100 p-5">
+              <p className="text-2xl mb-3">🔀</p>
+              <p className="font-bold text-gray-900 text-sm mb-2">複数人から並列調達できる</p>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                同じテーマで3人から同時購入もOK。視点を比較して意思決定の精度を上げる、新しい調達の使い方。
               </p>
             </div>
             <div className="rounded-2xl bg-blue-50 border border-blue-100 p-5">
               <p className="text-2xl mb-3">💸</p>
               <p className="font-bold text-gray-900 text-sm mb-2">手数料ゼロで価格が正直</p>
               <p className="text-xs text-gray-500 leading-relaxed">
-                出品者は手数料を価格に上乗せする必要がない。同じ品質なら、他より安く調達できる。
-              </p>
-            </div>
-            <div className="rounded-2xl bg-blue-50 border border-blue-100 p-5">
-              <p className="text-2xl mb-3">🔀</p>
-              <p className="font-bold text-gray-900 text-sm mb-2">複数人から並列で買える</p>
-              <p className="text-xs text-gray-500 leading-relaxed">
-                1人に¥50,000 払う代わりに、3人から¥15,000ずつ購入。視点を比較して意思決定の精度を上げる。
+                出品者は手数料を価格に上乗せしない。同じ品質なら、他のプラットフォームより安く調達できる。
               </p>
             </div>
           </div>
@@ -123,17 +123,17 @@ export default function Home() {
             <div className="grid grid-cols-2">
               <div className="bg-gray-50 p-5 border-r border-gray-200">
                 <p className="text-[10px] font-bold text-gray-400 tracking-widest mb-3">スポットコンサル（時間課金）</p>
-                <p className="text-sm font-bold text-gray-600 mb-1">¥50,000 × 1人</p>
-                <p className="text-xs text-gray-400 leading-relaxed">1時間の会話。成果物は残らない。</p>
+                <p className="text-sm font-bold text-gray-600 mb-1">¥50,000 × 1人 × 1回</p>
+                <p className="text-xs text-gray-400 leading-relaxed">1時間の会話。成果物は残らない。同じ人に再発注が必要。</p>
               </div>
               <div className="bg-blue-50 p-5">
-                <p className="text-[10px] font-bold text-blue-400 tracking-widest mb-3">経験イチバ（成果物）</p>
-                <p className="text-sm font-bold text-blue-700 mb-1">¥15,000 × 3人</p>
-                <p className="text-xs text-blue-600 leading-relaxed">3人の視点を成果物で比較。同じ予算で3倍の情報量。</p>
+                <p className="text-[10px] font-bold text-blue-400 tracking-widest mb-3">経験イチバ（成果物・複数発注）</p>
+                <p className="text-sm font-bold text-blue-700 mb-1">¥15,000 × 3人 × 同時購入</p>
+                <p className="text-xs text-blue-600 leading-relaxed">3人の視点を成果物で比較。¥5,000安くて、3倍の情報量。</p>
               </div>
             </div>
             <div className="bg-blue-600 px-6 py-3 text-center">
-              <p className="text-sm text-white font-bold">同じ予算で、複数の経験者から成果物を並列調達できる</p>
+              <p className="text-sm text-white font-bold">同じ予算で、複数の知見を成果物として並列調達できる</p>
             </div>
           </div>
         </div>
@@ -336,7 +336,7 @@ export default function Home() {
           <div className="grid sm:grid-cols-2 gap-5 max-w-lg mx-auto">
             <div className="bg-white/8 border border-white/15 rounded-2xl p-5 flex flex-col gap-3 text-left">
               <p className="text-xs font-bold text-amber-300 tracking-wide">経験を届けたい方へ</p>
-              <p className="text-sm text-slate-300 leading-relaxed">AIと壁打ちしながら、30分で出品できる。</p>
+              <p className="text-sm text-slate-300 leading-relaxed">一度作れば何度でも売れる。AIと30分で出品完了。</p>
               <Link href="/try"
                 className="mt-auto block text-center bg-gradient-to-r from-amber-500 to-amber-400 text-white py-3 px-4 rounded-xl text-sm font-bold hover:opacity-90 transition-opacity">
                 経験を出品する →
@@ -344,7 +344,7 @@ export default function Home() {
             </div>
             <div className="bg-white/8 border border-white/15 rounded-2xl p-5 flex flex-col gap-3 text-left">
               <p className="text-xs font-bold text-blue-300 tracking-wide">経験者に相談したい方へ</p>
-              <p className="text-sm text-slate-300 leading-relaxed">¥15,000〜、成果物として手元に残る。</p>
+              <p className="text-sm text-slate-300 leading-relaxed">¥15,000〜、複数人から並列調達OK。</p>
               <Link href="/browse"
                 className="mt-auto block text-center bg-white/15 border border-white/25 text-white py-3 px-4 rounded-xl text-sm font-bold hover:bg-white/20 transition-colors">
                 経験者を探す →
@@ -423,13 +423,19 @@ function ComparisonTable() {
       label: "取引の単位",
       spot:   "時間（1h単位）",
       skill:  "スキル・作業単位",
-      ours:   "成果物・経験パッケージ",
+      ours:   "成果物・固定価格",
     },
     {
-      label: "価格モデル",
-      spot:   "時間給",
-      skill:  "時間給 or 見積もり",
-      ours:   "固定価格",
+      label: "同じ成果物の複数販売",
+      spot:   "× 1時間=1回のみ",
+      skill:  "△ 基本は個別受注",
+      ours:   "◎ 何度でも販売可能",
+    },
+    {
+      label: "複数人への並列発注",
+      spot:   "× 1人ずつ個別",
+      skill:  "△ 手間がかかる",
+      ours:   "◎ 同時購入OK",
     },
     {
       label: "手数料",
@@ -448,12 +454,6 @@ function ComparisonTable() {
       spot:   "△ 準備が大変",
       skill:  "△ 文章力が必要",
       ours:   "◎ AIが一緒に作る",
-    },
-    {
-      label: "発注の整理",
-      spot:   "△ 自分で準備",
-      skill:  "△ 仕様書が必要",
-      ours:   "◎ AIと壁打ち",
     },
     {
       label: "期待外れの時",
