@@ -18,6 +18,7 @@ type ServiceDraft = {
 };
 
 type Drafts = { deliverable: ServiceDraft; consulting: ServiceDraft } | null;
+type FlowType = null | "skill" | "legacy";
 type Mode = null | "decided" | "explore";
 type ExploreMode = null | "chat" | "resume";
 type DecidedMode = null | "form" | "file" | "paste";
@@ -161,6 +162,15 @@ function DraftCard({ draft, label, badge, badgeColor, onSelect, isDeliverable, s
 }
 
 export default function TryPage() {
+  const [flowType, setFlowType] = useState<FlowType>(null);
+
+  // OBフロー
+  const [legacyMessages, setLegacyMessages] = useState<Message[]>([]);
+  const [legacyInput, setLegacyInput] = useState("");
+  const [legacyThinking, setLegacyThinking] = useState(false);
+  const [legacyDrafts, setLegacyDrafts] = useState<{ session: ServiceDraft; document: ServiceDraft } | null>(null);
+  const [legacyRounds, setLegacyRounds] = useState(0);
+
   const [mode, setMode] = useState<Mode>(null);
   const [exploreMode, setExploreMode] = useState<ExploreMode>(null);
 
@@ -199,6 +209,7 @@ export default function TryPage() {
   }, [messages, thinking]);
 
   const reset = () => {
+    setFlowType(null);
     setMode(null); setExploreMode(null);
     setDecidedMode(null);
     setDecidedForm({ title: "", description: "", price: "", days: "" });
@@ -208,6 +219,7 @@ export default function TryPage() {
     setResumeError(""); setResumeUploading(false);
     setPasteText(""); setPasteUrl(""); setPasteInputMode("text"); setPasteProcessing(false); setPasteDrafts(null); setPasteNewIdeas(null); setSelectedPasteKeys(new Set());
     setDrafts(null); setRefineChat(false);
+    setLegacyMessages([]); setLegacyInput(""); setLegacyThinking(false); setLegacyDrafts(null); setLegacyRounds(0);
   };
 
   const goRegister = (draft: ServiceDraft) => {
@@ -399,6 +411,35 @@ export default function TryPage() {
     }
   };
 
+  // OBフロー チャット
+  const sendLegacyChat = async () => {
+    const text = legacyInput.trim();
+    if (!text || legacyThinking) return;
+    setLegacyInput("");
+    const next: Message[] = [...legacyMessages, { role: "user", content: text }];
+    setLegacyMessages(next);
+    setLegacyThinking(true);
+    try {
+      const res = await fetch("/api/chat-legacy-create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: next }),
+      });
+      const data = await res.json();
+      const newRounds = legacyRounds + 1;
+      setLegacyRounds(newRounds);
+      setLegacyMessages([...next, { role: "assistant", content: data.text }]);
+      if (data.sessionDraft || data.documentDraft) {
+        setLegacyDrafts({
+          session: data.sessionDraft ?? data.documentDraft,
+          document: data.documentDraft ?? data.sessionDraft,
+        });
+      }
+    } finally {
+      setLegacyThinking(false);
+    }
+  };
+
   // 履歴書アップロード
   const handleFileUpload = async (file: File) => {
     setResumeError("");
@@ -540,8 +581,150 @@ export default function TryPage() {
           </div>
         )}
 
-        {/* ━━━ モード選択（最初の画面） ━━━ */}
-        {!drafts && mode === null && (
+        {/* ━━━ フロータイプ選択（最初の画面） ━━━ */}
+        {!drafts && !legacyDrafts && flowType === null && (
+          <>
+            <div className="bg-white border border-gray-100 rounded-2xl p-6 space-y-2">
+              <p className="text-xs font-semibold text-teal-600 bg-teal-50 border border-teal-100 inline-block px-3 py-1 rounded-full">はじめに</p>
+              <h1 className="text-xl font-bold text-gray-900 leading-snug">
+                どちらに近いですか？
+              </h1>
+              <p className="text-sm text-gray-500">目的に合わせて、最適な流れでご案内します。</p>
+            </div>
+
+            <div className="grid sm:grid-cols-2 gap-4">
+              <button
+                onClick={() => setFlowType("skill")}
+                className="bg-white border-2 border-gray-200 hover:border-blue-400 rounded-2xl p-6 text-left space-y-3 transition-all group"
+              >
+                <span className="text-2xl">💼</span>
+                <p className="font-bold text-gray-900 group-hover:text-blue-700">スキル・成果物を<br />売りたい</p>
+                <p className="text-xs text-gray-500 leading-relaxed">副業・フリーランスとして、自分のスキルを商品化します。AIがすばやく商品案を作ります。</p>
+              </button>
+              <button
+                onClick={() => setFlowType("legacy")}
+                className="bg-white border-2 border-gray-200 hover:border-teal-400 rounded-2xl p-6 text-left space-y-3 transition-all group"
+              >
+                <span className="text-2xl">📖</span>
+                <p className="font-bold text-gray-900 group-hover:text-teal-700">経験・知恵を<br />形に残したい</p>
+                <p className="text-xs text-gray-500 leading-relaxed">長年の経験を話しながら、対話セッションや経験録として後世に伝える形にします。</p>
+              </button>
+            </div>
+          </>
+        )}
+
+        {/* ━━━ OBフロー: チャット ━━━ */}
+        {flowType === "legacy" && !legacyDrafts && (
+          <div className="space-y-4">
+            {legacyMessages.length === 0 && !legacyThinking && (
+              <div className="bg-teal-50 border border-teal-100 rounded-2xl px-5 py-4">
+                <p className="text-sm text-teal-700 font-medium mb-1">あなたの経験を聞かせてください</p>
+                <p className="text-xs text-teal-600">AIが3つの質問をしながら、経験の核心を引き出します。対話セッションまたは経験録として形に残します。</p>
+              </div>
+            )}
+            {legacyMessages.length === 0 && !legacyThinking && (
+              <button
+                onClick={async () => {
+                  setLegacyThinking(true);
+                  try {
+                    const res = await fetch("/api/chat-legacy-create", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ messages: [] }),
+                    });
+                    const data = await res.json();
+                    setLegacyMessages([{ role: "assistant", content: data.text }]);
+                  } finally {
+                    setLegacyThinking(false);
+                  }
+                }}
+                className="w-full bg-teal-600 hover:bg-teal-700 transition-colors text-white font-bold py-3.5 rounded-xl text-sm"
+              >
+                話し始める →
+              </button>
+            )}
+            {(legacyMessages.length > 0 || legacyThinking) && (
+              <div className="bg-white border border-gray-100 rounded-2xl p-5 flex flex-col gap-4">
+                <div className="space-y-3 min-h-[200px] max-h-[420px] overflow-y-auto">
+                  {legacyMessages.map((m, i) => (
+                    <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+                      <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
+                        m.role === "user" ? "bg-teal-600 text-white rounded-br-sm" : "bg-gray-100 text-gray-800 rounded-bl-sm"
+                      }`}>
+                        {m.content}
+                      </div>
+                    </div>
+                  ))}
+                  {legacyThinking && (
+                    <div className="flex justify-start">
+                      <div className="bg-gray-100 rounded-2xl rounded-bl-sm px-4 py-3">
+                        <span className="flex gap-1">
+                          {[0,1,2].map(i => (
+                            <span key={i} className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
+                          ))}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                  <div ref={bottomRef} />
+                </div>
+                {legacyMessages.length > 0 && (
+                  <div className="flex gap-2 border-t border-gray-100 pt-4">
+                    <textarea
+                      value={legacyInput}
+                      onChange={(e) => setLegacyInput(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendLegacyChat(); } }}
+                      placeholder="続きを入力…（Enterで送信）"
+                      className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-teal-300 resize-none"
+                      rows={2}
+                    />
+                    <button
+                      onClick={sendLegacyChat}
+                      disabled={!legacyInput.trim() || legacyThinking}
+                      className="bg-teal-600 text-white px-4 rounded-xl disabled:opacity-40 flex-shrink-0 hover:bg-teal-700 transition-colors"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ━━━ OBフロー: 2案 ━━━ */}
+        {flowType === "legacy" && legacyDrafts && (
+          <div className="space-y-4">
+            <div className="text-center">
+              <p className="text-sm font-bold text-gray-900">2つの形を提案します</p>
+              <p className="text-xs text-gray-400 mt-1">内容は後で編集できます。</p>
+            </div>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <DraftCard
+                draft={legacyDrafts.session}
+                label="話を聞く時間として登録する"
+                badge="💬 対話セッション"
+                badgeColor="bg-purple-50 text-purple-700"
+                onSelect={() => goRegister(legacyDrafts.session)}
+              />
+              <DraftCard
+                draft={legacyDrafts.document}
+                label="経験録として登録する"
+                badge="📖 経験録"
+                badgeColor="bg-teal-50 text-teal-700"
+                onSelect={() => goRegister(legacyDrafts.document)}
+              />
+            </div>
+            <button onClick={reset} className="w-full text-xs text-gray-400 hover:text-gray-600 py-2">
+              最初からやり直す
+            </button>
+          </div>
+        )}
+
+        {/* ━━━ モード選択（スキルフロー） ━━━ */}
+        {!drafts && flowType === "skill" && mode === null && (
           <>
             <div className="bg-white border border-gray-100 rounded-2xl p-6 space-y-2">
               <p className="text-xs font-semibold text-blue-600 bg-blue-50 border border-blue-100 inline-block px-3 py-1 rounded-full">登録 ステップ1 / 2</p>
@@ -573,7 +756,7 @@ export default function TryPage() {
         )}
 
         {/* ━━━ A型: チャット（フォーム送信後） ━━━ */}
-        {!drafts && mode === "decided" && decidedChatActive && (() => {
+        {!drafts && flowType === "skill" && mode === "decided" && decidedChatActive && (() => {
           const userCount = messages.filter(m => m.role === "user").length;
           const remaining = Math.max(0, 3 - userCount);
           return (
@@ -646,7 +829,7 @@ export default function TryPage() {
         })()}
 
         {/* ━━━ A型: 入力方法選択 ━━━ */}
-        {!drafts && mode === "decided" && !decidedChatActive && decidedMode === null && (
+        {!drafts && flowType === "skill" && mode === "decided" && !decidedChatActive && decidedMode === null && (
           <>
             <div className="bg-white border border-gray-100 rounded-2xl p-5 space-y-1">
               <h2 className="font-bold text-gray-900">どちらで出品内容を入力しますか？</h2>
@@ -682,7 +865,7 @@ export default function TryPage() {
         )}
 
         {/* ━━━ A型: コピペ ━━━ */}
-        {!drafts && mode === "decided" && !decidedChatActive && decidedMode === "paste" && (
+        {!drafts && flowType === "skill" && mode === "decided" && !decidedChatActive && decidedMode === "paste" && (
           <div className="bg-white border border-gray-100 rounded-2xl p-6 space-y-4">
             <div>
               <h2 className="font-bold text-gray-900 mb-1">他サービスの出品内容を貼り付ける</h2>
@@ -808,7 +991,7 @@ export default function TryPage() {
         )}
 
         {/* ━━━ A型: ファイルアップロード ━━━ */}
-        {!drafts && mode === "decided" && !decidedChatActive && decidedMode === "file" && (
+        {!drafts && flowType === "skill" && mode === "decided" && !decidedChatActive && decidedMode === "file" && (
           <div className="bg-white border border-gray-100 rounded-2xl p-6 space-y-4">
             <div>
               <h2 className="font-bold text-gray-900 mb-1">仕事に関係するファイルをアップロード</h2>
@@ -850,7 +1033,7 @@ export default function TryPage() {
         )}
 
         {/* ━━━ A型: フォーム入力 ━━━ */}
-        {!drafts && mode === "decided" && !decidedChatActive && decidedMode === "form" && (
+        {!drafts && flowType === "skill" && mode === "decided" && !decidedChatActive && decidedMode === "form" && (
           <div className="bg-white border border-gray-100 rounded-2xl p-6 space-y-4">
             <h2 className="font-bold text-gray-900">出品内容を入力してください</h2>
             <div>
@@ -911,7 +1094,7 @@ export default function TryPage() {
         )}
 
         {/* ━━━ B/C型: 探索モード選択 ━━━ */}
-        {!drafts && mode === "explore" && exploreMode === null && (
+        {!drafts && flowType === "skill" && mode === "explore" && exploreMode === null && (
           <>
             <div className="bg-white border border-gray-100 rounded-2xl p-5 space-y-1">
               <h2 className="font-bold text-gray-900">どちらで商品案を作りますか？</h2>
@@ -939,7 +1122,7 @@ export default function TryPage() {
         )}
 
         {/* ━━━ B/C壁打ち: チャット ━━━ */}
-        {!drafts && mode === "explore" && exploreMode === "chat" && (
+        {!drafts && flowType === "skill" && mode === "explore" && exploreMode === "chat" && (
           <div className="bg-white border border-gray-100 rounded-2xl p-5 flex flex-col gap-4">
             <div className="space-y-3 min-h-[200px] max-h-[400px] overflow-y-auto">
               {messages.length === 0 && (
@@ -990,7 +1173,7 @@ export default function TryPage() {
         )}
 
         {/* ━━━ B/C履歴書: アップロード ━━━ */}
-        {!drafts && mode === "explore" && exploreMode === "resume" && (
+        {!drafts && flowType === "skill" && mode === "explore" && exploreMode === "resume" && (
           <div className="bg-white border border-gray-100 rounded-2xl p-6 space-y-4">
             <div>
               <h2 className="font-bold text-gray-900 mb-1">仕事に関係するファイルをアップロード</h2>
