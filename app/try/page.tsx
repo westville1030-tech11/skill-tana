@@ -177,6 +177,7 @@ export default function TryPage() {
   const [legacyThinking, setLegacyThinking] = useState(false);
   const [legacyDrafts, setLegacyDrafts] = useState<{ session: ServiceDraft; document: ServiceDraft } | null>(null);
   const [legacyRounds, setLegacyRounds] = useState(0);
+  const [legacyContinue, setLegacyContinue] = useState(false);
 
   const [mode, setMode] = useState<Mode>(null);
   const [exploreMode, setExploreMode] = useState<ExploreMode>(null);
@@ -226,7 +227,7 @@ export default function TryPage() {
     setResumeError(""); setResumeUploading(false);
     setPasteText(""); setPasteUrl(""); setPasteInputMode("text"); setPasteProcessing(false); setPasteDrafts(null); setPasteNewIdeas(null); setSelectedPasteKeys(new Set());
     setDrafts(null); setRefineChat(false);
-    setLegacyMessages([]); setLegacyInput(""); setLegacyThinking(false); setLegacyDrafts(null); setLegacyRounds(0);
+    setLegacyMessages([]); setLegacyInput(""); setLegacyThinking(false); setLegacyDrafts(null); setLegacyRounds(0); setLegacyContinue(false);
   };
 
   const goRegister = (draft: ServiceDraft) => {
@@ -690,37 +691,46 @@ export default function TryPage() {
                   <div ref={bottomRef} />
                 </div>
                 {legacyMessages.length > 0 && (
-                  <div className="flex gap-2 border-t border-gray-100 pt-4">
-                    <textarea
-                      value={legacyInput}
-                      onChange={(e) => setLegacyInput(e.target.value)}
-                      onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendLegacyChat(); } }}
-                      placeholder="続きを入力…（Enterで送信）"
-                      className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-teal-300 resize-none"
-                      rows={2}
-                    />
-                    <button
-                      onClick={sendLegacyChat}
-                      disabled={!legacyInput.trim() || legacyThinking}
-                      className="bg-teal-600 text-white px-4 rounded-xl disabled:opacity-40 flex-shrink-0 hover:bg-teal-700 transition-colors"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
-                      </svg>
-                    </button>
+                  <div className="border-t border-gray-100 pt-4">
+                    {legacyRounds >= 3 && !legacyContinue ? (
+                      <div className="flex gap-3">
+                        <button
+                          onClick={finalizeLegacy}
+                          disabled={legacyThinking}
+                          className="flex-1 bg-teal-600 hover:bg-teal-700 transition-colors text-white font-bold py-3 rounded-xl text-sm disabled:opacity-40"
+                        >
+                          まとめる →
+                        </button>
+                        <button
+                          onClick={() => setLegacyContinue(true)}
+                          className="flex-1 border border-gray-200 text-gray-600 font-bold py-3 rounded-xl text-sm hover:border-gray-300 transition-colors"
+                        >
+                          まだ続ける
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex gap-2">
+                        <textarea
+                          value={legacyInput}
+                          onChange={(e) => setLegacyInput(e.target.value)}
+                          onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendLegacyChat(); } }}
+                          placeholder="続きを入力…（Enterで送信）"
+                          className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-teal-300 resize-none"
+                          rows={2}
+                        />
+                        <button
+                          onClick={sendLegacyChat}
+                          disabled={!legacyInput.trim() || legacyThinking}
+                          className="bg-teal-600 text-white px-4 rounded-xl disabled:opacity-40 flex-shrink-0 hover:bg-teal-700 transition-colors"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+                          </svg>
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
-              </div>
-            )}
-            {legacyRounds >= 3 && !legacyThinking && (
-              <div className="border border-teal-200 bg-teal-50 rounded-2xl p-4 space-y-2">
-                <p className="text-xs text-teal-700">十分に話せましたか？今の内容をもとに2つの商品案を作ることができます。</p>
-                <button
-                  onClick={finalizeLegacy}
-                  className="w-full bg-teal-600 hover:bg-teal-700 transition-colors text-white font-bold py-3 rounded-xl text-sm"
-                >
-                  この内容でまとめる →
-                </button>
               </div>
             )}
           </div>
